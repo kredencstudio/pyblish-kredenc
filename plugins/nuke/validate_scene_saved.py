@@ -7,7 +7,7 @@ import pyblish.api
 class ValidateSceneSaved(pyblish.api.Validator):
     """Validates whether the scene is saved"""
 
-    families = ['*']
+    families = ['workfile']
     hosts = ['nuke']
     version = (0, 1, 0)
 

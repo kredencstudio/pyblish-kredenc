@@ -24,8 +24,9 @@ class SubmitDeadline(pyblish.api.Extractor):
         args.append(instance.data('job_path'))
         args.append(instance.data('plugin_path'))
         args.append(instance.data('scene_file'))
+        instance.set_data("publish", False)
 
-        self.log.info(self.CallDeadlineCommand(args))
+        # self.log.info(self.CallDeadlineCommand(args))
 
     def CallDeadlineCommand(self, arguments, hideWindow=True):
         # On OSX, we look for the DEADLINE_PATH file. On other platforms, we use the environment variable.
