@@ -1,2 +1,2 @@
-pyblish-bumpybox
-===============
+#### pyblish-kredenc
+
