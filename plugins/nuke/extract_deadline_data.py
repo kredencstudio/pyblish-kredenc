@@ -1,10 +1,7 @@
 import os
 import tempfile
 import subprocess
-import getpass
 
-import nuke
-import nukescripts
 import pyblish.api
 
 
@@ -12,6 +9,7 @@ import pyblish.api
 class SubmitDeadline(pyblish.api.Extractor):
     """Submits the scene to Deadline"""
 
+    order = pyblish.api.Extractor.order + 0.5
     families = ['writeNode']
     hosts = ['nuke']
     version = (0, 1, 0)
@@ -23,10 +21,8 @@ class SubmitDeadline(pyblish.api.Extractor):
         args = []
         args.append(instance.data('job_path'))
         args.append(instance.data('plugin_path'))
-        args.append(instance.data('scene_file'))
-        instance.set_data("publish", False)
 
-        # self.log.info(self.CallDeadlineCommand(args))
+        self.log.info(self.CallDeadlineCommand(args))
 
     def CallDeadlineCommand(self, arguments, hideWindow=True):
         # On OSX, we look for the DEADLINE_PATH file. On other platforms, we use the environment variable.
