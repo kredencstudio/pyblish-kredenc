@@ -1,19 +1,14 @@
-import os
-import tempfile
-import subprocess
-import getpass
-
-import nuke
-import nukescripts
 import pyblish.api
 import shutil
 
+import nuke
 
 @pyblish.api.log
-class extractWorkfile(pyblish.api.Extractor):
+class publishWorkfile(pyblish.api.Extractor):
     """Publishes current workfile to a _Publish location, next to current working directory"""
 
-    families = ['workfile']
+    order = pyblish.api.Extractor.order + 0.1
+    families = ['workFile']
     hosts = ['nuke']
     version = (0, 1, 0)
     optional = True
@@ -21,6 +16,10 @@ class extractWorkfile(pyblish.api.Extractor):
     def process_instance(self, instance):
         # submitting job
         sourcePath = instance.data('path')
-        directory, file = os.path.split(sourcePath)
-        publishPath = os.path.abspath(os.path.join(directory, '..', '_Publish', file))
+        new_workfile = instance.data('new_workfile')
+        publishPath = instance.context.data('published_scene_file')
+
         shutil.copy(sourcePath, publishPath)
+        nuke.scriptSaveAs(new_workfile)
+
+

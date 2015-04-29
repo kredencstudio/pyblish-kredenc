@@ -1,11 +1,11 @@
-import nuke
 import pyblish.api
 import os
 
+import nuke
 
 @pyblish.api.log
 class SelectWorkfile(pyblish.api.Selector):
-    """Selects all write nodes"""
+    """Selects current workfile"""
 
     hosts = ['nuke']
     version = (0, 1, 0)
@@ -17,8 +17,10 @@ class SelectWorkfile(pyblish.api.Selector):
         # Maya returns forward-slashes by default
         normalised = os.path.normpath(current_file)
 
-        instance = context.create_instance(name='Current File')
-        instance.set_data('family', value='workfile')
-        instance.set_data("publish", False)
+        directory, filename = os.path.split(normalised)
+
+        instance = context.create_instance(name=filename)
+        instance.set_data('family', value='workFile')
+        # instance.set_data("publish", False)
         instance.set_data("path", value=normalised)
         instance.add(normalised)
