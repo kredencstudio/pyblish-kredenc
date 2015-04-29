@@ -1,13 +1,13 @@
-import nuke
-
 import pyblish.api
+
+import nuke
 
 
 @pyblish.api.log
 class ValidateSceneSaved(pyblish.api.Validator):
     """Validates whether the scene is saved"""
 
-    families = ['workfile']
+    families = ['*']
     hosts = ['nuke']
     version = (0, 1, 0)
 
