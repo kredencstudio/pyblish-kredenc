@@ -1,16 +1,16 @@
 import os
 import getpass
 import tempfile
-import traceback
+import pyblish.api
 
 import nuke
 import nukescripts
-import pyblish.api
+
 
 
 @pyblish.api.log
 class ValidateDeadlineData(pyblish.api.Validator):
-    """Selects all write nodes"""
+    """Prepares All Deadline data"""
 
     families = ['writeNode', 'prerenders']
     hosts = ['nuke']
@@ -22,16 +22,22 @@ class ValidateDeadlineData(pyblish.api.Validator):
         name = 'Submit "%s" to Deadline' % node.name()
 
         [job_path, plugin_path, scene_file] = [None, None, None]
+
+        if instance.context.has_data('published_scene_file'):
+            scene_file = instance.context.data('published_scene_file')
+        else:
+            scene_file = nuke.root().name()
+
         try:
-            [job_path, plugin_path, scene_file] = self.CreateFtrackJob(node)
+            [job_path, plugin_path] = self.CreateFtrackJob(node, scene_file)
         except:
-            [job_path, plugin_path, scene_file] = self.CreateDeadlineJob(node)
+            [job_path, plugin_path] = self.CreateDeadlineJob(node, scene_file)
 
         instance.set_data('job_path', value=job_path)
         instance.set_data('plugin_path', value=plugin_path)
         instance.set_data('scene_file', value=scene_file)
 
-    def CreateDeadlineJob(self, write_node):
+    def CreateDeadlineJob(self, write_node, scene_file):
 
         # generating job file
         name = os.path.basename(nuke.root().name())
@@ -61,11 +67,11 @@ class ValidateDeadlineData(pyblish.api.Validator):
         job_file.close()
 
         # generating plugin file
-        scene_file = nuke.root().name()
         nukex = nuke.env['nukex']
 
-        #data = 'SceneFile=%s\n' % scene_file
-        data = 'Version=9.0\n'
+        data = 'SceneFile=%s\n' % scene_file
+        data += 'Version=9.0\n'
+        data += 'WriteNode=%s\n' % write_node.name()
         data += 'Threads=0\n'
         data += 'RamUse=0\n'
         data += 'BatchMode=False\n'
@@ -86,9 +92,9 @@ class ValidateDeadlineData(pyblish.api.Validator):
         plugin_file.write(data)
         plugin_file.close()
 
-        return [job_path, plugin_path, scene_file]
+        return [job_path, plugin_path]
 
-    def CreateFtrackJob(self, write_node):
+    def CreateFtrackJob(self, write_node, scene_file):
 
         import ftrack
 
@@ -121,15 +127,15 @@ class ValidateDeadlineData(pyblish.api.Validator):
 
         version_number = int(nukescripts.version_get(output_path, 'v')[1])
 
-        template = r'K:/tools/Deadline/draft-templates/quicktime_MPEG4_and_DNxHD.py'
+        template = r"K:\.core\repos\DeadlineRepository7\custom\draft\encode_to_mov_h264_540p.py"
 
         data = 'Name=%s\n' % name
         data += 'UserName=%s\n' % username
         data += 'Frames=%s-%s\n' % (start_frame, end_frame)
         data += 'ChunkSize=10\n'
-        data += 'Group=nuke_90v4\n'
-        data += 'Pool=medium\n'
-        data += 'LimitGroups=nuke\n'
+        data += 'Group=nuke\n'
+        data += 'Pool=comp\n'
+        data += 'LimitGroups=\n'
         data += 'OutputDirectory0=%s\n' % output_dir
         data += 'OutputFilename0=%s\n' % output_file
         data += 'Plugin=Nuke\n'
@@ -138,22 +144,24 @@ class ValidateDeadlineData(pyblish.api.Validator):
         data += 'ExtraInfo2=%s\n' % asset_name
         data += 'ExtraInfo3=%s\n' % version_number
         data += 'ExtraInfo5=%s\n' % username
-        data += 'ExtraInfoKeyValue0=DraftExtraArgs=\n'
-        data += 'ExtraInfoKeyValue1=DraftFrameHeight=%s\n' % height
-        data += 'ExtraInfoKeyValue2=DraftVersion=\n'
-        data += 'ExtraInfoKeyValue3=FT_TaskName=%s\n' % task_name
-        data += 'ExtraInfoKeyValue4=DraftTemplate=%s\n' % template
-        data += 'ExtraInfoKeyValue5=FT_Description=\n'
-        data += 'ExtraInfoKeyValue6=FT_VersionId=\n'
-        data += 'ExtraInfoKeyValue7=DraftUsername=\n'
-        data += 'ExtraInfoKeyValue8=FT_ProjectId=%s\n' % project_id
-        data += 'ExtraInfoKeyValue9=FT_AssetName=%s\n' % asset_name
-        data += 'ExtraInfoKeyValue10=DraftFrameWidth=%s\n' % width
-        data += 'ExtraInfoKeyValue11=FT_AssetId=%s\n' % asset_id
-        data += 'ExtraInfoKeyValue12=FT_TaskId=%s\n' % task_id
-        data += 'ExtraInfoKeyValue13=DraftUploadToShotgun=False\n'
-        data += 'ExtraInfoKeyValue14=FT_ProjectName=%s\n' % project_name
-        data += 'ExtraInfoKeyValue15=DraftEntity=\n'
+
+        data += 'ExtraInfoKeyValue0=DraftTemplate=%s\n' % template
+        data += 'ExtraInfoKeyValue1=DraftExtraArgs=\n'
+        data += 'ExtraInfoKeyValue2=DraftFrameHeight=%s\n'# % height
+        data += 'ExtraInfoKeyValue3=DraftFrameWidth=%s\n'# % width
+        data += 'ExtraInfoKeyValue4=DraftVersion=\n'
+        data += 'ExtraInfoKeyValue5=DraftUploadToFtrack=False\n'
+        data += 'ExtraInfoKeyValue6=DraftUsername=\n'
+        data += 'ExtraInfoKeyValue7=DraftEntity=\n'
+
+        data += 'ExtraInfoKeyValue8=FT_Description=\n'
+        data += 'ExtraInfoKeyValue9=FT_TaskName=%s\n' % task_name
+        data += 'ExtraInfoKeyValue10=FT_VersionId=\n'
+        data += 'ExtraInfoKeyValue11=FT_ProjectId=%s\n' % project_id
+        data += 'ExtraInfoKeyValue12=FT_AssetName=%s\n' % asset_name
+        data += 'ExtraInfoKeyValue13=FT_AssetId=%s\n' % asset_id
+        data += 'ExtraInfoKeyValue14=FT_TaskId=%s\n' % task_id
+        data += 'ExtraInfoKeyValue15=FT_ProjectName=%s\n' % project_name
         data += 'ExtraInfoKeyValue16=FT_Username=%s\n' % username
 
         name = '%s_job.txt' % write_node.name()
@@ -163,11 +171,11 @@ class ValidateDeadlineData(pyblish.api.Validator):
         job_file.close()
 
         # generating plugin file
-        scene_file = nuke.root().name()
         nukex = nuke.env['nukex']
 
-        #data = 'SceneFile=%s\n' % scene_file
-        data = 'Version=9.0\n'
+        data = 'SceneFile=%s\n' % scene_file
+        data += 'Version=9.0\n'
+        data += 'WriteNode=%s\n' % write_node.name()
         data += 'Threads=0\n'
         data += 'RamUse=0\n'
         data += 'BatchMode=False\n'
@@ -188,4 +196,4 @@ class ValidateDeadlineData(pyblish.api.Validator):
         plugin_file.write(data)
         plugin_file.close()
 
-        return [job_path, plugin_path, scene_file]
+        return [job_path, plugin_path]
