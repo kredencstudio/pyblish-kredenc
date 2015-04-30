@@ -110,12 +110,11 @@ class ValidateDeadlineData(pyblish.api.Validator):
         height = nuke.root().format().height()
         width = nuke.root().format().width()
 
+        component_name = write_node['fcompname'].getValue()
+
         task_id = os.environ['FTRACK_TASKID']
         task = ftrack.Task(id=os.environ['FTRACK_TASKID'])
 
-        task_name = task.getName()
-        task_id = os.environ['FTRACK_TASKID']
-        project_name = task.getProject().getName()
         project_id = task.getProject().getId()
 
         asset_name = None
@@ -124,6 +123,8 @@ class ValidateDeadlineData(pyblish.api.Validator):
             if asset.getType().getShort() == 'comp':
                 asset_name = asset.getName()
                 asset_id = asset.getId()
+            else:
+                asset_name = 'comp'
 
         version_number = int(nukescripts.version_get(output_path, 'v')[1])
 
@@ -139,30 +140,37 @@ class ValidateDeadlineData(pyblish.api.Validator):
         data += 'OutputDirectory0=%s\n' % output_dir
         data += 'OutputFilename0=%s\n' % output_file
         data += 'Plugin=Nuke\n'
-        data += 'ExtraInfo0=%s\n' % task_name
-        data += 'ExtraInfo1=%s\n' % project_name
-        data += 'ExtraInfo2=%s\n' % asset_name
-        data += 'ExtraInfo3=%s\n' % version_number
-        data += 'ExtraInfo5=%s\n' % username
+        # data += 'ExtraInfo0=%s\n' % task_name
+        # data += 'ExtraInfo1=%s\n' % project_name
+        # data += 'ExtraInfo2=%s\n' % asset_name
+        # data += 'ExtraInfo3=%s\n' % version_number
+        # data += 'ExtraInfo5=%s\n' % username
 
         data += 'ExtraInfoKeyValue0=DraftTemplate=%s\n' % template
         data += 'ExtraInfoKeyValue1=DraftExtraArgs=\n'
-        data += 'ExtraInfoKeyValue2=DraftFrameHeight=%s\n'# % height
-        data += 'ExtraInfoKeyValue3=DraftFrameWidth=%s\n'# % width
+        data += 'ExtraInfoKeyValue2=DraftFrameHeight=%s\n' % height
+        data += 'ExtraInfoKeyValue3=DraftFrameWidth=%s\n' % width
         data += 'ExtraInfoKeyValue4=DraftVersion=\n'
-        data += 'ExtraInfoKeyValue5=DraftUploadToFtrack=False\n'
+        data += 'ExtraInfoKeyValue5=DraftUploadToFtrack=True\n'
         data += 'ExtraInfoKeyValue6=DraftUsername=\n'
         data += 'ExtraInfoKeyValue7=DraftEntity=\n'
 
-        data += 'ExtraInfoKeyValue8=FT_Description=\n'
-        data += 'ExtraInfoKeyValue9=FT_TaskName=%s\n' % task_name
-        data += 'ExtraInfoKeyValue10=FT_VersionId=\n'
-        data += 'ExtraInfoKeyValue11=FT_ProjectId=%s\n' % project_id
-        data += 'ExtraInfoKeyValue12=FT_AssetName=%s\n' % asset_name
-        data += 'ExtraInfoKeyValue13=FT_AssetId=%s\n' % asset_id
-        data += 'ExtraInfoKeyValue14=FT_TaskId=%s\n' % task_id
-        data += 'ExtraInfoKeyValue15=FT_ProjectName=%s\n' % project_name
-        data += 'ExtraInfoKeyValue16=FT_Username=%s\n' % username
+
+        data += 'ExtraInfoKeyValue8=FT_TaskId=%s\n' % task_id
+        data += 'ExtraInfoKeyValue9=FT_ProjectId=%s\n' % project_id
+
+        data += 'ExtraInfoKeyValue10=FT_AssetName=%s\n' % asset_name
+        data += 'ExtraInfoKeyValue11=FT_AssetId=%s\n' % asset_id
+
+        data += 'ExtraInfoKeyValue12=FT_VersionNumber=%s\n' % version_number
+        data += 'ExtraInfoKeyValue13=FT_VersionId=\n'
+
+        data += 'ExtraInfoKeyValue14=FT_ComponentName=%s\n' % component_name
+
+        data += 'ExtraInfoKeyValue15=FT_Username=%s\n' % username
+        data += 'ExtraInfoKeyValue16=FT_Description=\n'
+
+
 
         name = '%s_job.txt' % write_node.name()
         job_path = os.path.join(tempfile.gettempdir(), name)
