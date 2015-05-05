@@ -19,10 +19,13 @@ class ConformDeadline(pyblish.api.Conformer):
 
         # submitting job
         args = []
-        args.append(instance.data('job_path'))
-        args.append(instance.data('plugin_path'))
+        if instance.has_data('job_path') and instance.has_data('plugin_path'):
+            args.append(instance.data('job_path'))
+            args.append(instance.data('plugin_path'))
+            self.log.info(self.CallDeadlineCommand(args))
+        else:
+            self.log.info("No deadline data found")
 
-        self.log.info(self.CallDeadlineCommand(args))
 
     def CallDeadlineCommand(self, arguments, hideWindow=True):
         # On OSX, we look for the DEADLINE_PATH file. On other platforms, we use the environment variable.

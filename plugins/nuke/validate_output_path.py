@@ -18,7 +18,7 @@ class ValidateOutputPath(pyblish.api.Validator):
             name = instance[0].name()
             msg = 'Output directory for %s doesn\'t exists' % name
 
-            raise ValueError(msg)
+            self.log.error(msg)
 
     def repair_instance(self, instance):
         """Auto-repair creates the output directory"""

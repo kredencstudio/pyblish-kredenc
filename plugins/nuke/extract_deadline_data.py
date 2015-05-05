@@ -15,6 +15,7 @@ class ExtractDeadlineData(pyblish.api.Extractor):
     families = ['writeNode', 'prerenders']
     hosts = ['nuke']
     version = (0, 1, 0)
+    optional = True
 
     def process_instance(self, instance):
 
