@@ -39,9 +39,9 @@ class SelectWorkfile(pyblish.api.Selector):
     # MAYA
     def process_maya(self):
         import cmds
-        return cmds.file(q=True, modified=True)
+        return cmds.file(q=True, location=True)
 
     # HOUDINI
     def process_houdini(self):
         import hou
-        return hou.hipFile.path()()
+        return hou.hipFile.path()
