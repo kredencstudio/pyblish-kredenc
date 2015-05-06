@@ -1,5 +1,6 @@
 import pyblish.api
 import os
+import sys
 
 @pyblish.api.log
 class SelectWorkfile(pyblish.api.Selector):
