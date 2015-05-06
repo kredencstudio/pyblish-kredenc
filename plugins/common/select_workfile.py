@@ -1,6 +1,7 @@
 import pyblish.api
 import os
 import sys
+import pprint
 
 @pyblish.api.log
 class SelectWorkfile(pyblish.api.Selector):
@@ -20,14 +21,14 @@ class SelectWorkfile(pyblish.api.Selector):
             current_file = self.process_houdini()
         else:
             current_file = None
-            self.log.warning('Current host workfile selection is not supported yet!')
-
+            self.log.warning('Workfile selection in current host is not supported yet!')
 
         # Normalise the path
         normalised = os.path.normpath(current_file)
 
         directory, filename = os.path.split(normalised)
         if current_file:
+            context.set_data('current_file', value=current_file)
             instance = context.create_instance(name=filename)
             instance.set_data('family', value='workFile')
             # instance.set_data("publish", False)
