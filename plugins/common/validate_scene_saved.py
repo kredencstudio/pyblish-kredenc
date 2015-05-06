@@ -1,0 +1,71 @@
+import pyblish.api
+import sys
+
+
+@pyblish.api.log
+class ValidateSceneSaved(pyblish.api.Validator):
+    """Validates whether the scene is saved"""
+
+    families = ['*']
+    hosts = ['*']
+    version = (0, 1, 0)
+
+
+    def process_context(self, context):
+
+        if "nuke" in sys.executable:
+            scene_modified = self.check_nuke()
+        elif "maya" in sys.executable:
+            scene_modified = self.check_houdini()
+        elif "houdini" in sys.executable:
+            scene_modified = self.check_houdini()
+        else:
+            scene_modified = True
+
+        if scene_modified:
+            raise pyblish.api.ValidationError('Scene has not been saved since modifying. '
+                                              'You can fix it using the repair button '
+                                              'or save it manually.')
+
+
+    def repair_context(self, context):
+        """Saves the script
+        """
+        if "nuke" in sys.executable:
+            self.repair_nuke()
+        elif "maya" in sys.executable:
+            self.repair_maya()
+        elif "houdini" in sys.executable:
+            self.repair_houdini()
+
+
+    # NUKE
+    def check_nuke(self):
+        import nuke
+        return nuke.Root().modified()
+
+    def repair_nuke(self):
+        import nuke
+        nuke.scriptSave()
+
+
+    # MAYA
+    def check_maya(self):
+        import cmds
+        return cmds.file(q=True, modified=True)
+
+    def repair_maya(self):
+        import cmds
+        cmds.SaveScene()
+
+
+    # HOUDINI
+    def check_houdini(self):
+        import hou
+        return hou.hipFile.hasUnsavedChanges()
+
+    def repair_houdini(self):
+        import hou
+        hou.hipFile.save()
+
+

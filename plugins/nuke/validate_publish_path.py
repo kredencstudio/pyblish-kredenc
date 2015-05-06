@@ -9,6 +9,7 @@ class ValidatePublishPath(pyblish.api.Validator):
     families = ['workFile']
     hosts = ['nuke']
     version = (0, 1, 0)
+    optional = True
 
     def process_instance(self, instance):
 

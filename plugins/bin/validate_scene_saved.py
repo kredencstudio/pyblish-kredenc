@@ -8,7 +8,7 @@ class ValidateSceneSaved(pyblish.api.Validator):
     """Validates whether the scene is saved"""
 
     families = ['*']
-    hosts = ['nuke']
+    hosts = ['*']
     version = (0, 1, 0)
 
     def process_context(self, context):
@@ -16,10 +16,7 @@ class ValidateSceneSaved(pyblish.api.Validator):
         root = nuke.Root()
         if root.modified():
             msg = 'Scene has not been saved since modifying.'
-            self.log.error(msg)
-            raise pyblish.api.ValidationError('Scene has not been saved since modifying.'
-                                              'this is how you fix it'
-                                              'or like thos')
+            raise pyblish.api.ValidationError('Scene has not been saved since modifying. You can fix it automatically using repair button')
 
     def repair_context(self, context):
         """Saves the script
