@@ -6,7 +6,7 @@ import pyblish.api
 
 
 @pyblish.api.log
-class ConformDeadline(pyblish.api.Conformer):
+class SendToDeadline(pyblish.api.Conformer):
     """Submits the scene to Deadline"""
 
     order = pyblish.api.Extractor.order + 0.5

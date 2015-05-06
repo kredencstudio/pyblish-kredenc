@@ -33,9 +33,11 @@ class SelectWriteNodes(pyblish.api.Selector):
 
         instance = context.create_instance(name=final_write_node.name())
         instance.set_data('family', value='writeNode')
+        instance.set_data('output_path', value=final_write_node['file'].value())
         instance.add(final_write_node)
 
         for node in list(prerender_write_nodes):
             instance = context.create_instance(name=node.name())
             instance.set_data('family', value='prerenders')
+            instance.set_data('output_path', value=node['file'].value())
             instance.add(node)

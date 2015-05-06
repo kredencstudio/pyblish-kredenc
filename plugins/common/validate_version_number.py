@@ -5,7 +5,7 @@ import pprint
 
 @pyblish.api.log
 class ValidateVersionNumber(pyblish.api.Validator):
-    """Validates whether workFile is versioned and makes sure that version number of write nodes matches version of the
+    """Validates whether version number of output matches version of the
     work file
     """
 
@@ -17,20 +17,8 @@ class ValidateVersionNumber(pyblish.api.Validator):
 
     def process_instance(self, instance):
         current_file = instance.context.data('current_file')
-
         current_v = int(self.version_get(current_file, 'v')[1])
-
-        if "nuke" in self.host:
-            output_path = self.get_output_nuke(instance)
-        elif "maya" in self.host:
-            pass
-            # output_path = self.get_output_maya(instance)
-        elif "houdini" in self.host:
-            output_path = self.get_output_houdini(instance)
-            self.log.info(output_path)
-        else:
-            output_path = None
-            self.log.warning('version  validation in current host is not supported yet!')
+        output_path = instance.data('output_path')
 
         try:
             output_v = int(self.version_get(output_path, 'v')[1])
@@ -47,21 +35,10 @@ class ValidateVersionNumber(pyblish.api.Validator):
         """Sets the version number of the output to the same as the file name
         """
         current_file = instance.context.data('currentFile')
-
-        if "nuke" in self.host:
-            output_path = self.get_output_nuke(instance)
-        elif "maya" in self.host:
-            output_path = self.get_output_maya(instance)
-        elif "houdini" in self.host:
-            output_path = self.get_output_houdini(instance)
-        else:
-            output_path = None
-            self.log.warning('version validation in current host is not supported yet!')
-
+        output_path = instance.data('output_path')
         version_number = int(self.version_get(current_file, 'v')[1])
         v = int(self.version_get(output_path, 'v')[1])
         new_path = self.version_set(output_path, 'v', v, version_number)
-
 
         if "nuke" in self.host:
             self.set_output_nuke(instance, new_path)
@@ -124,24 +101,11 @@ class ValidateVersionNumber(pyblish.api.Validator):
 
 
     # NUKE
-    def get_output_nuke(self, instance):
-        import nuke
-        return instance[0]['file'].value()
-
     def set_output_nuke(self, instance, new_path):
         import nuke
         instance[0]['file'].setValue(new_path)
 
-    # # MAYA
-    # def get_output_maya(self):
-    #     import cmds
-    #     return cmds.file(q=True, location=True)
-
     # HOUDINI
-    def get_output_houdini(self, instance):
-        import hou
-        return instance[0].parm('vm_picture').unexpandedString()
-
     def set_output_houdini(self, instance, new_path):
         import hou
         instance[0].parm('vm_picture').set(new_path)

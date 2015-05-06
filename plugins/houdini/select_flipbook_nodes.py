@@ -4,7 +4,7 @@ import pyblish.api
 
 @pyblish.api.log
 class SelectFlipbookNodes(pyblish.api.Selector):
-    """Selects all write nodes"""
+    """Selects all flipbook nodes"""
 
     hosts = ['*']
     version = (0, 1, 0)

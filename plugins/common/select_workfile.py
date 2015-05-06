@@ -28,7 +28,7 @@ class SelectWorkfile(pyblish.api.Selector):
 
         directory, filename = os.path.split(normalised)
         if current_file:
-            context.set_data('current_file', value=current_file)
+            context.set_data('current_file', value=normalised)
             instance = context.create_instance(name=filename)
             instance.set_data('family', value='workFile')
             # instance.set_data("publish", False)
