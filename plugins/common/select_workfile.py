@@ -9,27 +9,30 @@ class SelectWorkfile(pyblish.api.Selector):
     hosts = ['*']
     version = (0, 1, 0)
 
-    def process_context(self, context):
+    host = sys.executable.lower()
 
-        if "nuke" in sys.executable:
+    def process_context(self, context):
+        if "nuke" in self.host:
             current_file = self.process_nuke()
-        elif "maya" in sys.executable:
+        elif "maya" in self.host:
             current_file = self.process_houdini()
-        elif "houdini" in sys.executable:
+        elif "houdini" in self.host:
             current_file = self.process_houdini()
         else:
-            current_file = True
+            current_file = None
+            self.log.warning('Current host workfile selection is not supported yet!')
+
 
         # Normalise the path
         normalised = os.path.normpath(current_file)
 
         directory, filename = os.path.split(normalised)
-
-        instance = context.create_instance(name=filename)
-        instance.set_data('family', value='workFile')
-        # instance.set_data("publish", False)
-        instance.set_data("path", value=normalised)
-        instance.add(normalised)
+        if current_file:
+            instance = context.create_instance(name=filename)
+            instance.set_data('family', value='workFile')
+            # instance.set_data("publish", False)
+            instance.set_data("path", value=normalised)
+            instance.add(normalised)
 
 
     # NUKE

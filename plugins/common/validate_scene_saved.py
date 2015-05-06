@@ -10,14 +10,14 @@ class ValidateSceneSaved(pyblish.api.Validator):
     hosts = ['*']
     version = (0, 1, 0)
 
+    host = sys.executable.lower()
 
     def process_context(self, context):
-
-        if "nuke" in sys.executable:
+        if "nuke" in self.host:
             scene_modified = self.process_nuke()
-        elif "maya" in sys.executable:
+        elif "maya" in self.host:
             scene_modified = self.process_houdini()
-        elif "houdini" in sys.executable:
+        elif "houdini" in self.host:
             scene_modified = self.process_houdini()
         else:
             scene_modified = True
@@ -31,11 +31,11 @@ class ValidateSceneSaved(pyblish.api.Validator):
     def repair_context(self, context):
         """Saves the script
         """
-        if "nuke" in sys.executable:
+        if "nuke" in self.host:
             self.repair_nuke()
-        elif "maya" in sys.executable:
+        elif "maya" in self.host:
             self.repair_maya()
-        elif "houdini" in sys.executable:
+        elif "houdini" in self.host:
             self.repair_houdini()
 
 
