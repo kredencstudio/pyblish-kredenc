@@ -14,11 +14,11 @@ class ValidateSceneSaved(pyblish.api.Validator):
     def process_context(self, context):
 
         if "nuke" in sys.executable:
-            scene_modified = self.check_nuke()
+            scene_modified = self.process_nuke()
         elif "maya" in sys.executable:
-            scene_modified = self.check_houdini()
+            scene_modified = self.process_houdini()
         elif "houdini" in sys.executable:
-            scene_modified = self.check_houdini()
+            scene_modified = self.process_houdini()
         else:
             scene_modified = True
 
@@ -40,7 +40,7 @@ class ValidateSceneSaved(pyblish.api.Validator):
 
 
     # NUKE
-    def check_nuke(self):
+    def process_nuke(self):
         import nuke
         return nuke.Root().modified()
 
@@ -50,7 +50,7 @@ class ValidateSceneSaved(pyblish.api.Validator):
 
 
     # MAYA
-    def check_maya(self):
+    def process_maya(self):
         import cmds
         return cmds.file(q=True, modified=True)
 
@@ -60,7 +60,7 @@ class ValidateSceneSaved(pyblish.api.Validator):
 
 
     # HOUDINI
-    def check_houdini(self):
+    def process_houdini(self):
         import hou
         return hou.hipFile.hasUnsavedChanges()
 
