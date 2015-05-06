@@ -1,8 +1,7 @@
 import pyblish.api
 import re
-
-import nuke
-
+import sys
+import pprint
 
 @pyblish.api.log
 class ValidateVersionNumber(pyblish.api.Validator):
@@ -10,17 +9,22 @@ class ValidateVersionNumber(pyblish.api.Validator):
     work file
     """
 
-    families = ['writeNode', 'prerenders', 'workFile']
-    hosts = ['nuke']
+    families = ['writeNode', 'prerenders', 'rop']
+    hosts = ['NONE']
     version = (0, 1, 0)
 
-    def process_instance(self, instance):
-        path = nuke.root().name()
+    host = sys.executable.lower()
 
-        version_number = int(self.version_get(path, 'v')[1])
+    def process_instance(self, instance):
+
+        current_file = instance.context.data('currentFile')
+
+        version_number = int(self.version_get(current_file, 'v')[1])
+
+        #nuke_specific
+        path = instance[0]['file'].value()
 
         try:
-            path = instance[0]['file'].value()
             v = int(self.version_get(path, 'v')[1])
         except:
             v = version_number
@@ -34,16 +38,21 @@ class ValidateVersionNumber(pyblish.api.Validator):
             msg += 'file version number %s' % version_number
             raise Exception(msg)
 
+
     def repair_instance(self, instance):
         """Sets the version number of the output to the same as the file name
         """
-        path = nuke.root().name()
-        version_number = int(self.version_get(path, 'v')[1])
+        current_file = instance.context.data('currentFile')
 
+        version_number = int(self.version_get(current_file, 'v')[1])
+
+        #nuke_specific
         path = instance[0]['file'].value()
         v = int(self.version_get(path, 'v')[1])
 
         new_path = self.version_set(path, 'v', v, version_number)
+
+        #nuke_specific
         instance[0]['file'].setValue(new_path)
 
 
@@ -90,5 +99,3 @@ class ValidateVersionNumber(pyblish.api.Validator):
             raise ValueError, 'Unable to version up File'
 
         return file
-
-
