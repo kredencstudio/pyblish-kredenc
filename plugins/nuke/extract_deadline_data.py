@@ -24,8 +24,9 @@ class ExtractDeadlineData(pyblish.api.Extractor):
 
         [job_path, plugin_path, scene_file] = [None, None, None]
 
-        if instance.context.has_data('published_scene_file'):
-            scene_file = instance.context.data('published_scene_file')
+        if instance.context.has_data('workfile_published'):
+            scene_file = instance.context.data('workfile_publish_path')
+
         else:
             scene_file = nuke.root().name()
 
