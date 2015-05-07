@@ -19,7 +19,8 @@ class ValidatePublishPath(pyblish.api.Validator):
         publishFile = os.path.abspath(os.path.join(publishFolder, file))
 
         if os.path.exists(publishFolder):
-            instance.context.set_data('published_scene_file', value=publishFile)
+            instance.context.set_data('workfile_publish_path', value=publishFile)
+
         else:
             name = instance
             msg = 'Publish directory for %s doesn\'t exists' % name
