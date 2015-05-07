@@ -15,5 +15,6 @@ class PublishWorkfile(pyblish.api.Extractor):
         # submitting job
         sourcePath = instance.data('path')
         new_workfile = instance.context.data('new_workfile')
-        publishPath = instance.context.data('published_scene_file')
+        publishPath = instance.context.data('workfile_publish_path')
         shutil.copy(sourcePath, publishPath)
+        instance.context.set_data('workfile_published', value=True)
