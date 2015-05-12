@@ -6,6 +6,7 @@ import sys
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 import pyblish_utils
 
+import ftrack
 import ft_pathUtils
 
 
@@ -14,7 +15,7 @@ class ConformFtrackWorkfile(pyblish.api.Conformer):
     """Publishes current workfile to a _Publish location, next to current working directory"""
 
     families = ['workFile']
-    hosts = ['houdini']
+    hosts = ['*']
     version = (0, 1, 0)
     optional = True
 
@@ -23,9 +24,30 @@ class ConformFtrackWorkfile(pyblish.api.Conformer):
 
         version = ''.join(pyblish_utils.version_get(instance.context.data('current_file'), 'v'))
 
-        templates = ['tv-ep-hou-publish']
+        taskid = instance.context.data('ft_context')['task']['id']
+        task = ftrack.Task(taskid)
+        parents = task.getParents()
 
-        publishFile = ft_pathUtils.getPaths(instance.context.data('ft_context')['task']['id'], templates, version)
+        # Prepare data for parent filtering
+        parenttypes = []
+        for parent in parents:
+            try:
+                parenttypes.append(parent.get('objecttypename'))
+            except:
+                pass
+
+        print parenttypes
+        # choose correct template
+        if 'Episode' in parenttypes:
+            templates = [
+                'tv-ep-publish-file',
+            ]
+        elif 'Sequence' in parenttypes:
+            templates = [
+                'tv-sq-publish-file',
+            ]
+
+        publishFile = ft_pathUtils.getPaths(taskid, templates, version)
         print publishFile
         publishFile = os.path.normpath(publishFile[templates[0]])
 

@@ -25,7 +25,7 @@ class ConformFtrackFlipbook(pyblish.api.Conformer):
 
         version = ''.join(pyblish_utils.version_get(instance.data('output_path'), 'v'))
 
-        templates = ['tv-ep-hou-preview']
+        templates = ['tv-ep-preview-file']
 
         publishFile = ft_pathUtils.getPaths(instance.context.data('ft_context')['task']['id'], templates, version)
         print publishFile
