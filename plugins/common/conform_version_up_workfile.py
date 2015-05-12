@@ -14,7 +14,7 @@ class VersionUpWorkfile(pyblish.api.Conformer):
     def process_instance(self, instance):
 
         if instance.has_data('new_workfile'):
-            new_workfile = instance.context.data('new_workfile')
+            new_workfile = instance.data('new_workfile')
             if "nuke" in self.host:
                 self.process_nuke(new_workfile)
             elif "maya" in self.host:
@@ -22,8 +22,9 @@ class VersionUpWorkfile(pyblish.api.Conformer):
             elif "houdini" in self.host:
                 self.process_houdini(new_workfile)
         else:
-            self.log.warning("Can't find versioned up filename in context."
-                             "workfile probably doesn't have a version.")
+            raise pyblish.api.ValidationError("Can't find versioned up filename in context. "
+                                              "workfile probably doesn't have a version.")
+
 
     # NUKE
     def process_nuke(self, new_workfile):

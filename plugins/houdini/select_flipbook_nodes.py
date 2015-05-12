@@ -6,7 +6,7 @@ import pyblish.api
 class SelectFlipbookNodes(pyblish.api.Selector):
     """Selects all flipbook nodes"""
 
-    hosts = ['*']
+    hosts = ['houdini']
     version = (0, 1, 0)
 
     def process_context(self, context):

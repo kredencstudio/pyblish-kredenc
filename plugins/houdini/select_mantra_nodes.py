@@ -6,7 +6,7 @@ import pyblish.api
 class SelectMantraNodes(pyblish.api.Selector):
     """Selects all mantra nodes"""
 
-    hosts = ['*']
+    hosts = ['houdini']
     version = (0, 1, 0)
 
     def process_context(self, context):

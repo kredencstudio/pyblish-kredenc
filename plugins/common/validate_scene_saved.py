@@ -9,7 +9,7 @@ class ValidateSceneSaved(pyblish.api.Validator):
     families = ['*']
     hosts = ['*']
     version = (0, 1, 0)
-
+    optional = True
     host = sys.executable.lower()
 
     def process_context(self, context):
