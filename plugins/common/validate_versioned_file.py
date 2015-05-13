@@ -22,6 +22,7 @@ class ValidateVersionWorkfile(pyblish.api.Validator):
 
         instance.context.set_data('version', value=version)
         new_workfile = self.version_up(current_file)
+        self.log.info(new_workfile)
         instance.set_data('new_workfile', value=new_workfile)
 
         if not version:

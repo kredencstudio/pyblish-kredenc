@@ -9,7 +9,7 @@ import subprocess
 
 @pyblish.api.log
 class ExtractFlipbook(pyblish.api.Extractor):
-    """Publishes current workfile to a _Publish location, next to current working directory"""
+    """Creates preview movie from a Flipbook bode"""
 
     families = ['preview']
     hosts = ['houdini']
@@ -20,7 +20,10 @@ class ExtractFlipbook(pyblish.api.Extractor):
         # submitting job
 
         preview = flip(instance[0])
-        instance.set_data('output_path', value=preview)
+        if os.path.isfile(preview):
+            instance.set_data('output_path', value=preview)
+        else:
+            raise pyblish.api.ValidationError('didn\'t create flipbook.')
 
 
 def paneTabsOfType(self, tab_type):
