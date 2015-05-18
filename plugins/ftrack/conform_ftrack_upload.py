@@ -7,8 +7,6 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 import pyblish_utils
 
 import ftrack
-import ft_pathUtils
-
 
 @pyblish.api.log
 class ConformFtrackUpload(pyblish.api.Conformer):
@@ -41,11 +39,14 @@ class ConformFtrackUpload(pyblish.api.Conformer):
             version = None
             for v in asset.getVersions():
                 if int(v.getVersion()) == int(versionNumber):
+                    raise pyblish.api.ValidationError('This version already exists')
                     version = v
 
             if not version:
-                version = asset.createVersion(comment='auto upload', taskid=taskid)
-                version.set('version', value=int(versionNumber))
+                version = asset.createVersion(comment='', taskid=taskid)
+                if int(version.getVersion()) != int(versionNumber):
+                    raise pyblish.api.ValidationError('Version numbers don not match')
+                    version.set('version', value=int(versionNumber))
 
             self.log.info('Using ftrack version {} - {}'.format(assetName, versionNumber))
 
