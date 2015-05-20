@@ -22,7 +22,7 @@ class ExtractFlipbook(pyblish.api.Extractor):
         preview = flip(instance[0])
         print preview
         if os.path.isfile(preview):
-            instance.set_data('output_path', value=preview)
+            instance.set_data('outputPath', value=preview)
         else:
             raise pyblish.api.ValidationError('didn\'t create flipbook.')
 

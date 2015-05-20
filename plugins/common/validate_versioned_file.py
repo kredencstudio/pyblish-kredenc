@@ -15,10 +15,10 @@ class ValidateVersionWorkfile(pyblish.api.Validator):
     host = sys.executable.lower()
 
     def process_instance(self, instance):
-        current_file = instance.context.data('current_file')
+        current_file = instance.context.data('currentFile')
 
         # version = None
-        # version = int(self.version_get(current_file, 'v')[1])
+        # version = int(self.version_get(currentFile, 'v')[1])
 
 
         # instance.context.set_data('version', value=version)

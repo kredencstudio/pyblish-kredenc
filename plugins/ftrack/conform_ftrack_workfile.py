@@ -22,7 +22,7 @@ class ConformFtrackWorkfile(pyblish.api.Conformer):
     def process_instance(self, instance):
         sourcePath = os.path.normpath(instance.data('path'))
 
-        version = ''.join(pyblish_utils.version_get(instance.context.data('current_file'), 'v'))
+        version = ''.join(pyblish_utils.version_get(instance.context.data('currentFile'), 'v'))
 
         taskid = instance.context.data('ft_context')['task']['id']
         task = ftrack.Task(taskid)

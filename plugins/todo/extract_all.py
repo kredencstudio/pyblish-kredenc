@@ -18,7 +18,7 @@ class ExtractAll(pyblish.api.Extractor):
     def process_instance(self, instance):
         """
         """
-        filename = os.path.basename(instance.context.data('current_file'))
+        filename = os.path.basename(instance.context.data('currentFile'))
         filename = os.path.splitext(filename)[0]
         filename = filename + ".mb"
         

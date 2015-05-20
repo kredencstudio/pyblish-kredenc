@@ -23,7 +23,7 @@ class VersionUpWorkfile(pyblish.api.Conformer):
 
         if instance.context.has_data('version'):
 
-            sourcePath = os.path.normpath(instance.data('current_file'))
+            sourcePath = os.path.normpath(instance.data('currentFile'))
 
             new_file = pyblish_utils.version_up(sourcePath)
             version = ''.join(pyblish_utils.version_get(new_file, 'v'))

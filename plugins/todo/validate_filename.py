@@ -15,7 +15,7 @@ class ValidateFilename(pyblish.api.Validator):
     def process_context(self, context):
         """
         """
-        name = os.path.basename(context.data('current_file'))
+        name = os.path.basename(context.data('currentFile'))
         if not self.pattern.match(name):
             err = ValueError('Filename incorrect!')
             raise err

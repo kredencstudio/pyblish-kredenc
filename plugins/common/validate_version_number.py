@@ -17,7 +17,7 @@ class ValidateVersionNumber(pyblish.api.Validator):
     host = sys.executable.lower()
 
     def process_instance(self, instance):
-        current_file = instance.context.data('current_file')
+        current_file = instance.context.data('currentFile')
         current_v = int(self.version_get(current_file, 'v')[1])
         output_path = instance.data('output_path')
 
