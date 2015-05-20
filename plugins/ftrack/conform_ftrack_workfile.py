@@ -36,7 +36,6 @@ class ConformFtrackWorkfile(pyblish.api.Conformer):
             except:
                 pass
 
-        print parenttypes
         # choose correct template
         if 'Episode' in parenttypes:
             templates = [

@@ -26,42 +26,44 @@ class ConformFtrackUploadPreview(pyblish.api.Conformer):
             if instance.context.has_data('ft_versionID'):
                 version = ftrack.AssetVersion(id=instance.context.data('ft_versionID'))
 
+
+            #     (prefix, versionNumber) = pyblish_utils.version_get(sourcePath, 'v')
+
+            #     taskid = instance.context.data('ft_context')['task']['id']
+            #     task = ftrack.Task(taskid)
+            #     shot = ftrack.Shot(id=instance.context.data('ft_context')['shot']['id'])
+            #     assetType = instance.context.data('ft_context')['task']['code']
+            #     assetName = instance.context.data('ft_context')['task']['type']
+            #     asset = shot.createAsset(name=assetName, assetType=assetType, task=task)
+            #     # creating version
+            #     version = None
+            #     for v in asset.getVersions():
+            #         if int(v.getVersion()) == int(versionNumber):
+            #             raise pyblish.api.ValidationError('This version already exists')
+            #             version = v
+            #
+            #     if not version:
+            #         version = asset.createVersion(comment='', taskid=taskid)
+            #         if int(version.getVersion()) != int(versionNumber):
+            #             raise pyblish.api.ValidationError('Version numbers don not match')
+            #             version.set('version', value=int(versionNumber))
+            #
+            # version.publish()
+
+                componentName = 'preview'
+
+                try:
+                    component = version.getComponent(name=componentName)
+                    component.delete()
+                    self.log.info('Replacing component with name "%s"' % componentName)
+                except:
+                    self.log.info('Creating component with name "%s"' % componentName)
+
+                version.createComponent(name='preview', path=sourcePath)
+                #make reviewable
+                ftrack.Review.makeReviewable(version, sourcePath)
             else:
-                (prefix, versionNumber) = pyblish_utils.version_get(sourcePath, 'v')
-
-                taskid = instance.context.data('ft_context')['task']['id']
-                task = ftrack.Task(taskid)
-                shot = ftrack.Shot(id=instance.context.data('ft_context')['shot']['id'])
-                assetType = instance.context.data('ft_context')['task']['code']
-                assetName = instance.context.data('ft_context')['task']['type']
-                asset = shot.createAsset(name=assetName, assetType=assetType, task=task)
-                # creating version
-                version = None
-                for v in asset.getVersions():
-                    if int(v.getVersion()) == int(versionNumber):
-                        raise pyblish.api.ValidationError('This version already exists')
-                        version = v
-
-                if not version:
-                    version = asset.createVersion(comment='', taskid=taskid)
-                    if int(version.getVersion()) != int(versionNumber):
-                        raise pyblish.api.ValidationError('Version numbers don not match')
-                        version.set('version', value=int(versionNumber))
-
-            version.publish()
-
-            componentName = 'preview'
-
-            try:
-                component = version.getComponent(name=componentName)
-                component.delete()
-                self.log.info('Replacing component with name "%s"' % componentName)
-            except:
-                self.log.info('Creating component with name "%s"' % componentName)
-
-            version.createComponent(name='preview', path=sourcePath)
-            #make reviewable
-            ftrack.Review.makeReviewable(version, sourcePath)
+                self.log.info('No versionID found in context')
 
         else:
             self.log.warning('No published flipbook found!')

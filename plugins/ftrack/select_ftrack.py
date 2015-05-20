@@ -36,4 +36,4 @@ class SelectFtrack(pyblish.api.Selector):
 
         context.set_data('ft_context', value=ft_context)
 
-        self.log.info('Found ftrack data: {}'.format(context.data('ft_context')))
+        self.log.info('Found ftrack data')

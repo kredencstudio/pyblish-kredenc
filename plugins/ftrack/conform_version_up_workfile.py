@@ -21,12 +21,13 @@ class VersionUpWorkfile(pyblish.api.Conformer):
 
     def process_instance(self, instance):
 
-        if instance.has_data('new_workfile'):
+        if instance.context.has_data('version'):
 
             sourcePath = os.path.normpath(instance.data('current_file'))
 
             new_file = pyblish_utils.version_up(sourcePath)
             version = ''.join(pyblish_utils.version_get(new_file, 'v'))
+
 
             taskid = instance.context.data('ft_context')['task']['id']
             task = ftrack.Task(taskid)
@@ -40,7 +41,6 @@ class VersionUpWorkfile(pyblish.api.Conformer):
                 except:
                     pass
 
-            print parenttypes
             # choose correct template
             if 'Episode' in parenttypes:
                 templates = [
@@ -52,7 +52,6 @@ class VersionUpWorkfile(pyblish.api.Conformer):
                 ]
 
             new_workFile = ft_pathUtils.getPaths(taskid, templates, version)
-            print new_workFile
             new_workFile = os.path.normpath(new_workFile[templates[0]])
             self.log.info('New workfile version created: {}'.format(new_workFile))
             self.log.info('Next time you opens this task, start working on the version up file')
