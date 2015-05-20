@@ -20,18 +20,12 @@ class ExtractFlipbook(pyblish.api.Extractor):
         # submitting job
 
         preview = flip(instance[0])
+        print preview
         if os.path.isfile(preview):
             instance.set_data('output_path', value=preview)
         else:
             raise pyblish.api.ValidationError('didn\'t create flipbook.')
 
-
-def paneTabsOfType(self, tab_type):
-    pane_tabs = [t for t in self.paneTabs() if t.type() == tab_type]
-
-    if not len(pane_tabs):
-        return None
-    return pane_tabs
 
 def makeMovie(outputI, outputV, audio):
     if audio != '':
@@ -52,7 +46,6 @@ def flip(node):
 
     enable_postscript = node.parm('enable_postscript').eval()
     postscript = node.parm('postscript').eval()
-    paneNum = node.parm('pane').eval()
     outputIraw = node.parm('output').unexpandedString()
     outputI = node.parm('output').eval()
     audio = ''
@@ -73,11 +66,28 @@ def flip(node):
     I = node.parm('I').eval()
     c = node.parm('c').eval()
 
-    desktop = hou.ui.curDesktop()
-    pane = paneTabsOfType(desktop, hou.paneTabType.SceneViewer)[paneNum]
-    viewPort = pane.curViewport()
+    import toolutils
 
-    view = '%s.%s.%s.%s' %(desktop.name(), pane.name(), 'world', viewPort.name())
+    #Get the current Desktop
+    desktop = hou.ui.curDesktop()
+
+    # Get the scene viewer
+    scene_view = toolutils.sceneViewer()
+
+    #check of we are good to go
+    if scene_view is None or scene_view.type() != hou.paneTabType.SceneViewer:
+        raise hou.Error("No scene view available to playblast.")
+
+    # Get the current viewport
+    viewport = scene_view.curViewport()
+
+    # Now build the name of the view required in the viewwrite command, this
+    # is a little bit of magic, but is all procedural, except for the "world"
+    # part...
+    view = desktop.name() + '.' + scene_view.name() + '.world.' + viewport.name()
+
+
+    #view = '%s.%s.%s.%s' %(desktop.name(), pane.name(), 'world', viewPort.name())
 
     try:
         os.makedirs(imagePath)
@@ -107,18 +117,20 @@ def flip(node):
     cmd.append(view)
     cmd.append("'%s'"%outputIraw)
 
+
     hou.hscript(' '.join(cmd))
+
+    print ' '.join(cmd)
 
     if enable_a:
         audio = node.parm('audio').eval()
 
     if enable_v:
-        makeMovie(outputI, outputV, audio)
+        print 'video'
+        return makeMovie(outputI, outputV, audio)
 
     if enable_postscript:
         executeScript(postscript)
 
     if not enable_i:
         shutil.rmtree(imagePath)
-
-    return outputV

@@ -17,15 +17,15 @@ class ValidateVersionWorkfile(pyblish.api.Validator):
     def process_instance(self, instance):
         current_file = instance.context.data('current_file')
 
-        version = None
-        version = int(self.version_get(current_file, 'v')[1])
+        # version = None
+        # version = int(self.version_get(current_file, 'v')[1])
 
-        instance.context.set_data('version', value=version)
-        new_workfile = self.version_up(current_file)
-        self.log.info(new_workfile)
-        instance.set_data('new_workfile', value=new_workfile)
 
-        if not version:
+        # instance.context.set_data('version', value=version)
+        # new_workfile = self.version_up(current_file)
+        # self.log.info(new_workfile)
+
+        if not instance.context.has_data('version'):
             msg = 'Your workfile is not versioned!'
             raise Exception(msg)
 
