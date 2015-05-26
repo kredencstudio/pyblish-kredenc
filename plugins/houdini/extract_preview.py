@@ -20,7 +20,6 @@ class ExtractFlipbook(pyblish.api.Extractor):
         # submitting job
 
         preview = flip(instance[0])
-        print preview
         if os.path.isfile(preview):
             instance.set_data('outputPath', value=preview)
         else:
@@ -44,6 +43,7 @@ def flip(node):
     if enable_prescript:
         executeScript(prescript)
 
+    cam = node.parm('cam').eval()
     enable_postscript = node.parm('enable_postscript').eval()
     postscript = node.parm('postscript').eval()
     outputIraw = node.parm('output').unexpandedString()
@@ -72,11 +72,13 @@ def flip(node):
     desktop = hou.ui.curDesktop()
 
     # Get the scene viewer
-    scene_view = toolutils.sceneViewer()
+    scene_view = desktop.createFloatingPaneTab(hou.paneTabType.SceneViewer, size=[1280,720])
 
     #check of we are good to go
     if scene_view is None or scene_view.type() != hou.paneTabType.SceneViewer:
         raise hou.Error("No scene view available to playblast.")
+
+    hou.hscript("viewcamera -c {0} *.*.world.persp1".format(cam))
 
     # Get the current viewport
     viewport = scene_view.curViewport()
@@ -84,17 +86,17 @@ def flip(node):
     # Now build the name of the view required in the viewwrite command, this
     # is a little bit of magic, but is all procedural, except for the "world"
     # part...
-    view = desktop.name() + '.' + scene_view.name() + '.world.' + viewport.name()
+    viewPane = desktop.name() + '.' + scene_view.name() + '.world'
+    viewString =  viewPane + '.' + viewport.name()
 
-
-    #view = '%s.%s.%s.%s' %(desktop.name(), pane.name(), 'world', viewPort.name())
+    hou.hscript('vieweroption -V "-bone -null" {0}'.format(viewPane))
 
     try:
         os.makedirs(imagePath)
     except:
         pass
 
-    cmd = ['viewwrite']
+    cmd = ['viewwrite -r 1280 720']
     cmd.append('-f')
     cmd.append(str(startf))
     cmd.append(str(endf))
@@ -114,11 +116,18 @@ def flip(node):
         cmd.append('-I')
     if c:
         cmd.append('-c')
-    cmd.append(view)
+    cmd.append(viewString)
     cmd.append("'%s'"%outputIraw)
 
+    i=0
+    while not hou.hscript(' '.join(cmd))[0] == '':
+        print 'waiting for vieport'
+        i+=1
+        if i == 10:
+            return
 
-    hou.hscript(' '.join(cmd))
+    #close temporary viewport
+    scene_view.close()
 
     print ' '.join(cmd)
 

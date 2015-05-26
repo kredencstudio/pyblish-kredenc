@@ -3,7 +3,7 @@ import pyblish.api
 
 
 @pyblish.api.log
-class ValidateFlipbookPaths(pyblish.api.Validator):
+class ValidateFlipbookAudio(pyblish.api.Validator):
     """Validates that the output directory for the instance exists"""
 
     families = ['preview']

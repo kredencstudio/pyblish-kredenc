@@ -9,8 +9,8 @@ class ValidateVersionNumber(pyblish.api.Validator):
     work file
     """
 
-    families = ['writeNode', 'prerenders', 'rop']
-    hosts = ['NONE']
+    families = ['writeNode', 'prerenders']
+    hosts = ['nuke']
     version = (0, 1, 0)
 
     host = sys.executable.lower()

@@ -19,6 +19,6 @@ class SelectMantraNodes(pyblish.api.Selector):
             if node.type().name() == 'ifd':
                 instance = context.create_instance(name=node.name())
                 instance.set_data('family', value='mantra')
-                instance.set_data('output_path_expanded', value=node.parm('vm_picture').eval())
-                instance.set_data('output_path', value=node.parm('vm_picture').unexpandedString())
+                instance.set_data('outputPathExpanded', value=node.parm('vm_picture').eval())
+                instance.set_data('outputPath', value=node.parm('vm_picture').unexpandedString())
                 instance.add(node)
