@@ -6,7 +6,7 @@ import ft_pathUtils
 
 
 @pyblish.api.log
-class FtrackPublishWorkfile(pyblish.api.Conformer):
+class ConformWorkfile(pyblish.api.Conformer):
     """Copies current workfile to it's final location
 
     Expected data members:
@@ -57,5 +57,8 @@ class FtrackPublishWorkfile(pyblish.api.Conformer):
         self.log.info('Copying Workfile to location: {}'.format(publishFile))
 
         shutil.copy(sourcePath, publishFile)
-        instance.set_data('publishedFile', value=publishFile)
+
+        instance.set_data('ftrackComponent', value=publishFile)
+        instance.set_data('ftrackComponentName', value='scene')
+
 

@@ -28,16 +28,16 @@ class SelectWorkfile(pyblish.api.Selector):
             self.log.warning('Workfile selection in current host is not supported yet!')
 
         directory, filename = os.path.split(current_file)
-        # try:
-        #     (prefix, version) = pyblish_utils.version_get(filename, 'v')
-        # except:
-        #     self.log.warning('Cannot publish workfile which is not versioned.')
-        #     return
+        try:
+            (prefix, version) = pyblish_utils.version_get(filename, 'v')
+        except:
+            self.log.warning('Cannot publish workfile which is not versioned.')
+            return
 
         if current_file:
             context.set_data('currentFile', value=current_file)
-            # context.set_data('version', value=version)
-            # context.set_data('vprefix', value=prefix)
+            context.set_data('version', value=version)
+            context.set_data('vprefix', value=prefix)
             instance = context.create_instance(name=filename)
             instance.set_data('family', value='workFile')
             instance.set_data("path", value=current_file)

@@ -6,7 +6,7 @@ import ft_pathUtils
 
 
 @pyblish.api.log
-class ConformFtrackFlipbook(pyblish.api.Conformer):
+class ConformFlipbook(pyblish.api.Conformer):
     """Copies Preview movie to it's final location
 
      Expected data members:
@@ -60,7 +60,10 @@ class ConformFtrackFlipbook(pyblish.api.Conformer):
 
             self.log.info('Copying preview to location: {}'.format(publishFile))
             shutil.copy(sourcePath, publishFile)
-            instance.set_data('publishedFile', value=publishFile)
+
+            instance.set_data('ftrackComponent', value=publishFile)
+            instance.set_data('ftrackComponentName', value='preview')
+            instance.set_data('ftrackReviewable', value=True)
 
         else:
             self.log.warning('preview wasn\'t created so it can\'t be published')

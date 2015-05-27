@@ -4,7 +4,7 @@ import os
 import pyblish.api
 
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
-import pyblish_ftrack_utils
+import pyblish_utils
 
 import ftrack
 import ft_pathUtils
@@ -33,8 +33,8 @@ class VersionUpWorkfile(pyblish.api.Conformer):
             # TODO: figure out how to make path matching customisable
             ####
 
-            new_file = pyblish_ftrack_utils.version_up(sourcePath)
-            version = ''.join(pyblish_ftrack_utils.version_get(new_file, 'v'))
+            new_file = pyblish_utils.version_up(sourcePath)
+            version = ''.join(pyblish_utils.version_get(new_file, 'v'))
 
             taskid = instance.context.data('ftrackData')['task']['id']
             task = ftrack.Task(taskid)
