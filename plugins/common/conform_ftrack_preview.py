@@ -1,18 +1,19 @@
-import pyblish.api
 import shutil
 import os
-import sys
-
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
-import pyblish_utils
-
 import ftrack
+import pyblish.api
 import ft_pathUtils
 
 
 @pyblish.api.log
 class ConformFtrackFlipbook(pyblish.api.Conformer):
-    """Copies Preview movie to it's final location"""
+    """Copies Preview movie to it's final location
+
+     Expected data members:
+    'ftrackData' - Necessary ftrack information gathered by select_ftrack
+    'outputPath' - Output path of current instance
+    'version' - version of publish
+    """
 
     families = ['preview']
     hosts = ['*']
@@ -21,11 +22,16 @@ class ConformFtrackFlipbook(pyblish.api.Conformer):
 
     def process_instance(self, instance):
 
-        if instance.has_data('output_path'):
-            sourcePath = os.path.normpath(instance.data('output_path'))
-            version = ''.join(pyblish_utils.version_get(instance.data('output_path'), 'v'))
+        if instance.has_data('outputPath'):
+            sourcePath = os.path.normpath(instance.data('outputPath'))
+            version = instance.context.data('version')
+            version = 'v' + version
 
-            taskid = instance.context.data('ft_context')['task']['id']
+            ######################################################################################
+            # TODO: figure out how to make path matching customisable
+            ####
+
+            taskid = instance.context.data('ftrackData')['task']['id']
             task = ftrack.Task(taskid)
             parents = task.getParents()
 
@@ -49,11 +55,13 @@ class ConformFtrackFlipbook(pyblish.api.Conformer):
 
             publishFile = ft_pathUtils.getPaths(taskid, templates, version)
             publishFile = os.path.normpath(publishFile[templates[0]])
-            self.log.info('Copying preview to location: {}'.format(publishFile))
 
+            ######################################################################################
+
+            self.log.info('Copying preview to location: {}'.format(publishFile))
             shutil.copy(sourcePath, publishFile)
-            instance.set_data('published_path', value=publishFile)
-            instance.context.set_data('flipbook_published', value=True)
+            instance.set_data('publishedFile', value=publishFile)
+
         else:
-            self.log.warning('flipbook wasn\'t created so it can\'t be published')
+            self.log.warning('preview wasn\'t created so it can\'t be published')
 
