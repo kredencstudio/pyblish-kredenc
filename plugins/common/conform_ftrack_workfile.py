@@ -29,7 +29,7 @@ class ConformWorkfile(pyblish.api.Conformer):
         version = instance.context.data('version')
         version = 'v' + version
 
-        taskid = instance.context.data('ftrackData')['task']['id']
+        taskid = instance.context.data('ftrackData')['Task']['id']
         task = ftrack.Task(taskid)
         parents = task.getParents()
         # Prepare data for parent filtering
@@ -54,11 +54,7 @@ class ConformWorkfile(pyblish.api.Conformer):
 
         ###################################################################################
 
-        self.log.info('Copying Workfile to location: {}'.format(publishFile))
-
         shutil.copy(sourcePath, publishFile)
-
         instance.set_data('ftrackComponent', value=publishFile)
-        instance.set_data('ftrackComponentName', value='scene')
-
+        self.log.info('Copying Workfile to location: {}'.format(publishFile))
 

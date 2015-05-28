@@ -16,6 +16,7 @@ class SelectWorkfile(pyblish.api.Selector):
     host = sys.executable.lower()
 
     def process_context(self, context):
+
         if "nuke" in self.host:
             current_file = self.process_nuke()
             current_file = os.path.normpath(current_file)
@@ -35,12 +36,14 @@ class SelectWorkfile(pyblish.api.Selector):
             return
 
         if current_file:
-            context.set_data('currentFile', value=current_file)
+            # context.set_data('currentFile', value=current_file)
             context.set_data('version', value=version)
             context.set_data('vprefix', value=prefix)
             instance = context.create_instance(name=filename)
             instance.set_data('family', value='workFile')
             instance.set_data("path", value=current_file)
+            if "nuke" in self.host:
+                instance.set_data('ftrackComponentName', value='nukescript')
             instance.add(current_file)
 
 

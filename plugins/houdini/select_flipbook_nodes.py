@@ -19,4 +19,5 @@ class SelectFlipbookNodes(pyblish.api.Selector):
             if 'flipbook' in node.type().name():
                 instance = context.create_instance(name=node.name())
                 instance.set_data('family', value='preview')
+                instance.set_data('ftrackComponentName', value='preview')
                 instance.add(node)

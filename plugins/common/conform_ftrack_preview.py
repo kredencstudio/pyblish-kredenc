@@ -31,7 +31,7 @@ class ConformFlipbook(pyblish.api.Conformer):
             # TODO: figure out how to make path matching customisable
             ####
 
-            taskid = instance.context.data('ftrackData')['task']['id']
+            taskid = instance.context.data('ftrackData')['Task']['id']
             task = ftrack.Task(taskid)
             parents = task.getParents()
 
@@ -62,7 +62,6 @@ class ConformFlipbook(pyblish.api.Conformer):
             shutil.copy(sourcePath, publishFile)
 
             instance.set_data('ftrackComponent', value=publishFile)
-            instance.set_data('ftrackComponentName', value='preview')
             instance.set_data('ftrackReviewable', value=True)
 
         else:

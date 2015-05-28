@@ -36,7 +36,7 @@ class VersionUpWorkfile(pyblish.api.Conformer):
             new_file = pyblish_utils.version_up(sourcePath)
             version = ''.join(pyblish_utils.version_get(new_file, 'v'))
 
-            taskid = instance.context.data('ftrackData')['task']['id']
+            taskid = instance.context.data('ftrackData')['Task']['id']
             task = ftrack.Task(taskid)
             parents = task.getParents()
 
