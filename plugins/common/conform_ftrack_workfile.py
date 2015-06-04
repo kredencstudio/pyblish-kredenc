@@ -17,14 +17,9 @@ class ConformWorkfile(pyblish.api.Conformer):
     families = ['workFile']
     hosts = ['*']
     version = (0, 1, 0)
-    optional = True
 
     def process_instance(self, instance):
         sourcePath = os.path.normpath(instance.context.data('currentFile'))
-
-        ######################################################################################
-        # TODO: figure out how to make path matching customisable
-        ####
 
         version = instance.context.data('version')
         version = 'v' + str(version).zfill(3)
@@ -56,9 +51,13 @@ class ConformWorkfile(pyblish.api.Conformer):
         publishFile = ft_pathUtils.getPaths(taskid, templates, version)
         publishFile = os.path.normpath(publishFile[templates[0]])
 
-        ###################################################################################
-
         shutil.copy(sourcePath, publishFile)
-        instance.set_data('ftrackComponent', value=publishFile)
+
+        # ftrack data
+        components = instance.data('ftrackComponents')
+        components['scene']['path'] = publishFile
+        instance.set_data('ftrackComponents', value=components)
+
+
         self.log.info('Copying Workfile to location: {}'.format(publishFile))
 

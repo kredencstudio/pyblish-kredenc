@@ -18,7 +18,6 @@ class ConformFlipbook(pyblish.api.Conformer):
     families = ['preview']
     hosts = ['*']
     version = (0, 1, 0)
-    optional = True
 
     def process_instance(self, instance):
 
@@ -52,12 +51,14 @@ class ConformFlipbook(pyblish.api.Conformer):
             publishFile = ft_pathUtils.getPaths(taskid, templates, version)
             publishFile = os.path.normpath(publishFile[templates[0]])
 
-
             self.log.info('Copying preview to location: {}'.format(publishFile))
             shutil.copy(sourcePath, publishFile)
 
-            instance.set_data('ftrackComponent', value=publishFile)
-            instance.set_data('ftrackReviewable', value=True)
+            # ftrack data
+            components = instance.data('ftrackComponents')
+            components['preview']['path'] = publishFile
+
+            instance.set_data('ftrackComponents', value=components)
 
         else:
             self.log.warning('preview wasn\'t created so it can\'t be published')
