@@ -1,7 +1,6 @@
 import pyblish.api
 import sys
 
-
 @pyblish.api.log
 class ValidateSceneSaved(pyblish.api.Validator):
     """Validates whether the scene is saved"""
@@ -9,7 +8,7 @@ class ValidateSceneSaved(pyblish.api.Validator):
     families = ['*']
     hosts = ['*']
     version = (0, 1, 0)
-    optional = True
+
     host = sys.executable.lower()
 
     def process_context(self, context):
