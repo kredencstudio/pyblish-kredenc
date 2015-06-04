@@ -25,11 +25,7 @@ class ConformFlipbook(pyblish.api.Conformer):
         if instance.has_data('outputPath'):
             sourcePath = os.path.normpath(instance.data('outputPath'))
             version = instance.context.data('version')
-            version = 'v' + version
-
-            ######################################################################################
-            # TODO: figure out how to make path matching customisable
-            ####
+            version = 'v' + str(version).zfill(3)
 
             taskid = instance.context.data('ftrackData')['Task']['id']
             task = ftrack.Task(taskid)
@@ -56,7 +52,6 @@ class ConformFlipbook(pyblish.api.Conformer):
             publishFile = ft_pathUtils.getPaths(taskid, templates, version)
             publishFile = os.path.normpath(publishFile[templates[0]])
 
-            ######################################################################################
 
             self.log.info('Copying preview to location: {}'.format(publishFile))
             shutil.copy(sourcePath, publishFile)

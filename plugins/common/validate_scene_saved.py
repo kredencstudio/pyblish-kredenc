@@ -16,7 +16,7 @@ class ValidateSceneSaved(pyblish.api.Validator):
         if "nuke" in self.host:
             scene_modified = self.process_nuke()
         elif "maya" in self.host:
-            scene_modified = self.process_houdini()
+            scene_modified = self.process_maya()
         elif "houdini" in self.host:
             scene_modified = self.process_houdini()
         else:
@@ -51,11 +51,11 @@ class ValidateSceneSaved(pyblish.api.Validator):
 
     # MAYA
     def process_maya(self):
-        import cmds
+        from maya import cmds
         return cmds.file(q=True, modified=True)
 
     def repair_maya(self):
-        import cmds
+        from maya import cmds
         cmds.SaveScene()
 
 

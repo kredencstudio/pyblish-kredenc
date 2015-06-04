@@ -21,7 +21,7 @@ class SelectWorkfile(pyblish.api.Selector):
             current_file = self.process_nuke()
             current_file = os.path.normpath(current_file)
         elif "maya" in self.host:
-            current_file = self.process_houdini()
+            current_file = self.process_maya()
         elif "houdini" in self.host:
             current_file = self.process_houdini()
         else:
@@ -44,6 +44,9 @@ class SelectWorkfile(pyblish.api.Selector):
             instance.set_data("path", value=current_file)
             if "nuke" in self.host:
                 instance.set_data('ftrackComponentName', value='nukescript')
+            if "houdini" or 'maya' in self.host:
+                instance.set_data('ftrackComponentName', value='scene')
+            self.log.debug('ftrackComponentName: {}'.format(str(instance.data('ftrackComponentName'))))
             instance.add(current_file)
 
 
@@ -54,7 +57,7 @@ class SelectWorkfile(pyblish.api.Selector):
 
     # MAYA
     def process_maya(self):
-        import cmds
+        from maya import cmds
         return cmds.file(q=True, location=True)
 
     # HOUDINI

@@ -27,7 +27,7 @@ class ConformWorkfile(pyblish.api.Conformer):
         ####
 
         version = instance.context.data('version')
-        version = 'v' + version
+        version = 'v' + str(version).zfill(3)
 
         taskid = instance.context.data('ftrackData')['Task']['id']
         task = ftrack.Task(taskid)
@@ -47,6 +47,10 @@ class ConformWorkfile(pyblish.api.Conformer):
         elif 'Sequence' in parenttypes:
             templates = [
                 'tv-sq-publish-file',
+            ]
+        elif 'Asset Build' in parenttypes:
+            templates = [
+                'tv-asset-publish-file',
             ]
 
         publishFile = ft_pathUtils.getPaths(taskid, templates, version)

@@ -34,8 +34,8 @@ class VersionUpWorkfile(pyblish.api.Conformer):
             ####
 
             new_file = pyblish_utils.version_up(sourcePath)
-            version = ''.join(pyblish_utils.version_get(new_file, 'v'))
 
+            version = ''.join(pyblish_utils.version_get(new_file, 'v'))
             taskid = instance.context.data('ftrackData')['Task']['id']
             task = ftrack.Task(taskid)
             parents = task.getParents()
@@ -56,6 +56,10 @@ class VersionUpWorkfile(pyblish.api.Conformer):
             elif 'Sequence' in parenttypes:
                 templates = [
                     'tv-sq-work-file',
+                ]
+            elif 'Asset Build' in parenttypes:
+                templates = [
+                    'tv-asset-work-file',
                 ]
 
             new_workFile = ft_pathUtils.getPaths(taskid, templates, version)
