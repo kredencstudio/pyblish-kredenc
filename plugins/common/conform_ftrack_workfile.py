@@ -55,7 +55,11 @@ class ConformWorkfile(pyblish.api.Conformer):
 
         # ftrack data
         components = instance.data('ftrackComponents')
-        components['scene']['path'] = publishFile
+        if pyblish.api.current_host() == 'nuke':
+            components['nukescript']['path'] = publishFile
+        else:
+            components['scene']['path'] = publishFile
+
         instance.set_data('ftrackComponents', value=components)
 
 
