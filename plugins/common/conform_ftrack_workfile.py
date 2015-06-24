@@ -15,41 +15,43 @@ class ConformWorkfile(pyblish.api.Conformer):
     """
 
     families = ['workFile']
-    hosts = ['*']
     version = (0, 1, 0)
+    label = 'Conform Workfile'
 
-    def process_instance(self, instance):
-        sourcePath = os.path.normpath(instance.context.data('currentFile'))
+    def process(self, context, instance):
+        sourcePath = os.path.normpath(context.data('currentFile'))
 
-        version = instance.context.data('version')
-        version = 'v' + str(version).zfill(3)
+        publishFile = context.data('publishFile')
 
-        taskid = instance.context.data('ftrackData')['Task']['id']
-        task = ftrack.Task(taskid)
-        parents = task.getParents()
-        # Prepare data for parent filtering
-        parenttypes = []
-        for parent in parents:
-            try:
-                parenttypes.append(parent.get('objecttypename'))
-            except:
-                pass
-        # choose correct template
-        if 'Episode' in parenttypes:
-            templates = [
-                'tv-ep-publish-file',
-            ]
-        elif 'Sequence' in parenttypes:
-            templates = [
-                'tv-sq-publish-file',
-            ]
-        elif 'Asset Build' in parenttypes:
-            templates = [
-                'tv-asset-publish-file',
-            ]
-
-        publishFile = ft_pathUtils.getPaths(taskid, templates, version)
-        publishFile = os.path.normpath(publishFile[templates[0]])
+        # version = instance.context.data('version')
+        # version = 'v' + str(version).zfill(3)
+        #
+        # taskid = instance.context.data('ftrackData')['Task']['id']
+        # task = ftrack.Task(taskid)
+        # parents = task.getParents()
+        # # Prepare data for parent filtering
+        # parenttypes = []
+        # for parent in parents:
+        #     try:
+        #         parenttypes.append(parent.get('objecttypename'))
+        #     except:
+        #         pass
+        # # choose correct template
+        # if 'Episode' in parenttypes:
+        #     templates = [
+        #         'tv-ep-publish-file',
+        #     ]
+        # elif 'Sequence' in parenttypes:
+        #     templates = [
+        #         'tv-sq-publish-file',
+        #     ]
+        # elif 'Asset Build' in parenttypes:
+        #     templates = [
+        #         'tv-asset-publish-file',
+        #     ]
+        #
+        # publishFile = ft_pathUtils.getPaths(taskid, templates, version)
+        # publishFile = os.path.normpath(publishFile[templates[0]])
 
         shutil.copy(sourcePath, publishFile)
 

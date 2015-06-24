@@ -10,13 +10,13 @@ class ValidateVersionNumber(pyblish.api.Validator):
     """
 
     families = ['writeNode', 'prerenders', 'mantra']
-    hosts = ['*']
     version = (0, 1, 0)
     optional = True
+    label = 'Compare version numbers'
 
     host = sys.executable.lower()
 
-    def process_instance(self, instance):
+    def process(self, instance):
         current_file = instance.context.data('currentFile')
         current_v = int(self.version_get(current_file, 'v')[1])
         output_path = instance.data('outputPath')
@@ -32,7 +32,7 @@ class ValidateVersionNumber(pyblish.api.Validator):
             raise Exception(msg)
 
 
-    def repair_instance(self, instance):
+    def repair(self, instance):
         """Sets the version number of the output to the same as the file name
         """
         current_file = instance.context.data('currentFile')

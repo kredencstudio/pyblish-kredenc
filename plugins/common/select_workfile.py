@@ -10,10 +10,9 @@ class SelectWorkfile(pyblish.api.Selector):
     """Selects current workfile"""
 
     order = pyblish.api.Selector.order + 0.1
-    hosts = ['*']
     version = (0, 1, 0)
 
-    def process_context(self, context):
+    def process(self, context):
 
         current_file = context.data('currentFile')
 

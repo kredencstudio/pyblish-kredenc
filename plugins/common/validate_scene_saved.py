@@ -5,13 +5,12 @@ import sys
 class ValidateSceneSaved(pyblish.api.Validator):
     """Validates whether the scene is saved"""
 
-    families = ['*']
-    hosts = ['*']
     version = (0, 1, 0)
+    label = 'Check scene saved'
 
     host = sys.executable.lower()
 
-    def process_context(self, context):
+    def process(self, context):
         if "nuke" in self.host:
             scene_modified = self.process_nuke()
         elif "maya" in self.host:
@@ -27,7 +26,7 @@ class ValidateSceneSaved(pyblish.api.Validator):
                                               'or save it manually.')
 
 
-    def repair_context(self, context):
+    def repair(self, context):
         """Saves the script
         """
         if "nuke" in self.host:

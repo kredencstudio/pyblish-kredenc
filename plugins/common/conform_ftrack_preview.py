@@ -16,10 +16,10 @@ class ConformFlipbook(pyblish.api.Conformer):
     """
 
     families = ['preview']
-    hosts = ['*']
     version = (0, 1, 0)
+    label = 'Conform Preview'
 
-    def process_instance(self, instance):
+    def process(self, instance):
 
         if instance.has_data('outputPath'):
             sourcePath = os.path.normpath(instance.data('outputPath'))

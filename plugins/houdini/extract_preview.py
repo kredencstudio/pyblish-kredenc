@@ -15,7 +15,7 @@ class ExtractFlipbook(pyblish.api.Extractor):
     hosts = ['houdini']
     version = (0, 1, 0)
 
-    def process_instance(self, instance):
+    def process(self, instance):
         # submitting job
 
         preview = flip(instance[0])

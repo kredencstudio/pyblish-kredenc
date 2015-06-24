@@ -10,7 +10,7 @@ class ValidateOutputPath(pyblish.api.Validator):
     hosts = ['nuke']
     version = (0, 1, 0)
 
-    def process_instance(self, instance):
+    def process(self, instance):
         name = instance[0].name()
 
         try:
@@ -28,7 +28,7 @@ class ValidateOutputPath(pyblish.api.Validator):
             raise pyblish.api.ValidationError('No output directory could be found in %s, hence it can\'t be validated' % name)
 
 
-    def repair_instance(self, instance):
+    def repair(self, instance):
         """Auto-repair creates the output directory"""
         path = os.path.dirname(instance[0]['file'].value())
 

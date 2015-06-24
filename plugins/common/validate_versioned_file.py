@@ -7,11 +7,9 @@ class ValidateVersionWorkfile(pyblish.api.Validator):
     """
 
     families = ['workFile']
-    hosts = ['*']
     version = (0, 1, 0)
+    label = 'Versioned File?'
 
-    def process_instance(self, instance):
+    def process(self, context):
 
-        if not instance.context.has_data('version'):
-            msg = 'Your workfile is not versioned!'
-            raise Exception(msg)
+        assert context.has_data('version'), 'Your workfile is not versioned!'

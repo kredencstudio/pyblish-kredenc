@@ -18,16 +18,15 @@ class VersionUpWorkfile(pyblish.api.Conformer):
     """
 
     families = ['workFile']
-    hosts = ['*']
     version = (0, 1, 0)
     optional = True
-    host = sys.executable.lower()
+    label = 'Version up currentFile'
 
-    def process_instance(self, instance):
+    def process(self, context, instance):
 
-        if instance.context.has_data('version'):
+        if context.has_data('version'):
 
-            sourcePath = os.path.normpath(instance.context.data('currentFile'))
+            sourcePath = os.path.normpath(context.data('currentFile'))
 
             ######################################################################################
             # TODO: figure out how to make path matching customisable
@@ -36,7 +35,7 @@ class VersionUpWorkfile(pyblish.api.Conformer):
             new_file = pyblish_utils.version_up(sourcePath)
 
             version = ''.join(pyblish_utils.version_get(new_file, 'v'))
-            taskid = instance.context.data('ftrackData')['Task']['id']
+            taskid = context.data('ftrackData')['Task']['id']
             task = ftrack.Task(taskid)
             parents = task.getParents()
 
@@ -71,7 +70,7 @@ class VersionUpWorkfile(pyblish.api.Conformer):
             self.log.info('Next time you opens this task, start working on the version up file')
 
             shutil.copy(sourcePath, new_workFile)
-            instance.context.set_data('versionUpFile', value=new_workFile)
+            context.set_data('versionUpFile', value=new_workFile)
 
         else:
             raise pyblish.api.ValidationError("Can't find versioned up filename in context. "

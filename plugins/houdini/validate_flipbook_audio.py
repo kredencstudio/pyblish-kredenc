@@ -10,7 +10,7 @@ class ValidateFlipbookAudio(pyblish.api.Validator):
     hosts = ['houdini']
     version = (0, 1, 0)
 
-    def process_instance(self, instance):
+    def process(self, instance):
         name = instance[0].name()
         audio = instance[0].parm('audio').eval()
         enable_a = instance[0].parm('enable_a').eval()

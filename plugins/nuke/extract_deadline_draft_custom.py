@@ -3,7 +3,7 @@ import pyblish.api
 
 @pyblish.api.log
 class ExtractDeadlineDraftCustom(pyblish.api.Extractor):
-    """ Gathers optional Draft related data for Deadline
+    """ Gathers optional Nuke related data for Deadline
     """
     order = pyblish.api.Extractor.order + 0.55
     families = ['deadline.render']
@@ -11,12 +11,12 @@ class ExtractDeadlineDraftCustom(pyblish.api.Extractor):
     version = (0, 1, 0)
     optional = True
 
-    def process_context(self, context):
+    def process(self, instance):
 
         # getting job data
         job_data = {}
-        if context.has_data('deadlineJobData'):
-            job_data = context.data('deadlineJobData').copy()
+        if instance.has_data('deadlineJobData'):
+            job_data = instance.data('deadlineJobData').copy()
 
         # setting extra info key values
         extra_info_key_value = {}
@@ -27,4 +27,4 @@ class ExtractDeadlineDraftCustom(pyblish.api.Extractor):
         extra_info_key_value['DraftTemplate'] = t
         extra_info_key_value['DraftUploadToFtrack'] = True
 
-        context.set_data('deadlineJobData', value=job_data)
+        instance.set_data('deadlineJobData', value=job_data)

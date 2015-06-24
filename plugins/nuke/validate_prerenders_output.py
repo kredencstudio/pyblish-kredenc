@@ -11,7 +11,7 @@ class ValidatePrerendersOutput(pyblish.api.Validator):
     hosts = ['nuke']
     version = (0, 1, 0)
 
-    def process_instance(self, instance):
+    def process(self, instance):
         path = os.path.dirname(instance[0]['file'].value())
 
         if 'output' not in path:

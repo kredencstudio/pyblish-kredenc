@@ -9,7 +9,7 @@ class SelectFlipbookNodes(pyblish.api.Selector):
     hosts = ['houdini']
     version = (0, 1, 0)
 
-    def process_context(self, context):
+    def process(self, context):
 
         renderNode = hou.node( "/out" )
         render_nodes = renderNode.children()
