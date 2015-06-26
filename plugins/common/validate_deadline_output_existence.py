@@ -13,8 +13,8 @@ class ValidateDeadlineOutputExistence(pyblish.api.Validator):
     optional = True
 
     def process(self, instance):
-        path = instance.data('deadlineOutput')
-
+        job_data = instance.data('deadlineJobData').copy()
+        path, file = os.path.split(job_data['OutputFilename0'])
         if not os.path.exists(path):
             msg = 'Output directory for %s doesn\'t exists: %s' % (instance,
                                                                    path)

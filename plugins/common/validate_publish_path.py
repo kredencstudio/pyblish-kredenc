@@ -19,7 +19,7 @@ class ValidatePublishPath(pyblish.api.Validator):
         publishFolder = os.path.abspath(os.path.join(directory, '..', '_Publish'))
 
         version = context.data('version')
-        version = 'v' + str(version).zfill(3)
+        version = 'v' + str(version).zfill(2)
 
         taskid = context.data('ftrackData')['Task']['id']
         task = ftrack.Task(taskid)

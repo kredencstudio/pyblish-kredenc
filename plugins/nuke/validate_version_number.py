@@ -15,28 +15,35 @@ class ValidateVersionNumber(pyblish.api.Validator):
 
     host = sys.executable.lower()
 
-    def process(self, instance):
+    def process(self, instance, context):
 
         current_file = instance.context.data('currentFile')
 
-        version_number = int(self.version_get(current_file, 'v')[1])
+        if context.data('version'):
+            version_number = int(context.data('version'))
+            version = None
+        # version_number = int(self.version_get(current_file, 'v')[1])
 
         #nuke_specific
+        print instance
+        # print 'haloooooo: ' instance['file'].value()
         path = instance[0]['file'].value()
 
         try:
             v = int(self.version_get(path, 'v')[1])
-        except:
-            v = version_number
+        except ValueError:
+            'no version found in the output'
 
-        instance.context.set_data('version', value=version_number)
-        new_workfile = self.version_up(path)
-        instance.set_data('new_workfile', value=new_workfile)
+        assert v == version_number, 'versions do not match'
 
-        if version_number != v:
-            msg = 'Version number %s is not the same as ' % v
-            msg += 'file version number %s' % version_number
-            raise Exception(msg)
+        # instance.context.set_data('version', value=version_number)
+        # new_workfile = self.version_up(path)
+        # instance.set_data('new_workfile', value=new_workfile)
+
+        # if version_number != v:
+        #     msg = 'Version number %s is not the same as ' % v
+        #     msg += 'file version number %s' % version_number
+        #     raise Exception(msg)
 
 
     def repair(self, instance):
@@ -47,13 +54,13 @@ class ValidateVersionNumber(pyblish.api.Validator):
         version_number = int(self.version_get(current_file, 'v')[1])
 
         #nuke_specific
-        path = instance[0]['file'].value()
+        path = instance['file'].value()
         v = int(self.version_get(path, 'v')[1])
 
         new_path = self.version_set(path, 'v', v, version_number)
 
         #nuke_specific
-        instance[0]['file'].setValue(new_path)
+        instance['file'].setValue(new_path)
 
 
     def version_get(self, string, prefix, suffix = None):
