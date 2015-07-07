@@ -25,7 +25,7 @@ class ExtractDeadlineDraftCustom(pyblish.api.Extractor):
 
 
 
-        t = r'K:\.core\repos\DeadlineRepository7\custom\draft\ftupload_encode_to_mov_h264_540p.py'
+        t = r'K:\.core\repos\DeadlineRepository7\custom\draft\ftupload_encode_to_mov_h264_720p.py'
         extra_info_key_value['DraftTemplate'] = t
         extra_info_key_value['DraftUploadToFtrack'] = True
 

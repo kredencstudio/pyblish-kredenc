@@ -16,16 +16,13 @@ class SelectWorkfile(pyblish.api.Selector):
 
         current_file = context.data('currentFile')
 
-        #set version
+        # set version
         directory, filename = os.path.split(current_file)
 
         # create instance
         instance = context.create_instance(name=filename)
         instance.set_data('family', value='workFile')
         instance.set_data('path', value=current_file)
-
-        # deadline data
-        # instance.context.set_data('deadlineInput', value=publish_file)
 
         # ftrack data
         components = {}
@@ -35,6 +32,12 @@ class SelectWorkfile(pyblish.api.Selector):
             components['scene'] = {'path': current_file}
         instance.set_data('ftrackComponents', value=components)
 
+        # if asset_type == 'light':
+        #     asset_type = 'render'
+
+        # instance.set_data('ftrackAssetName', value='testAsset')
+        # instance.set_data('ftrackAssetType', value='scene')
+
         # version data
         try:
             (prefix, version) = pyblish_utils.version_get(filename, 'v')
@@ -43,6 +46,5 @@ class SelectWorkfile(pyblish.api.Selector):
             return
         context.set_data('version', value=version)
         context.set_data('vprefix', value=prefix)
-
 
         instance.add(current_file)

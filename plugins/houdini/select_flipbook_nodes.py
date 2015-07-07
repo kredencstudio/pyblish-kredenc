@@ -11,7 +11,7 @@ class SelectFlipbookNodes(pyblish.api.Selector):
 
     def process(self, context):
 
-        renderNode = hou.node( "/out" )
+        renderNode = hou.node("/out")
         render_nodes = renderNode.children()
 
         for node in list(render_nodes):
@@ -29,3 +29,6 @@ class SelectFlipbookNodes(pyblish.api.Selector):
                                           'reviewable': True,
                                           }}
                 instance.set_data('ftrackComponents', value=components)
+
+                # instance.set_data('ftrackAssetName', value='quicktime')
+                # instance.set_data('ftrackAssetType', value='mov')
