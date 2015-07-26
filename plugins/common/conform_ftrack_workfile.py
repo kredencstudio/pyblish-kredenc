@@ -23,40 +23,11 @@ class ConformWorkfile(pyblish.api.Conformer):
 
         publishFile = context.data('publishFile')
 
-        # version = instance.context.data('version')
-        # version = 'v' + str(version).zfill(3)
-        #
-        # taskid = instance.context.data('ftrackData')['Task']['id']
-        # task = ftrack.Task(taskid)
-        # parents = task.getParents()
-        # # Prepare data for parent filtering
-        # parenttypes = []
-        # for parent in parents:
-        #     try:
-        #         parenttypes.append(parent.get('objecttypename'))
-        #     except:
-        #         pass
-        # # choose correct template
-        # if 'Episode' in parenttypes:
-        #     templates = [
-        #         'tv-ep-publish-file',
-        #     ]
-        # elif 'Sequence' in parenttypes:
-        #     templates = [
-        #         'tv-sq-publish-file',
-        #     ]
-        # elif 'Asset Build' in parenttypes:
-        #     templates = [
-        #         'tv-asset-publish-file',
-        #     ]
-        #
-        # publishFile = ft_pathUtils.getPaths(taskid, templates, version)
-        # publishFile = os.path.normpath(publishFile[templates[0]])
-
         shutil.copy(sourcePath, publishFile)
 
         # ftrack data
         components = instance.data('ftrackComponents')
+        self.log.debug(str(components))
         if pyblish.api.current_host() == 'nuke':
             components['nukescript']['path'] = publishFile
         else:
@@ -64,6 +35,4 @@ class ConformWorkfile(pyblish.api.Conformer):
 
         instance.set_data('ftrackComponents', value=components)
 
-
         self.log.info('Copying Workfile to location: {}'.format(publishFile))
-

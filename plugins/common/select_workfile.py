@@ -5,6 +5,7 @@ import sys
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 import pyblish_utils
 
+
 @pyblish.api.log
 class SelectWorkfile(pyblish.api.Selector):
     """Selects current workfile"""
@@ -32,11 +33,8 @@ class SelectWorkfile(pyblish.api.Selector):
             components['scene'] = {'path': current_file}
         instance.set_data('ftrackComponents', value=components)
 
-        # if asset_type == 'light':
-        #     asset_type = 'render'
-
-        # instance.set_data('ftrackAssetName', value='testAsset')
-        # instance.set_data('ftrackAssetType', value='scene')
+        if 'asset' in current_file:
+            instance.set_data('ftrackAssetType', value='img')
 
         # version data
         try:
@@ -44,6 +42,7 @@ class SelectWorkfile(pyblish.api.Selector):
         except:
             self.log.warning('Cannot publish workfile which is not versioned.')
             return
+
         context.set_data('version', value=version)
         context.set_data('vprefix', value=prefix)
 

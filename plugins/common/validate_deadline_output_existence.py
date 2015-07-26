@@ -22,7 +22,8 @@ class ValidateDeadlineOutputExistence(pyblish.api.Validator):
 
     def repair(self, instance):
         """Auto-repair creates the output directory"""
-        path = instance.data('deadlineOutput')
+        job_data = instance.data('deadlineJobData').copy()
+        path, file = os.path.split(job_data['OutputFilename0'])
 
         if not os.path.exists(path):
             os.makedirs(path)

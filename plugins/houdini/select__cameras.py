@@ -10,11 +10,11 @@ class SelectMantraNodes(pyblish.api.Selector):
 
     def process(self, context):
 
-        nodes = hou.node("/").allSubChildren()
+        node_type = hou.nodeType('Object/cam')
+        cam_nodes = node_type.instances()
 
-        for node in list(nodes):
+        for node in list(cam_nodes):
 
-            if node.type().name() == 'cam' and node.name() != 'ipr_camera':
-                instance = context.create_instance(name=node.name())
-                instance.set_data('family', value='camera')
-                instance.add(node)
+            instance = context.create_instance(name=node.name())
+            instance.set_data('family', value='camera')
+            instance.add(node)
