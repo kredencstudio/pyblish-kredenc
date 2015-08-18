@@ -7,7 +7,7 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 import pyblish_utils
 
 import ftrack
-import ft_pathUtils
+from ft_studio import ft_pathUtils
 
 @pyblish.api.log
 class VersionUpWorkfile(pyblish.api.Conformer):
@@ -61,7 +61,7 @@ class VersionUpWorkfile(pyblish.api.Conformer):
                     'tv-asset-work-file',
                 ]
 
-            new_workFile = ft_pathUtils.getPaths(taskid, templates, version)
+            new_workFile = ft_pathUtils.getPaths(task, templates, version)
             new_workFile = os.path.normpath(new_workFile[templates[0]])
 
             ######################################################################################

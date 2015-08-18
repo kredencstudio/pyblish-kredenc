@@ -8,8 +8,8 @@ class ValidateVersionWorkfile(pyblish.api.Validator):
 
     families = ['workFile']
     version = (0, 1, 0)
-    label = 'Versioned File?'
+    label = 'File versioned'
 
     def process(self, context):
-
+gh
         assert context.has_data('version'), 'Your workfile is not versioned!'

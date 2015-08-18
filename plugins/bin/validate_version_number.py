@@ -4,7 +4,7 @@ import sys
 import pprint
 
 @pyblish.api.log
-class ValidateVersionNumber(pyblish.api.Validator):
+class ValidateVersionNuke(pyblish.api.Validator):
     """Validates whether workFile is versioned and makes sure that version number of write nodes matches version of the
     work file
     """

@@ -15,6 +15,8 @@ class SelectMantraNodes(pyblish.api.Selector):
 
         for node in list(cam_nodes):
 
-            instance = context.create_instance(name=node.name())
-            instance.set_data('family', value='camera')
-            instance.add(node)
+            if 'ipr' not in node.name():
+                instance = context.create_instance(name=node.name())
+                instance.set_data('family', value='camera')
+                instance.set_data('path', value=node.path())
+                instance.add(node)

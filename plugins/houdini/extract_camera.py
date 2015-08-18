@@ -1,7 +1,7 @@
 import pyblish.api
 import shutil
 import hou
-import _alembic_hom_extensions as abc
+import os
 
 
 @pyblish.api.log
@@ -13,7 +13,24 @@ class ExtractCamera(pyblish.api.Extractor):
     version = (0, 1, 0)
     label = 'ABC camera'
 
-    def process(self, instance):
+    def process(self, instance, context):
         # extracting camera
-        self.log.info('Extracting cameras from houdini is not supported yet.\
-                      I\'m doing my best to fix this!')
+
+        out = hou.node('/out')
+        currentFile = context.data('currentFile')
+
+        root, ext = os.path.splitext(currentFile)
+
+        filepath = '{0}_cam.abc'.format(root)
+
+        abc_rop = out.createNode("alembic")
+        abc_rop.setParms({'trange': 1,
+                          'filename': filepath,
+                          'objects': instance.data('path'),
+                          'partition_mode': 4,
+                          'collapse': 1,
+                          })
+
+        instance.set_data('outputPath', value=filepath)
+        abc_rop.render()
+        abc_rop.destroy()

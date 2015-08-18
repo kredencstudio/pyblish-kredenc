@@ -1,8 +1,12 @@
 import os
 import pyblish.api
+import sys
 
-import ft_pathUtils
+from ft_studio import ft_pathUtils
 import ftrack
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+import pyblish_utils
+
 
 @pyblish.api.log
 class ValidatePublishPath(pyblish.api.Validator):
@@ -14,14 +18,22 @@ class ValidatePublishPath(pyblish.api.Validator):
 
     def process(self, context, instance):
 
-        sourcePath = instance.data('path')
+        sourcePath = os.path.normpath(context.data('currentFile'))
         directory, file = os.path.split(sourcePath)
         publishFolder = os.path.abspath(os.path.join(directory, '..', '_Publish'))
 
-        version = context.data('version')
-        version = 'v' + str(version).zfill(2)
+        # version = context.data('version')
+        # prj_code = context.data('ftrackData')['Prcject']['code']
+        # if prj_code in ['rad']:
+        #     version = 'v' + str(version).zfill(3)
+        # else:
+        #     version = 'v' + str(version).zfill(2)
+
+        version = ''.join(pyblish_utils.version_get(sourcePath, 'v'))
+        self.log.debug(version)
 
         taskid = context.data('ftrackData')['Task']['id']
+        self.log.debug(taskid)
         task = ftrack.Task(taskid)
         parents = task.getParents()
         # Prepare data for parent filtering
@@ -45,7 +57,10 @@ class ValidatePublishPath(pyblish.api.Validator):
                 'tv-asset-publish-file',
             ]
 
-        publishFile = ft_pathUtils.getPaths(taskid, templates, version)
+        self.log.debug(ft_pathUtils.__file__)
+
+        publishFile = ft_pathUtils.getPaths(task, templates, version)
+
         publishFile = os.path.normpath(publishFile[templates[0]])
 
         if os.path.exists(publishFolder):
@@ -57,7 +72,6 @@ class ValidatePublishPath(pyblish.api.Validator):
             msg = 'Publish directory for %s doesn\'t exists' % name
 
             raise ValueError(msg)
-
 
 
     def repair(self, instance):

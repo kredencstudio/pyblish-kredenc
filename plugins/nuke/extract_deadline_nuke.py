@@ -27,5 +27,6 @@ class ExtractDeadlineNuke(pyblish.api.Extractor):
         # group = 'nuke_%s' % nuke.NUKE_VERSION_STRING.replace('.', '')
         group = 'nuke'
         job_data['Group'] = group
+        job_data['LimitGroups'] = 'nuke'
 
         instance.set_data('deadlineJobData', value=job_data)

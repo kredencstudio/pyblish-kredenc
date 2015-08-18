@@ -1,8 +1,6 @@
 import shutil
 import os
-import ftrack
 import pyblish.api
-import ft_pathUtils
 
 
 @pyblish.api.log

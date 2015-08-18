@@ -36,3 +36,8 @@ class CollectFtrackAsset(pyblish.api.Collector):
                               value='comp')
             instance.set_data('ftrackAssetName',
                               value=ftrack_data['Task']['type'])
+        if ftrack_data['Task']['code'] == 'lookdev':
+            instance.set_data('ftrackAssetType',
+                              value='img')
+            instance.set_data('ftrackAssetName',
+                              value=ftrack_data['Task']['type'])
