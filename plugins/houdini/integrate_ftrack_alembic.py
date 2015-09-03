@@ -6,7 +6,7 @@ from ft_studio import ft_pathUtils
 
 
 @pyblish.api.log
-class IntegrateCamera(pyblish.api.Conformer):
+class IntegrateCache(pyblish.api.Conformer):
     """Copies Preview movie to it's final location
 
      Expected data members:
@@ -15,10 +15,10 @@ class IntegrateCamera(pyblish.api.Conformer):
     'version' - version of publish
     """
 
-    families = ['camera']
+    families = ['cache']
     hosts = ['houdini']
     version = (0, 1, 0)
-    label = 'Conform Camera'
+    label = 'Conform Cache'
 
     def process(self, instance, context):
 
@@ -42,17 +42,17 @@ class IntegrateCamera(pyblish.api.Conformer):
             # choose correct template
             if 'Episode' in parenttypes:
                 templates = [
-                    'tv-ep-cam-file',
+                    'tv-ep-abc-file',
                 ]
             elif 'Sequence' in parenttypes:
                 templates = [
-                    'tv-sq-cam-file',
+                    'tv-sq-abc-file',
                 ]
 
             publishFile = ft_pathUtils.getPaths(task, templates, version)
             publishFile = os.path.normpath(publishFile[templates[0]])
 
-            self.log.info('Copying preview to location: {}'.format(publishFile))
+            self.log.info('Copying cache to location: {}'.format(publishFile))
             shutil.copy(sourcePath, publishFile)
 
             # # ftrack data

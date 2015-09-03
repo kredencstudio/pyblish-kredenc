@@ -22,13 +22,6 @@ class ValidatePublishPath(pyblish.api.Validator):
         directory, file = os.path.split(sourcePath)
         publishFolder = os.path.abspath(os.path.join(directory, '..', '_Publish'))
 
-        # version = context.data('version')
-        # prj_code = context.data('ftrackData')['Prcject']['code']
-        # if prj_code in ['rad']:
-        #     version = 'v' + str(version).zfill(3)
-        # else:
-        #     version = 'v' + str(version).zfill(2)
-
         version = ''.join(pyblish_utils.version_get(sourcePath, 'v'))
         self.log.debug(version)
 
