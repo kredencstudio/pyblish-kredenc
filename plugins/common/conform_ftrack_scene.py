@@ -12,7 +12,7 @@ class ConformWorkfile(pyblish.api.Conformer):
     'version' - version of publish
     """
 
-    families = ['workFile']
+    families = ['scene']
     version = (0, 1, 0)
     label = 'Conform Workfile'
 

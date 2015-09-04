@@ -22,11 +22,8 @@ class ExtractDeadlineNuke(pyblish.api.Extractor):
         # setting optional data
         job_data['Pool'] = 'comp'
         job_data['ChunkSize'] = '10'
-        # job_data['LimitGroups'] = 'nuke'
-
-        # group = 'nuke_%s' % nuke.NUKE_VERSION_STRING.replace('.', '')
         group = 'nuke'
         job_data['Group'] = group
-        job_data['LimitGroups'] = 'nuke'
+        job_data['LimitGroups'] = group
 
         instance.set_data('deadlineJobData', value=job_data)

@@ -12,7 +12,7 @@ import pyblish_utils
 class ValidatePublishPath(pyblish.api.Validator):
     """Validates that the publish directory for the workFile exists"""
 
-    families = ['workFile']
+    families = ['scene']
     version = (0, 1, 0)
     label = 'Check Publish Path'
 
@@ -55,6 +55,18 @@ class ValidatePublishPath(pyblish.api.Validator):
         publishFile = ft_pathUtils.getPaths(task, templates, version)
 
         publishFile = os.path.normpath(publishFile[templates[0]])
+        projectName = task.getProject().getName()
+        self.log.debug(projectName)
+
+        if projectName not in ['rad', 'drm']:
+            templates = [
+                'shot.publish.file'
+            ]
+
+            publishFile = ft_pathUtils.getPathsYaml(task,
+                                                    templateList=templates,
+                                                    version=version)
+            publishFile = publishFile[0]
 
         if os.path.exists(publishFolder):
             context.set_data('publishFile', value=publishFile)

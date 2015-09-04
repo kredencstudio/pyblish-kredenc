@@ -6,7 +6,7 @@ class ValidateVersionWorkfile(pyblish.api.Validator):
     work file
     """
 
-    families = ['workFile']
+    families = ['scene']
     version = (0, 1, 0)
     label = 'File versioned'
 

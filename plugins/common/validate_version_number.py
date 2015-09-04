@@ -9,7 +9,7 @@ class ValidateVersionNumber(pyblish.api.Validator):
     """
     families = ['writeNode', 'prerenders', 'mantra', 'deadline.render']
     version = (0, 1, 0)
-    label = 'Compare version numbers'
+    label = 'Version numbers'
 
     host = sys.executable.lower()
 

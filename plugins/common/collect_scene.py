@@ -16,13 +16,12 @@ class SelectWorkfile(pyblish.api.Selector):
     def process(self, context):
 
         current_file = context.data('currentFile')
-
-        # set version
-        directory, filename = os.path.split(current_file)
+        directory, filename = os.path.split(str(current_file))
 
         # create instance
         instance = context.create_instance(name=filename)
-        instance.set_data('family', value='workFile')
+
+        instance.set_data('family', value='scene')
         instance.set_data('path', value=current_file)
 
         # ftrack data
@@ -33,7 +32,7 @@ class SelectWorkfile(pyblish.api.Selector):
             components['scene'] = {'path': current_file}
         instance.set_data('ftrackComponents', value=components)
 
-        if 'asset' in current_file:
+        if 'asset' in str(current_file):
             instance.set_data('ftrackAssetType', value='img')
 
         # version data

@@ -9,6 +9,7 @@ import pyblish_utils
 import ftrack
 from ft_studio import ft_pathUtils
 
+
 @pyblish.api.log
 class VersionUpWorkfile(pyblish.api.Conformer):
     """Versions up current workfile
@@ -17,7 +18,7 @@ class VersionUpWorkfile(pyblish.api.Conformer):
     'ftrackData' - Necessary ftrack information gathered by select_ftrack
     """
 
-    families = ['workFile']
+    families = ['scene']
     version = (0, 1, 0)
     optional = True
     label = 'Version up currentFile'
@@ -28,7 +29,7 @@ class VersionUpWorkfile(pyblish.api.Conformer):
 
             sourcePath = os.path.normpath(context.data('currentFile'))
 
-            ######################################################################################
+            ###############################################################
             # TODO: figure out how to make path matching customisable
             ####
 
@@ -63,15 +64,28 @@ class VersionUpWorkfile(pyblish.api.Conformer):
 
             new_workFile = ft_pathUtils.getPaths(task, templates, version)
             new_workFile = os.path.normpath(new_workFile[templates[0]])
+            projectName = task.getProject().getName()
 
-            ######################################################################################
+            if projectName not in ['rad', 'drm']:
+                templates = [
+                    'shot.work.file'
+                ]
+                new_workFile = ft_pathUtils.getPathsYaml(
+                    task,
+                    templateList=templates,
+                    version=version)[0]
 
-            self.log.info('New workfile version created: {}'.format(new_workFile))
-            self.log.info('Next time you opens this task, start working on the version up file')
+            #################################################################
+
+            self.log.info('New workfile version created: \
+                            {}'.format(new_workFile))
+            self.log.info('Next time you opens this task, \
+                            start working on the version up file')
 
             shutil.copy(sourcePath, new_workFile)
             context.set_data('versionUpFile', value=new_workFile)
 
         else:
-            raise pyblish.api.ValidationError("Can't find versioned up filename in context. "
-                                              "workfile probably doesn't have a version.")
+            raise pyblish.api.ValidationError(
+                "Can't find versioned up filename in context. \
+                workfile probably doesn't have a version.")
