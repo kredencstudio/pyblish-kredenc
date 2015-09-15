@@ -32,8 +32,11 @@ def makeMovie(outputI, outputV, audio):
     file, extension = os.path.splitext(outputI)
     file, padding = os.path.splitext(file)
     input = file + paddingExp + extension
-    output = subprocess.call('ffmpeg -i {0} {2} -b:v 2000k -c:v h264 -pix_fmt yuv420p -preset slow -vf "scale=trunc(iw/2)*2:trunc(ih/2)*2" -y {1}'.format(input, outputV, audio))
+    output = subprocess.call('ffmpeg -i {0} {2} -c:v libx264 -preset slow -vf\
+                             "scale=trunc(iw/2)*2:trunc(ih/2)*2" -crf 28 -y\
+                              {1}'.format(input, outputV, audio))
     return outputV
+
 
 def flip(node):
 
@@ -64,6 +67,8 @@ def flip(node):
     B = node.parm('B').eval()
     I = node.parm('I').eval()
     c = node.parm('c').eval()
+    width = node.parm('resx').eval()
+    height = node.parm('resy').eval()
 
     import toolutils
 
@@ -95,7 +100,7 @@ def flip(node):
     except:
         pass
 
-    cmd = ['viewwrite -r 1280 720']
+    cmd = ['viewwrite -r {0} {1}'.format(width, height)]
     cmd.append('-f')
     cmd.append(str(startf))
     cmd.append(str(endf))
@@ -135,7 +140,7 @@ def flip(node):
 
     if enable_v:
         print 'video'
-        return makeMovie(outputI, outputV, audio)
+        makeMovie(outputI, outputV, audio)
 
     if enable_postscript:
         executeScript(postscript)
