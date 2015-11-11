@@ -32,9 +32,7 @@ def makeMovie(outputI, outputV, audio):
     file, extension = os.path.splitext(outputI)
     file, padding = os.path.splitext(file)
     input = file + paddingExp + extension
-    output = subprocess.call('ffmpeg -i {0} {2} -c:v libx264 -preset slow -vf\
-                             "scale=trunc(iw/2)*2:trunc(ih/2)*2" -crf 28 -y\
-                              {1}'.format(input, outputV, audio))
+    output = subprocess.call('ffmpeg -i {0} {2} -c:v libx264 -preset slow -vf "scale=trunc(iw/2)*2:trunc(ih/2)*2" -crf 28 -y {1}'.format(input, outputV, audio))
     return outputV
 
 
