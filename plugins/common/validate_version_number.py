@@ -33,7 +33,7 @@ class ValidateVersionNumber(pyblish.api.Validator):
 
         output_path = instance.data('outputPath')
         if not output_path:
-            output_path = instance.data('deadlineJobData')['OutputFilename0']
+            output_path = instance.data('deadlineData')['job']['OutputFilename0']
 
         current_v = int(context.data('version'))
 
@@ -51,7 +51,7 @@ class ValidateVersionNumber(pyblish.api.Validator):
         current_file = instance.context.data('currentFile')
         output_path = instance.data('outputPath')
         if not output_path:
-            output_path = instance.data('deadlineJobData')['OutputFilename0']
+            output_path = instance.data('deadlineJobData')['job']['OutputFilename0']
 
         current_v = int(context.data('version'))
 

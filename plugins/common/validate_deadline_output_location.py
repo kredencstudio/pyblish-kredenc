@@ -15,7 +15,7 @@ class ValidateDeadlineOutputLocation(pyblish.api.Validator):
 
     def process(self, instance):
         # checking output
-        job_data = instance.data('deadlineJobData').copy()
+        job_data = instance.data('deadlineData')['job'].copy()
         path = job_data['OutputFilename0']
         mount = self.find_mount_point(path)
         if platform.system() == 'Windows':

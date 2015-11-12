@@ -67,6 +67,8 @@ class ValidatePublishPath(pyblish.api.Validator):
                                                     templateList=templates,
                                                     version=version)
             publishFile = publishFile[0]
+            publishFolder = os.path.dirname(publishFile)
+            self.log.debug(publishFolder)
 
         if os.path.exists(publishFolder):
             context.set_data('publishFile', value=publishFile)
