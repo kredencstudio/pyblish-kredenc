@@ -23,6 +23,7 @@ class ConformFlipbook(pyblish.api.Conformer):
 
         if instance.has_data('outputPath'):
             sourcePath = os.path.normpath(instance.data('outputPath'))
+
             version = context.data('version')
             version = 'v' + str(version).zfill(3)
 
@@ -51,8 +52,30 @@ class ConformFlipbook(pyblish.api.Conformer):
             publishFile = ft_pathUtils.getPaths(task, templates, version)
             publishFile = os.path.normpath(publishFile[templates[0]])
 
-            self.log.info('Copying preview to location: {}'.format(publishFile))
-            shutil.copy(sourcePath, publishFile)
+            projectName = task.getProject().getName()
+            if projectName not in ['rad', 'drm']:
+                if 'Asset Build' not in parenttypes:
+                    templates = [
+                        'shot.publish.file'
+                    ]
+                else:
+                    templates = [
+                        'asset.publish.file'
+                    ]
+
+                self.log.debug(templates)
+                publishFile = ft_pathUtils.getPathsYaml(task,
+                                                        templateList=templates,
+                                                        version=version)
+
+
+                path, extension = os.path.splitext(publishFile[0])
+                publishFile = path + ".mov"
+
+
+            self.log.info('Moving preview from location: {}'.format(sourcePath))
+            self.log.info('Moving preview to location: {}'.format(publishFile))
+            shutil.move(sourcePath, publishFile)
 
             # ftrack data
             components = instance.data('ftrackComponents')

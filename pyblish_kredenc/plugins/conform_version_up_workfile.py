@@ -3,7 +3,6 @@ import shutil
 import os
 import pyblish.api
 
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 import pyblish_utils
 
 import ftrack
@@ -67,9 +66,14 @@ class VersionUpWorkfile(pyblish.api.Conformer):
             projectName = task.getProject().getName()
 
             if projectName not in ['rad', 'drm']:
-                templates = [
-                    'shot.work.file'
-                ]
+                if 'Asset Build' not in parenttypes:
+                    templates = [
+                        'shot.work.file'
+                    ]
+                else:
+                    templates = [
+                        'asset.work.file'
+                    ]
                 new_workFile = ft_pathUtils.getPathsYaml(
                     task,
                     templateList=templates,

@@ -57,15 +57,24 @@ class ValidatePublishPath(pyblish.api.Validator):
         publishFile = os.path.normpath(publishFile[templates[0]])
         projectName = task.getProject().getName()
         self.log.debug(projectName)
+        self.log.debug(parenttypes)
 
         if projectName not in ['rad', 'drm']:
-            templates = [
-                'shot.publish.file'
-            ]
+            if 'Asset Build' not in parenttypes:
+                templates = [
+                    'shot.publish.file'
+                ]
+            else:
+                templates = [
+                    'asset.publish.file'
+                ]
 
+            self.log.debug(templates)
             publishFile = ft_pathUtils.getPathsYaml(task,
                                                     templateList=templates,
                                                     version=version)
+
+
             publishFile = publishFile[0]
             publishFolder = os.path.dirname(publishFile)
             self.log.debug(publishFolder)
