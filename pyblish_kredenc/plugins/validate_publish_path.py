@@ -36,44 +36,20 @@ class ValidatePublishPath(pyblish.api.Validator):
                 parenttypes.append(parent.get('objecttypename'))
             except:
                 pass
-        # choose correct template
-        if 'Episode' in parenttypes:
+
+        if 'Asset Build' not in parenttypes:
             templates = [
-                'tv-ep-publish-file',
+                'shot.publish.file'
             ]
-        elif 'Sequence' in parenttypes:
+        else:
             templates = [
-                'tv-sq-publish-file',
-            ]
-        elif 'Asset Build' in parenttypes:
-            templates = [
-                'tv-asset-publish-file',
+                'asset.publish.file'
             ]
 
-        self.log.debug(ft_pathUtils.__file__)
-
-        publishFile = ft_pathUtils.getPaths(task, templates, version)
-
-        publishFile = os.path.normpath(publishFile[templates[0]])
-        projectName = task.getProject().getName()
-        self.log.debug(projectName)
-        self.log.debug(parenttypes)
-
-        if projectName not in ['rad', 'drm']:
-            if 'Asset Build' not in parenttypes:
-                templates = [
-                    'shot.publish.file'
-                ]
-            else:
-                templates = [
-                    'asset.publish.file'
-                ]
-
-            self.log.debug(templates)
-            publishFile = ft_pathUtils.getPathsYaml(task,
-                                                    templateList=templates,
-                                                    version=version)
-
+        self.log.debug(templates)
+        publishFile = ft_pathUtils.getPathsYaml(task,
+                                                templateList=templates,
+                                                version=version)
 
             publishFile = publishFile[0]
             publishFolder = os.path.dirname(publishFile)
