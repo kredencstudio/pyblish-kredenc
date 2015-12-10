@@ -6,9 +6,9 @@ import pymel
 class ValidateDisplaylayer(pyblish.api.Validator):
     """ Ensure no construction history exists on the nodes in the instance """
 
-    families = ['scene']
+    families = ['model']
     optional = True
-    label = 'Modeling - Display Layers'
+    label = 'Model - Display Layers'
 
     def process(self, instance):
         """Process all the nodes in the instance """

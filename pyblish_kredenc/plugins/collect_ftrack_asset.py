@@ -26,28 +26,16 @@ class CollectFtrackAsset(pyblish.api.Collector):
 
         ftrack_data = context.data('ftrackData').copy()
 
-        instance.set_data('ftrackAssetName',
-                          value=ftrack_data['Task']['name'])
+        instance.data['ftrackAssetName'] = ftrack_data['Task']['name']
 
-        if ftrack_data['Task']['code'] == 'light':
-            instance.set_data('ftrackAssetType',
-                              value='render')
-            instance.set_data('ftrackAssetName',
-                              value=ftrack_data['Task']['name'])
-        if ftrack_data['Task']['code'] == 'comp':
-            instance.set_data('ftrackAssetType',
-                              value='comp')
-            instance.set_data('ftrackAssetName',
-                              value=ftrack_data['Task']['name'])
-        if ftrack_data['Task']['code'] == 'lookdev':
-            instance.set_data('ftrackAssetType',
-                              value='img')
-            instance.set_data('ftrackAssetName',
-                              value=ftrack_data['Task']['name'])
+        if ftrack_data['Task']['type'] == 'Lighting':
+            instance.data['ftrackAssetType'] = 'render'
+        if ftrack_data['Task']['type'] == 'COmpositing':
+            instance.data['ftrackAssetType'] = 'comp'
+        if ftrack_data['Task']['type'] == 'lookdev':
+            instance.data['ftrackAssetType'] = 'img'
         if ftrack_data['Task']['type'] == 'Modeling':
-            instance.set_data('ftrackAssetType',
-                              value='geo')
-            instance.set_data('ftrackAssetName',
-                              value=ftrack_data['Task']['name'])
+            instance.data['ftrackAssetType'] = 'geo'
 
-        self.log.info(instance.data('ftrackAssetName'))
+        self.log.info(instance.data['ftrackAssetType'])
+        self.log.info(instance.data['ftrackAssetName'])

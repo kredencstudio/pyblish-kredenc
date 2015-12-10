@@ -3,6 +3,8 @@ import pyblish.api
 import sys
 
 from ft_studio import ft_pathUtils
+reload(ft_pathUtils)
+
 import ftrack
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 import pyblish_utils
@@ -20,24 +22,18 @@ class ValidatePublishPath(pyblish.api.Validator):
 
         sourcePath = os.path.normpath(context.data('currentFile'))
         directory, file = os.path.split(sourcePath)
-        publishFolder = os.path.abspath(os.path.join(directory, '..', '_Publish'))
 
-        version = ''.join(pyblish_utils.version_get(sourcePath, 'v'))
+        version = context.data['version']
+        version = 'v' + str(version).zfill(3)
         self.log.debug(version)
 
         taskid = context.data('ftrackData')['Task']['id']
         self.log.debug(taskid)
         task = ftrack.Task(taskid)
-        parents = task.getParents()
-        # Prepare data for parent filtering
-        parenttypes = []
-        for parent in parents:
-            try:
-                parenttypes.append(parent.get('objecttypename'))
-            except:
-                pass
 
-        if 'Asset Build' not in parenttypes:
+
+        ftrack_data = context.data['ftrackData']
+        if 'Asset_Build' not in ftrack_data.keys():
             templates = [
                 'shot.publish.file'
             ]
@@ -51,9 +47,9 @@ class ValidatePublishPath(pyblish.api.Validator):
                                                 templateList=templates,
                                                 version=version)
 
-            publishFile = publishFile[0]
-            publishFolder = os.path.dirname(publishFile)
-            self.log.debug(publishFolder)
+        publishFile = publishFile[0]
+        publishFolder = os.path.dirname(publishFile)
+        self.log.debug(publishFolder)
 
         if os.path.exists(publishFolder):
             context.set_data('publishFile', value=publishFile)

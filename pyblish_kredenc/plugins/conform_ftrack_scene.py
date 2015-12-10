@@ -18,9 +18,9 @@ class ConformWorkfile(pyblish.api.Conformer):
 
     def process(self, context, instance):
         sourcePath = os.path.normpath(context.data('currentFile'))
-
+        self.log.debug(sourcePath)
         publishFile = context.data('publishFile')
-
+        self.log.debug(publishFile)
         shutil.copy(sourcePath, publishFile)
 
         # ftrack data

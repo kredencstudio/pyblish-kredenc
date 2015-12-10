@@ -5,9 +5,9 @@ import pymel
 class ValidateHierarchy(pyblish.api.Validator):
     """ Ensures a flat hierarchy """
 
-    families = ['scene']
+    families = ['model']
     optional = True
-    label = 'Modeling - Hierarchy'
+    label = 'Model - Hierarchy'
 
     def process(self, instance):
 

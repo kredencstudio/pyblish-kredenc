@@ -8,9 +8,9 @@ import pyblish.api
 class ValidateTransforms(pyblish.api.Validator):
     """"""
 
-    families = ['scene']
+    families = ['model']
     optional = True
-    label = 'Modeling - Transforms'
+    label = 'Model - Transforms'
 
     def process(self, instance):
 

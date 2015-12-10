@@ -1,16 +1,14 @@
 import os
-import re
-
 import pymel
 import pyblish.api
-import ftrack
+import pyblish_utils
 
 
 class ExtractAlembic(pyblish.api.Extractor):
     """
     """
 
-    families = ['alembic']
+    families = ['alembic', 'model']
 
     def get_path(self, instance):
 
@@ -25,16 +23,20 @@ class ExtractAlembic(pyblish.api.Extractor):
 
     def process(self, instance, context):
 
-        root = instance[0]
-        path = self.get_path(instance)
 
-        if not os.path.exists(os.path.dirname(path)):
-            os.makedirs(os.path.dirname(path))
+        dir_path = pyblish_utils.temp_dir(instance)
+        filename = "{0}.abc".format(instance.name)
+        path = os.path.join(dir_path, filename)
 
-        nodesString = '-root ' + root.name()
+        nodesString = ''
+        for node in instance:
+            nodesString = ' -root ' + node.name()
 
         frame_start = int(pymel.core.playbackOptions(q=True, min=True))
         frame_end = int(pymel.core.playbackOptions(q=True, max=True))
+        if instance['family'] == 'model':
+            frame_end = frame_start
+
 
         cmd = '-frameRange %s %s' % (frame_start, frame_end)
         cmd += ' -stripNamespaces -uvWrite -worldSpace -wholeFrameGeo '
@@ -42,4 +44,4 @@ class ExtractAlembic(pyblish.api.Extractor):
 
         pymel.core.AbcExport(j=cmd)
 
-        instance.data['extractDirAbc'] = path
+        instance.data['extractDirAbc']=path

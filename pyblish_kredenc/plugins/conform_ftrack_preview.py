@@ -39,29 +39,15 @@ class ConformFlipbook(pyblish.api.Conformer):
                 except:
                     pass
 
-            # choose correct template
-            if 'Episode' in parenttypes:
-                templates = [
-                    'tv-ep-preview-file',
-                ]
-            elif 'Sequence' in parenttypes:
-                templates = [
-                    'tv-sq-preview-file',
-                ]
 
-            publishFile = ft_pathUtils.getPaths(task, templates, version)
-            publishFile = os.path.normpath(publishFile[templates[0]])
-
-            projectName = task.getProject().getName()
-            if projectName not in ['rad', 'drm']:
-                if 'Asset Build' not in parenttypes:
-                    templates = [
-                        'shot.publish.file'
-                    ]
-                else:
-                    templates = [
-                        'asset.publish.file'
-                    ]
+            if 'Asset Build' not in parenttypes:
+                templates = [
+                    'shot.publish.file'
+                ]
+            else:
+                templates = [
+                    'asset.publish.file'
+                ]
 
                 self.log.debug(templates)
                 publishFile = ft_pathUtils.getPathsYaml(task,
