@@ -1,54 +1,51 @@
-import shutil
 import pyblish.api
-import pyblish_kredenc.utils as pyblish_utils
 from ft_studio import ft_pathUtils
 
 
 @pyblish.api.log
-class VersionUpWorkfile(pyblish.api.Conformer):
+class ValidateInitialScene(pyblish.api.Validator):
     """Versions up current workfile
 
     Expected data members:
     'ftrackData' - Necessary ftrack information gathered by select_ftrack
     """
 
-    families = ['scene']
+    families = ['new_scene']
     optional = True
-    label = 'Version up scene'
+    label = 'Initial scene'
 
     def process(self, context, instance):
 
         if context.has_data('version'):
 
-            sourcePath = context.data('currentFile')
+            version = context.data['version']
+            version = 'v' + str(version).zfill(3)
+            self.log.debug(version)
 
-            new_file = pyblish_utils.version_up(sourcePath)
-
-            version = ''.join(pyblish_utils.version_get(new_file, 'v'))
             taskid = context.data('ftrackData')['Task']['id']
+            self.log.debug(taskid)
 
             ftrack_data = context.data['ftrackData']
-            if 'Asset_Build' not in ftrack_data.keys():
-                templates = [
-                    'shot.work.file'
-                ]
-            else:
+            if 'Asset_Build' in ftrack_data.keys():
                 templates = [
                     'asset.work.file'
                 ]
+            else:
+                templates = [
+                    'shot.work.file'
+                ]
+
+
+            self.log.debug(templates)
+
             new_workFile = ft_pathUtils.getPathsYaml(taskid,
                                                      templateList=templates,
                                                      version=version)[0]
 
-            #################################################################
+            context.data['workfile'] = new_workFile
 
-            self.log.info('New workfile version created: \
+            self.log.info('New workfile path prepared: \
                             {}'.format(new_workFile))
-            self.log.info('Next time you opens this task, \
-                            start working on the version up file')
-
-            shutil.copy(sourcePath, new_workFile)
-            context.set_data('versionUpFile', value=new_workFile)
 
         else:
             raise pyblish.api.ValidationError(

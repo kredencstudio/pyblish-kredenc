@@ -1,7 +1,6 @@
 import os
-
 import pyblish.api
-from pyblish_kredenc.utils import versioning
+import pyblish_kredenc.utils as pyblish_utils
 
 
 class CollectSceneVersion(pyblish.api.Collector):
@@ -10,14 +9,21 @@ class CollectSceneVersion(pyblish.api.Collector):
         version (int, optional): version number of the publish
     """
 
-    order = pyblish.api.Collector.order + 0.1
+    order = pyblish.api.Collector.order + 0.11
+    label = 'Version'
 
     def process(self, context):
 
         filename = os.path.basename(context.data('currentFile'))
 
-        prefix, version = versioning.version_get(filename, 'v')
-        context.set_data('version', value=int(version))
-        self.log.info('Scene Version: %s' % context.data('version'))
+        # version data
+        try:
+            (prefix, version) = pyblish_utils.version_get(filename, 'v')
+        except:
+            self.log.warning('Cannot publish workfile which is not versioned.')
+            return
 
-        context.set_data('vprefix', value=prefix)
+        context.data['version'] = version
+        context.data['vprefix'] = prefix
+
+        self.log.info('Scene Version: %s' % context.data('version'))
