@@ -1,8 +1,19 @@
 import re
-import sys
+import tempfile
 
 
 print 'pyblish_utils loaded'
+
+
+def temp_dir(context):
+    """Provide a temporary directory in which to store extracted files"""
+    extract_dir = context.data('extractDir')
+
+    if not extract_dir:
+        extract_dir = tempfile.mkdtemp()
+        context.set_data('extractDir', value=extract_dir)
+
+    return extract_dir
 
 
 def version_get(string, prefix, suffix=None):

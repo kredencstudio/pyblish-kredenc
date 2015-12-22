@@ -33,7 +33,7 @@ class ValidateSettingsNuke(pyblish.api.Validator):
 
         # # validating first frame
         # local_first_frame = nuke.root()['first_frame'].value()
-        # 
+        #
         # online_first_frame = shot.getFrameStart()
         #
         # msg = 'First frame is incorrect.'

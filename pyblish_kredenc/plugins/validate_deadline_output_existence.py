@@ -8,7 +8,6 @@ class ValidateDeadlineOutputExistence(pyblish.api.Validator):
     """Validates that the output directory for the write nodes exists"""
 
     families = ['deadline.render']
-    version = (0, 1, 0)
     label = 'Output location existence'
     optional = True
 

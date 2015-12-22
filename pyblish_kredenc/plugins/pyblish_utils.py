@@ -61,3 +61,5 @@ def version_up(string):
         raise ValueError, 'Unable to version up File'
 
     return file
+
+def get_path

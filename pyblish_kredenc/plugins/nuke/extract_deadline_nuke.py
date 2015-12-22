@@ -1,8 +1,5 @@
 import pyblish.api
 
-import nuke
-
-
 @pyblish.api.log
 class ExtractDeadlineNuke(pyblish.api.Extractor):
     """ Gathers optional Nuke related data for Deadline
@@ -10,7 +7,6 @@ class ExtractDeadlineNuke(pyblish.api.Extractor):
 
     families = ['deadline.render']
     hosts = ['nuke']
-    version = (0, 1, 0)
 
     def process(self, instance):
 

@@ -1,13 +1,7 @@
 import os
 import pyblish.api
-import sys
-
 from ft_studio import ft_pathUtils
 reload(ft_pathUtils)
-
-import ftrack
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
-import pyblish_utils
 
 
 @pyblish.api.log
@@ -16,12 +10,9 @@ class ValidatePublishPath(pyblish.api.Validator):
 
     families = ['scene']
     version = (0, 1, 0)
-    label = 'Check Publish Path'
+    label = 'Publish Path'
 
     def process(self, context, instance):
-
-        sourcePath = os.path.normpath(context.data('currentFile'))
-        directory, file = os.path.split(sourcePath)
 
         version = context.data['version']
         version = 'v' + str(version).zfill(3)
@@ -29,8 +20,6 @@ class ValidatePublishPath(pyblish.api.Validator):
 
         taskid = context.data('ftrackData')['Task']['id']
         self.log.debug(taskid)
-        task = ftrack.Task(taskid)
-
 
         ftrack_data = context.data['ftrackData']
         if 'Asset_Build' not in ftrack_data.keys():
@@ -43,13 +32,13 @@ class ValidatePublishPath(pyblish.api.Validator):
             ]
 
         self.log.debug(templates)
-        publishFile = ft_pathUtils.getPathsYaml(task,
-                                                templateList=templates,
-                                                version=version)
 
-        publishFile = publishFile[0]
+        publishFiles = ft_pathUtils.getPathsYaml(taskid,
+                                                 templateList=templates,
+                                                 version=version)
+
+        publishFile = publishFiles[0]
         publishFolder = os.path.dirname(publishFile)
-        self.log.debug(publishFolder)
 
         if os.path.exists(publishFolder):
             context.set_data('publishFile', value=publishFile)

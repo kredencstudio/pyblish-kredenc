@@ -1,5 +1,4 @@
 import getpass
-
 import pyblish.api
 
 

@@ -1,48 +1,58 @@
 import pyblish.api
 import os
-import sys
-
-import pyblish_utils
+import pyblish_kredenc.utils as pyblish_utils
 
 
 @pyblish.api.log
-class SelectWorkfile(pyblish.api.Selector):
+class CollectScene(pyblish.api.Collector):
     """Selects current workfile"""
 
-    order = pyblish.api.Selector.order + 0.1
+    order = pyblish.api.Collector.order + 0.1
+    label = 'Scene'
 
     def process(self, context):
 
         current_file = context.data('currentFile')
         directory, filename = os.path.split(str(current_file))
 
-        # create instance
-        instance = context.create_instance(name=filename)
+        if current_file.lower() in ['', '.', 'untitled', 'root']:
+            self.log.warning('New scene! Preparing an initial workfile')
+            # create instance
+            instance = context.create_instance(name=filename)
+            instance.data['family'] = 'new_scene'
+            instance.data['path'] = ''
+            version = 1
 
-        instance.data['family'] = 'scene'
-        instance.data['path'] = current_file
-
-        # ftrack data
-        components = {}
-        if pyblish.api.current_host() == 'nuke':
-            components['nukescript'] = {'path': current_file}
         else:
-            components['scene'] = {'path': current_file}
+            # create instance
+            instance = context.create_instance(name=filename)
+            instance.data['family'] = 'scene'
+            instance.data['path'] = current_file
 
-        instance.set_data('ftrackComponents', value=components)
-        self.log.info("Added: %s" % components)
+            self.log.warning('Collected instance: {}'.format(instance))
+            self.log.warning('Scene path: {}'.format(current_file))
 
-        if 'asset' in str(current_file):
-            instance.set_data('ftrackAssetType', value='img')
+            # ftrack data
+            components = {}
+            if pyblish.api.current_host() == 'nuke':
+                components['nukescript'] = {'path': current_file}
+            else:
+                components['scene'] = {'path': current_file}
 
-        # version data
-        try:
-            (prefix, version) = pyblish_utils.version_get(filename, 'v')
-        except:
-            self.log.warning('Cannot publish workfile which is not versioned.')
-            return
+            instance.set_data('ftrackComponents', value=components)
+            self.log.info("Added: %s" % components)
 
-        context.set_data('version', value=version)
-        context.set_data('vprefix', value=prefix)
+            if 'asset' in str(current_file):
+                instance.set_data('ftrackAssetType', value='img')
+
+            # version data
+            try:
+                (prefix, version) = pyblish_utils.version_get(filename, 'v')
+            except:
+                self.log.warning('Cannot publish workfile which is not versioned.')
+                return
+
+        context.data['version'] = version
+        context.data['vprefix'] = prefix
 
         instance.add(current_file)

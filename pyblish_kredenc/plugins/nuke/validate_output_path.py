@@ -8,7 +8,7 @@ class ValidateOutputPath(pyblish.api.Validator):
 
     families = ['writeNode', 'prerenders']
     hosts = ['nuke']
-    version = (0, 1, 0)
+    label = 'Output Path'
 
     def process(self, instance):
         name = instance[0].name()

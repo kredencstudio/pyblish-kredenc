@@ -1,5 +1,4 @@
 import os
-
 import pyblish.api
 
 
@@ -9,7 +8,7 @@ class ValidatePrerendersOutput(pyblish.api.Validator):
 
     families = ['prerenders']
     hosts = ['nuke']
-    version = (0, 1, 0)
+    label = 'Pre-renders output'
 
     def process(self, instance):
         path = os.path.dirname(instance[0]['file'].value())

@@ -1,5 +1,4 @@
 import pyblish.api
-import ftrack
 
 
 @pyblish.api.log
@@ -9,7 +8,7 @@ class CollectFtrackAsset(pyblish.api.Collector):
     """
 
     order = pyblish.api.Collector.order + 0.41
-    label = 'Collect Asset Attributes'
+    label = 'Asset Attributes'
 
     def process(self, instance, context):
 
@@ -30,12 +29,14 @@ class CollectFtrackAsset(pyblish.api.Collector):
 
         if ftrack_data['Task']['type'] == 'Lighting':
             instance.data['ftrackAssetType'] = 'render'
-        if ftrack_data['Task']['type'] == 'COmpositing':
+        if ftrack_data['Task']['type'] == 'Compositing':
             instance.data['ftrackAssetType'] = 'comp'
         if ftrack_data['Task']['type'] == 'lookdev':
             instance.data['ftrackAssetType'] = 'img'
         if ftrack_data['Task']['type'] == 'Modeling':
             instance.data['ftrackAssetType'] = 'geo'
+        if 'camera' in instance.data['family']:
+            instance.data['ftrackAssetType'] = 'cam'
 
         self.log.info(instance.data['ftrackAssetType'])
         self.log.info(instance.data['ftrackAssetName'])

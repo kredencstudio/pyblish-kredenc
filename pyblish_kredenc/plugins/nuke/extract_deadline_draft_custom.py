@@ -5,10 +5,9 @@ import pyblish.api
 class ExtractDeadlineDraftCustom(pyblish.api.Extractor):
     """ Gathers optional Nuke related data for Deadline
     """
-    order = pyblish.api.Extractor.order + 0.55
+    order = pyblish.api.Extractor.order + 0.49
     families = ['deadline.render']
     hosts = ['nuke']
-    version = (0, 1, 0)
     optional = True
 
     def process(self, instance):
