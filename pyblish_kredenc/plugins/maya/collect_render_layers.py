@@ -1,12 +1,9 @@
 import os
-import traceback
-
 import pyblish.api
 import pymel
 import pymel.core
-import maya
 
-
+@pyblish.api.log
 class CollectRenderlayers(pyblish.api.Collector):
     """ Gathers all renderlayers
     TODO:

@@ -12,18 +12,17 @@ class ConformAsset(pyblish.api.Conformer):
     label = 'Conform Assets'
 
     def process(self, context, instance):
-        sourcePath = os.path.normpath(instance.data.get('extractDir'))
-        self.log.debug(sourcePath)
 
-        publishFile = instance.data('publishFile')
-        self.log.debug(publishFile)
+        extractedPaths = [v for k,v in instance.data.items() if k.startswith('outputPath')]
+        for path in extractedPaths:
 
-        self.log.info('Copying model to location: {}'.format(publishFile))
-        shutil.copy(sourcePath, publishFile)
+            # sourcePath = os.path.normpath(instance.data.get('outputPath'))
+            sourcePath = path
+            self.log.debug(sourcePath)
+            filename, ext = os.path.splitext(sourcePath)
+            publishFile = instance.data('publishFile')
+            publishFile = os.path.splitext(publishFile)[0] + ext
+            self.log.debug(publishFile)
 
-        # ftrack data
-        components = instance.data['ftrackComponents']
-        self.log.debug(str(components))
-        components[instance.data['variation']]['path'] = publishFile
-        self.log.debug(str(components))
-        instance.data['ftrackComponents'] = components
+            self.log.info('Copying model to location: {}'.format(publishFile))
+            shutil.copy(sourcePath, publishFile)

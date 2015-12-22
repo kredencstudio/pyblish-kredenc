@@ -1,8 +1,5 @@
-import os
-
 import pymel
 import pyblish.api
-import ftrack
 
 
 @pyblish.api.log

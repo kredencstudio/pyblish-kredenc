@@ -3,11 +3,11 @@ import pyblish.api
 import maya.cmds as cmds
 
 @pyblish.api.log
-class CollectPreview(pyblish.api.Collector):
+class CollectCameras(pyblish.api.Collector):
 
     order = pyblish.api.Collector.order + 0.2
     hosts = ["maya"]
-    label = "Collect Preview"
+    label = "Collect Cameras"
 
     def process(self, context):
         for camera_shape in cmds.ls("*_CAM*",
@@ -19,10 +19,11 @@ class CollectPreview(pyblish.api.Collector):
             camera = cmds.listRelatives(camera_shape, parent=True)[0]
 
             # Use short name
-            name = cmds.ls(camera, long=False)[0].rsplit("_CAM", 1)[0]
+            name = cmds.ls(camera, long=False)[0].lower()
 
-            instance = context.create_instance(name=name, family='preview')
+            instance = context.create_instance(name=name, family='camera')
             instance.add(camera)
+
             attrs = cmds.listAttr(camera, userDefined=True) or list()
 
             self.log.info("Found: %s" % camera)
@@ -41,8 +42,7 @@ class CollectPreview(pyblish.api.Collector):
                 instance.data[attr] = value
 
             # ftrack data
-            components = {'preview': {'path': '',
-                                      'reviewable': True,
-                                      }}
+            components = {'mayaAscii': {'path': ''}}
+
             instance.data['ftrackComponents'] = components
             self.log.info("Added: %s" % components)
