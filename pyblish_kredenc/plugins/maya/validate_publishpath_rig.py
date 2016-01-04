@@ -12,7 +12,7 @@ class ValidatePublishPathAssets(pyblish.api.Validator):
     'version' - version of publish
     """
 
-    families = ['model']
+    families = ['rig']
     label = 'Validate Asset Paths'
 
     def process(self, context, instance):

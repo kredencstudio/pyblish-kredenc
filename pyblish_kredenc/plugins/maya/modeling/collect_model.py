@@ -1,6 +1,4 @@
-import os
 import pyblish.api
-import pyblish_maya
 import pymel
 
 
@@ -9,11 +7,6 @@ class CollectModel(pyblish.api.Collector):
     """Inject all models from the scene into the context"""
 
     def process(self, context):
-
-        # if not os.environ["TASK"] == "modeling":
-        #     return self.log.info("No model found")
-
-        # name = os.environ["ITEM"]
 
         sets = pymel.core.ls(sets=True)
 

@@ -35,6 +35,8 @@ class CollectFtrackAsset(pyblish.api.Collector):
             instance.data['ftrackAssetType'] = 'img'
         if ftrack_data['Task']['type'] == 'Modeling':
             instance.data['ftrackAssetType'] = 'geo'
+        if ftrack_data['Task']['type'] == 'Rigging':
+            instance.data['ftrackAssetType'] = 'rig'
         if 'camera' in instance.data['family']:
             instance.data['ftrackAssetType'] = 'cam'
 
