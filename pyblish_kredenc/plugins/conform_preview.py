@@ -38,9 +38,12 @@ class ConformFlipbook(pyblish.api.Conformer):
                 ]
 
             self.log.debug(templates)
+            root = context.data('ftrackData')['Project']['root']
+            self.log.debug(root)
             publishFile = ft_pathUtils.getPathsYaml(taskid,
                                                     templateList=templates,
-                                                    version=version)
+                                                    version=version,
+                                                    root=root)
 
             path, extension = os.path.splitext(publishFile[0])
             publishFile = path + ".mov"

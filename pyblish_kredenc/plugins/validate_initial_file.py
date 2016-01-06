@@ -25,6 +25,9 @@ class ValidateInitialScene(pyblish.api.Validator):
             taskid = context.data('ftrackData')['Task']['id']
             self.log.debug(taskid)
 
+            root = context.data('ftrackData')['Project']['root']
+            self.log.debug(root)
+
             ftrack_data = context.data['ftrackData']
             if 'Asset_Build' in ftrack_data.keys():
                 templates = [
@@ -40,7 +43,8 @@ class ValidateInitialScene(pyblish.api.Validator):
 
             new_workFile = ft_pathUtils.getPathsYaml(taskid,
                                                      templateList=templates,
-                                                     version=version)[0]
+                                                     version=version,
+                                                     root=root)[0]
 
             context.data['workfile'] = new_workFile
 

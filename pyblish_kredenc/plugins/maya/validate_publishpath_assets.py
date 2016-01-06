@@ -24,6 +24,9 @@ class ValidatePublishPathAssets(pyblish.api.Validator):
         taskid = context.data('ftrackData')['Task']['id']
         self.log.debug(taskid)
 
+        root = context.data('ftrackData')['Project']['root']
+        self.log.debug(root)
+
         ftrack_data = context.data['ftrackData']
         if 'Asset_Build' not in ftrack_data.keys():
             templates = [
@@ -42,7 +45,8 @@ class ValidatePublishPathAssets(pyblish.api.Validator):
         publishFile = ft_pathUtils.getPathsYaml(taskid,
                                                 templateList=templates,
                                                 version=version,
-                                                object_name=object_name)
+                                                object_name=object_name
+                                                root=root)
         publishFile = publishFile[0]
         instance.data['publishFile'] = publishFile
         self.log.debug('saving publishFile to instance: {}'.format(publishFile))

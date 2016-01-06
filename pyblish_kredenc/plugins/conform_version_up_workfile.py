@@ -36,9 +36,14 @@ class VersionUpWorkfile(pyblish.api.Conformer):
                 templates = [
                     'asset.work.file'
                 ]
+
+            root = context.data('ftrackData')['Project']['root']
+            self.log.debug(root)
+
             new_workFile = ft_pathUtils.getPathsYaml(taskid,
                                                      templateList=templates,
-                                                     version=version)[0]
+                                                     version=version
+                                                     root=root)[0]
 
             #################################################################
 

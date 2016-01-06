@@ -22,6 +22,7 @@ class CollectScene(pyblish.api.Collector):
             instance.data['family'] = 'new_scene'
             instance.data['path'] = ''
             version = 1
+            prefix = 'v'
 
         else:
             # create instance

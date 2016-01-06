@@ -26,6 +26,9 @@ class IntegrateCamera(pyblish.api.Conformer):
 
         taskid = context.data('ftrackData')['Task']['id']
 
+        root = context.data('ftrackData')['Project']['root']
+        self.log.debug(root)
+
         ftrack_data = context.data['ftrackData']
         if 'Asset_Build' in ftrack_data.keys():
             templates = [
@@ -39,7 +42,8 @@ class IntegrateCamera(pyblish.api.Conformer):
 
         publishFile = ft_pathUtils.getPathsYaml(taskid,
                                                 templateList=templates,
-                                                version=version)[0]
+                                                version=version,
+                                                root=root)[0]
 
         self.log.debug(publishFile)
 
