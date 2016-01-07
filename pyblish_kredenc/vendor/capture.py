@@ -34,7 +34,8 @@ def capture(camera=None,
             camera_options=None,
             viewport_options=None,
             display_options=None,
-            complete_filename=None):
+            complete_filename=None,
+            quality=100):
     """Playblast in an independent panel
 
     Arguments:
@@ -98,7 +99,7 @@ def capture(camera=None,
     if maintain_aspect_ratio:
         ratio = cmds.getAttr("defaultResolution.deviceAspectRatio")
         height = width / ratio
-        
+
     start_frame = start_frame or cmds.playbackOptions(minTime=True, query=True)
     end_frame = end_frame or cmds.playbackOptions(maxTime=True, query=True)
 
@@ -134,7 +135,7 @@ def capture(camera=None,
                                 compression=compression,
                                 format=format,
                                 percent=100,
-                                quality=100,
+                                quality=quality,
                                 viewer=viewer,
                                 startTime=start_frame,
                                 endTime=end_frame,

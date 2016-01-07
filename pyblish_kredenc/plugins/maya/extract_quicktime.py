@@ -104,6 +104,7 @@ class ExtractQuicktime(pyblish.api.Extractor):
                 viewport_options=view_opts,
                 camera_options=cam_opts,
                 overwrite=True,
+                quality=50,
                 )
 
 
