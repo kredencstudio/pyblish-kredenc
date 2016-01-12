@@ -5,6 +5,7 @@ import pyblish.api
 from pyblish_kredenc.vendor import capture
 
 from maya import cmds
+import pymel.core as pm
 
 
 @pyblish.api.log
@@ -62,6 +63,15 @@ class ExtractQuicktime(pyblish.api.Extractor):
         view_opts.dtx = True
         view_opts.grid = False
 
+        # Set display settings
+
+        display_options = capture.DisplayOptions()
+        display_options.background = pm.displayRGBColor('background', q=True)
+        display_options.backgroundTop = pm.displayRGBColor('backgroundTop', q=True)
+        display_options.backgroundBottom = pm.displayRGBColor('backgroundBottom', q=True)
+        display_options.displayGradient = pm.displayPref(dgr=True, q=True)
+
+
         if 'show' in instance.data():
             for nodetype in instance.data('show').split():
                 self.log.info("Overriding show: %s" % nodetype)
@@ -105,6 +115,7 @@ class ExtractQuicktime(pyblish.api.Extractor):
                 camera_options=cam_opts,
                 overwrite=True,
                 quality=50,
+                display_options=display_options,
                 )
 
 
