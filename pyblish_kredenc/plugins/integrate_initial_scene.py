@@ -11,6 +11,7 @@ class IntegrateInitialScene(pyblish.api.Integrator):
     hosts = ['nuke', 'maya']
     optional = True
     label = 'Initial Scene'
+    order = pyblish.api.Integrator.order + 0.1
 
     def process(self, context, instance):
 
