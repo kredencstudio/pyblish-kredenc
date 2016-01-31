@@ -12,8 +12,8 @@ class ExtractDeadlineNuke(pyblish.api.Extractor):
 
         # getting job data
         job_data = {}
-        if instance.has_data('deadlineJobData'):
-            job_data = instance.data('deadlineJobData').copy()
+        if instance.has_data('deadlineData'):
+            job_data = instance.data['deadlineData']['job'].copy()
 
         # setting optional data
         job_data['Pool'] = 'comp'
@@ -22,4 +22,15 @@ class ExtractDeadlineNuke(pyblish.api.Extractor):
         job_data['Group'] = group
         job_data['LimitGroups'] = group
 
-        instance.set_data('deadlineJobData', value=job_data)
+        instance.data['deadlineData']['job'] = job_data
+
+        # getting plugin data
+        plugin_data = {}
+        if instance.has_data('deadlineData'):
+            plugin_data = instance.data['deadlineData']['plugin'].copy()
+
+        plugin_data['BatchMode'] = 'True'
+        plugin_data['EnforceRenderOrder'] = 'False'
+        plugin_data['NukeX'] = 'False'
+
+        instance.data['deadlineData']['plugin'] = plugin_data
