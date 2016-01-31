@@ -21,7 +21,6 @@ class ValidatePublishPath(pyblish.api.Validator):
         taskid = context.data('ftrackData')['Task']['id']
         self.log.debug(taskid)
 
-
         ftrack_data = context.data['ftrackData']
         if 'Asset_Build' not in ftrack_data.keys():
             templates = [

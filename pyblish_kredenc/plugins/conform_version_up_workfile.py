@@ -42,7 +42,7 @@ class VersionUpWorkfile(pyblish.api.Conformer):
 
             new_workFile = ft_pathUtils.getPathsYaml(taskid,
                                                      templateList=templates,
-                                                     version=version
+                                                     version=version,
                                                      root=root)[0]
 
             #################################################################
