@@ -6,12 +6,12 @@ import pyblish_kredenc.utils as pyblish_utils
 reload(pyblish_utils)
 
 
-class ExtractMayaAscii(pyblish.api.Extractor):
-    """Extract as Maya Ascii"""
+class ExtractMayaOBJ(pyblish.api.Extractor):
+    """Extract as Maya OBJ"""
 
-    label = "Maya Ascii"
+    label = "OBJ"
     hosts = ["maya"]
-    families = ["model", "rig", 'camera']
+    families = ["model"]
     optional = True
 
     def process(self, instance):
@@ -24,7 +24,6 @@ class ExtractMayaAscii(pyblish.api.Extractor):
         # Perform extraction
         self.log.info("Performing extraction..")
         with pyblish_maya.maintained_selection():
-            self.log.info("instance.." + str(instance))
             mc.select(instance)
             # cmds.select(instance, noExpand=True)
             path = mc.file(path,
@@ -35,9 +34,9 @@ class ExtractMayaAscii(pyblish.api.Extractor):
                            channels=False,
                            constraints=False,
                            force=True,
-                           type='mayaAscii')
+                           type='OBJexport')
 
-            instance.data['outputPath_ma'] = path
+            instance.data['outputPath_obj'] = path
 
         self.log.info("Extracted instance '{0}' to: {1}".format(
             instance.name, path))

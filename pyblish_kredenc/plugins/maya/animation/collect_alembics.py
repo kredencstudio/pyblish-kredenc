@@ -2,29 +2,37 @@ import pymel
 import pyblish.api
 
 
-class CollectAlembics(pyblish.api.Collector):
+class CollectCache(pyblish.api.Collector):
     """
+    Collect Animation Caches
     """
 
     def process(self, context):
 
-        alembic_nodes = []
+        sets = pymel.core.ls(sets=True)
 
-        for t in pymel.core.ls(type='transform'):
-            if pymel.core.general.hasAttr(t, 'pyblish_alembic'):
-                alembic_nodes.append(t)
+        for obj in sets:
 
-        for node in alembic_nodes:
+            extensions = ['cache']
 
-            instance = context.create_instance(name=str(node))
-            instance.set_data('family', value='alembic')
-            instance.add(node)
+            if any(ext in obj.name().lower() for ext in extensions):
 
-            # adding ftrack data to activate processing
-            ftrack_data = context.data('ftrackData')
+                self.log.info("Set: {}".format(obj))
+                name = obj.name().split('_')[0]
 
-            instance.set_data('ftrackComponents', value={})
-            instance.set_data('ftrackAssetType', value='cache')
+                members = obj.members()
+                nodes = []
 
-            asset_name = ftrack_data['Task']['name']
-            instance.set_data('ftrackAssetName', value=asset_name)
+                self.log.info("Collecting instance contents: {}".format(name))
+
+                for mesh in pymel.core.ls(members, dag=True, exactType='transform'):
+                    nodes.append(mesh)
+
+                self.log.info(nodes)
+
+                instance = context.create_instance(name, family="cache")
+                instance[:] = nodes
+
+                components = {}
+                components[name] = {'path': ''}
+                instance.data['ftrackComponents'] = components

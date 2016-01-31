@@ -4,7 +4,7 @@ reload(ft_pathUtils)
 
 
 @pyblish.api.log
-class ValidatePublishPathAssets(pyblish.api.Validator):
+class ValidatePublishPathCache(pyblish.api.Validator):
     """Copies current workfile to it's final location
 
     Expected data members:
@@ -12,8 +12,8 @@ class ValidatePublishPathAssets(pyblish.api.Validator):
     'version' - version of publish
     """
 
-    families = ['model']
-    label = 'Validate Asset Paths'
+    families = ['cache']
+    label = 'Validate Cache Paths'
 
     def process(self, context, instance):
 
@@ -28,24 +28,21 @@ class ValidatePublishPathAssets(pyblish.api.Validator):
         self.log.debug(root)
 
         ftrack_data = context.data['ftrackData']
-        if 'Asset_Build' not in ftrack_data.keys():
+        if 'Asset_Build' in ftrack_data.keys():
             templates = [
-                'shot.publish.file'
             ]
         else:
             templates = [
-                'asset.publish.file'
+                'shot.abccache.file'
             ]
 
-        object_name = None
-        if instance.data.get('variation'):
-            object_name = instance.data['variation']
+        object_name = instance.data['name']
 
         self.log.debug(templates)
         publishFile = ft_pathUtils.getPathsYaml(taskid,
                                                 templateList=templates,
                                                 version=version,
-                                                variant=object_name,
+                                                object_name=object_name,
                                                 root=root)
         publishFile = publishFile[0]
         instance.data['publishFile'] = publishFile
@@ -54,6 +51,6 @@ class ValidatePublishPathAssets(pyblish.api.Validator):
         # ftrack data
         components = instance.data['ftrackComponents']
         self.log.debug(str(components))
-        components[instance.data['variation']]['path'] = publishFile
+        components[object_name]['path'] = publishFile
         self.log.debug(str(components))
         instance.data['ftrackComponents'] = components
