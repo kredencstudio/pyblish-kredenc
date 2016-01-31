@@ -30,7 +30,7 @@ class CollectFtrackAsset(pyblish.api.Collector):
         if ftrack_data['Task']['type'] == 'Lighting':
             instance.data['ftrackAssetType'] = 'render'
         if ftrack_data['Task']['type'] == 'Compositing':
-            instance.data['ftrackAssetType'] = 'comp'
+            instance.data['ftrackAssetType'] = 'img'
         if ftrack_data['Task']['type'] == 'lookdev':
             instance.data['ftrackAssetType'] = 'img'
         if ftrack_data['Task']['type'] == 'Modeling':
@@ -39,6 +39,8 @@ class CollectFtrackAsset(pyblish.api.Collector):
             instance.data['ftrackAssetType'] = 'rig'
         if 'camera' in instance.data['family']:
             instance.data['ftrackAssetType'] = 'cam'
+        if 'cache' in instance.data['family']:
+            instance.data['ftrackAssetType'] = 'cache'
 
         self.log.info(instance.data['ftrackAssetType'])
         self.log.info(instance.data['ftrackAssetName'])
