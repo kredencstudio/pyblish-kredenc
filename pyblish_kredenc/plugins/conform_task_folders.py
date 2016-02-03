@@ -4,24 +4,21 @@ import os
 
 @pyblish.api.log
 class IntegrateTaskFolders(pyblish.api.Integrator):
-    """Versions up current workfile
-
-    Expected data members:
-    'ftrackData' - Necessary ftrack information gathered by select_ftrack
+    """Creates task folders if non-existent
     """
 
     families = ['new_scene']
     optional = True
     label = 'Task Folders'
 
-    def process(self, context, instance):
+    def process(self, instance):
 
-        if 'workfile' in context.data:
+        if 'workfile' in instance.context.data:
 
-            workfile = context.data['workfile']
+            workfile = instance.context.data['workfile']
             workFolder = os.path.dirname(workfile)
             publishFolder = os.path.join(os.path.dirname(workFolder), 'publish')
-            version = context.data['version']
+            version = instance.context.data['version']
             version = 'v' + str(version).zfill(3)
             self.log.debug(version)
 
@@ -37,5 +34,5 @@ class IntegrateTaskFolders(pyblish.api.Integrator):
 
         else:
             raise pyblish.api.ValidationError(
-                "Can't find versioned up filename in context. \
+                "Can't find versioned up filename in instance.context. \
                 workfile probably doesn't have a version.")

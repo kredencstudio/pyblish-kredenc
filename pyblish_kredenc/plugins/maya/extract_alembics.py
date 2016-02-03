@@ -12,7 +12,7 @@ class ExtractAlembic(pyblish.api.Extractor):
     families = ['alembic', 'model', 'cache', 'camera']
     optional = True
 
-    def process(self, instance, context):
+    def process(self, instance):
 
         self.log.info(pyblish_utils)
         dir_path = pyblish_utils.temp_dir(instance)

@@ -12,11 +12,13 @@ class VersionUpWorkfile(pyblish.api.Conformer):
     'ftrackData' - Necessary ftrack information gathered by select_ftrack
     """
 
-    families = ['scene']
     optional = True
     label = 'Version up scene'
 
-    def process(self, context, instance):
+    def process(self, context):
+
+        if 'new_scene' in context:
+            return
 
         if context.has_data('version'):
 

@@ -35,7 +35,6 @@ class CollectModel(pyblish.api.Collector):
                 self.log.info("Model Variation: {}".format(variation))
 
                 components = {}
-                components[variation] = {'path': ''}
                 instance.data['ftrackComponents'] = components
 
                 self.log.info("Successfully collected %s" % name)

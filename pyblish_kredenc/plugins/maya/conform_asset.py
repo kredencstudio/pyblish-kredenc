@@ -11,7 +11,7 @@ class ConformAsset(pyblish.api.Conformer):
     families = ['model', 'rig', 'cache']
     label = 'Conform Assets'
 
-    def process(self, context, instance):
+    def process(self, instance):
 
         extractedPaths = [v for k,v in instance.data.items() if k.startswith('outputPath')]
         self.log.debug(extractedPaths)
@@ -28,6 +28,13 @@ class ConformAsset(pyblish.api.Conformer):
 
             self.log.info('Copying model from location: {}'.format(sourcePath))
             self.log.info('Copying model to location: {}'.format(publishFile))
+
+            components = instance.data['ftrackComponents']
+            self.log.debug('components: {}'.format(str(components)))
+
+            components[str(ext)[1:]] = {'path': publishFile}
+
+            self.log.debug('components2: {}'.format(str(components)))
 
             if not os.path.exists(os.path.dirname(publishFile)):
                 os.mkdirs(os.path.dirname(publishFile))

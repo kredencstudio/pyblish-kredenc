@@ -4,31 +4,28 @@ from ft_studio import ft_pathUtils
 
 @pyblish.api.log
 class ValidateInitialScene(pyblish.api.Validator):
-    """Versions up current workfile
-
-    Expected data members:
-    'ftrackData' - Necessary ftrack information gathered by select_ftrack
+    """Checks if we are able to create new workfile
     """
 
     families = ['new_scene']
     optional = True
     label = 'Initial scene'
 
-    def process(self, context, instance):
+    def process(self, instance):
 
-        if context.has_data('version'):
+        if instance.context.has_data('version'):
 
-            version = context.data['version']
+            version = instance.context.data['version']
             version = 'v' + str(version).zfill(3)
             self.log.debug(version)
 
-            taskid = context.data('ftrackData')['Task']['id']
+            taskid = instance.context.data('ftrackData')['Task']['id']
             self.log.debug(taskid)
 
-            root = context.data('ftrackData')['Project']['root']
+            root = instance.context.data('ftrackData')['Project']['root']
             self.log.debug(root)
 
-            ftrack_data = context.data['ftrackData']
+            ftrack_data = instance.context.data['ftrackData']
             if 'Asset_Build' in ftrack_data.keys():
                 templates = [
                     'asset.work.file'
@@ -46,12 +43,12 @@ class ValidateInitialScene(pyblish.api.Validator):
                                                      version=version,
                                                      root=root)[0]
 
-            context.data['workfile'] = new_workFile
+            instance.context.data['workfile'] = new_workFile
 
             self.log.info('New workfile path prepared: \
                             {}'.format(new_workFile))
 
         else:
             raise pyblish.api.ValidationError(
-                "Can't find versioned up filename in context. \
+                "Can't find versioned up filename in instance.context. \
                 workfile probably doesn't have a version.")

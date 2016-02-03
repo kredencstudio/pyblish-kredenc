@@ -13,7 +13,7 @@ class ExtractDeadlineFtrack(pyblish.api.Extractor):
     optional = True
     label = 'Ftrack to Deadline'
 
-    def process(self, context, instance):
+    def process(self, instance):
 
         # getting job data
         job_data = {}
@@ -23,7 +23,7 @@ class ExtractDeadlineFtrack(pyblish.api.Extractor):
         # getting data
         username = getpass.getuser()
 
-        ftrack_data = context.data('ftrackData')
+        ftrack_data = instance.context.data('ftrackData')
 
         project_name = ftrack_data['Project']['code']
         project_id = ftrack_data['Project']['id']
@@ -41,7 +41,7 @@ class ExtractDeadlineFtrack(pyblish.api.Extractor):
             version_id = ''
             version_used_id = instance.data('ftrackVersionUsedID')
 
-        version_number = context.data('version')
+        version_number = instance.context.data('version')
 
         component_name = 'main'
         if instance.has_data('ftrackComponents'):

@@ -15,11 +15,11 @@ class ConformScene(pyblish.api.Conformer):
     families = ['scene']
     label = 'Scene'
 
-    def process(self, context, instance):
-        sourcePath = os.path.normpath(context.data('currentFile'))
+    def process(self, instance):
+        sourcePath = os.path.normpath(instance.context.data('currentFile'))
         self.log.debug(sourcePath)
 
-        publishFile = context.data('publishFile')
+        publishFile = instance.context.data('publishFile')
         self.log.debug(publishFile)
 
         shutil.copy(sourcePath, publishFile)
@@ -29,9 +29,11 @@ class ConformScene(pyblish.api.Conformer):
         self.log.debug(str(components))
 
         if pyblish.api.current_host() == 'nuke':
-            components['nukescript']['path'] = publishFile
+            components = {'nukescript': {'path': publishFile}}
+            # components['nukescript']['path'] = publishFile
         else:
-            components['scene']['path'] = publishFile
+            components = {'scene': {'path': publishFile}}
+            # components['scene']['path'] = publishFile
 
         instance.set_data('ftrackComponents', value=components)
         self.log.info('Copying Workfile to location: {}'.format(publishFile))

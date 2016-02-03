@@ -18,18 +18,18 @@ class IntegrateCamera(pyblish.api.Conformer):
     version = (0, 1, 0)
     label = 'Camera'
 
-    def process(self, instance, context):
+    def process(self, instance):
 
         # Get Target Path
-        version = context.data('version')
+        version = instance.context.data('version')
         version = 'v' + str(version).zfill(3)
 
-        taskid = context.data('ftrackData')['Task']['id']
+        taskid = instance.context.data('ftrackData')['Task']['id']
 
-        root = context.data('ftrackData')['Project']['root']
+        root = instance.context.data('ftrackData')['Project']['root']
         self.log.debug(root)
 
-        ftrack_data = context.data['ftrackData']
+        ftrack_data = instance.context.data['ftrackData']
         if 'Asset_Build' in ftrack_data.keys():
             templates = [
                 'asset.cam.file'

@@ -7,7 +7,7 @@ class CollectPreview(pyblish.api.Collector):
 
     order = pyblish.api.Collector.order + 0.2
     hosts = ["maya"]
-    label = "Collect Preview"
+    label = "Collect Review"
 
     def process(self, context):
         for camera_shape in cmds.ls("*_CAM*",
@@ -21,7 +21,7 @@ class CollectPreview(pyblish.api.Collector):
             # Use short name
             name = cmds.ls(camera, long=False)[0].rsplit("_CAM", 1)[0]
 
-            instance = context.create_instance(name=name, family='preview')
+            instance = context.create_instance(name=name, family='review')
             instance.add(camera)
             attrs = cmds.listAttr(camera, userDefined=True) or list()
 
@@ -41,8 +41,9 @@ class CollectPreview(pyblish.api.Collector):
                 instance.data[attr] = value
 
             # ftrack data
-            components = {'preview': {'path': '',
-                                      'reviewable': True,
-                                      }}
+            components = {'review': {'path': '',
+                                     'reviewable': True,
+                                     }}
             instance.data['ftrackComponents'] = components
             self.log.info("Added: %s" % components)
+            self.log.info("components: %s" % instance.data['ftrackComponents'])

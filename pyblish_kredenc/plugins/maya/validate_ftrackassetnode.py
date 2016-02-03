@@ -22,9 +22,9 @@ class ValidateFtrackAssetNode(pyblish.api.Validator):
     hyperLayout
     """
 
-    def process(self, instance, context):
+    def process(self, instance):
 
-        if not context.has_data('ftrackData'):
+        if not instance.context.has_data('ftrackData'):
             return
 
         check = True

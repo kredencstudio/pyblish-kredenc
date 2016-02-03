@@ -15,19 +15,19 @@ class ValidatePublishPathAssets(pyblish.api.Validator):
     families = ['model']
     label = 'Validate Asset Paths'
 
-    def process(self, context, instance):
+    def process(self, instance):
 
-        version = context.data['version']
+        version = instance.context.data['version']
         version = 'v' + str(version).zfill(3)
         self.log.debug(version)
 
-        taskid = context.data('ftrackData')['Task']['id']
+        taskid = instance.context.data('ftrackData')['Task']['id']
         self.log.debug(taskid)
 
-        root = context.data('ftrackData')['Project']['root']
+        root = instance.context.data('ftrackData')['Project']['root']
         self.log.debug(root)
 
-        ftrack_data = context.data['ftrackData']
+        ftrack_data = instance.context.data['ftrackData']
         if 'Asset_Build' not in ftrack_data.keys():
             templates = [
                 'shot.publish.file'
@@ -54,6 +54,6 @@ class ValidatePublishPathAssets(pyblish.api.Validator):
         # ftrack data
         components = instance.data['ftrackComponents']
         self.log.debug(str(components))
-        components[instance.data['variation']]['path'] = publishFile
+        components = {instance.data['variation']: {'path': publishFile}}
         self.log.debug(str(components))
         instance.data['ftrackComponents'] = components

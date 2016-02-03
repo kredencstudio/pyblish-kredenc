@@ -27,15 +27,15 @@ class ValidateVersionNumber(pyblish.api.Validator):
         return (matches[-1:][0][1], re.search("\d+", matches[-1:][0]).group())
 
 
-    def process(self, instance, context):
-        # current_file = context.data('currentFile')
+    def process(self, instance):
+        # current_file = instance.context.data('currentFile')
         # current_v = int(self.version_get(current_file, 'v')[1])
 
         output_path = instance.data('outputPath')
         if not output_path:
             output_path = instance.data('deadlineData')['job']['OutputFilename0']
 
-        current_v = int(context.data('version'))
+        current_v = int(instance.context.data('version'))
 
         output_v = int(self.version_get(output_path, 'v')[1])
 
@@ -45,7 +45,7 @@ class ValidateVersionNumber(pyblish.api.Validator):
             raise Exception(msg)
 
 
-    def repair(self, instance, context):
+    def repair(self, instance):
         """Sets the version number of the output to the same as the file name
         """
         current_file = instance.context.data('currentFile')
@@ -53,7 +53,7 @@ class ValidateVersionNumber(pyblish.api.Validator):
         if not output_path:
             output_path = instance.data('deadlineJobData')['job']['OutputFilename0']
 
-        current_v = int(context.data('version'))
+        current_v = int(instance.context.data('version'))
 
         v = int(self.version_get(output_path, 'v')[1])
         new_path = self.version_set(output_path, 'v', v, current_v)

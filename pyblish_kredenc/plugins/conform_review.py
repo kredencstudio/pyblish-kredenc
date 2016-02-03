@@ -6,7 +6,7 @@ from ft_studio import ft_pathUtils
 
 @pyblish.api.log
 class ConformFlipbook(pyblish.api.Conformer):
-    """Copies Preview movie to it's final location
+    """Copies Review movie to it's final location
 
      Expected data members:
     'ftrackData' - Necessary ftrack information gathered by select_ftrack
@@ -14,20 +14,20 @@ class ConformFlipbook(pyblish.api.Conformer):
     'version' - version of publish
     """
 
-    families = ['preview']
-    label = 'Preview'
+    families = ['review']
+    label = 'Review'
 
-    def process(self, instance, context):
+    def process(self, instance):
 
         if instance.has_data('outputPath'):
             sourcePath = os.path.normpath(instance.data('outputPath'))
 
-            version = context.data('version')
+            version = instance.context.data('version')
             version = 'v' + str(version).zfill(3)
 
-            taskid = context.data('ftrackData')['Task']['id']
+            taskid = instance.context.data('ftrackData')['Task']['id']
 
-            ftrack_data = context.data['ftrackData']
+            ftrack_data = instance.context.data['ftrackData']
             if 'Asset_Build' in ftrack_data.keys():
                 templates = [
                     'asset.publish.file'
@@ -38,7 +38,7 @@ class ConformFlipbook(pyblish.api.Conformer):
                 ]
 
             self.log.debug(templates)
-            root = context.data('ftrackData')['Project']['root']
+            root = instance.context.data('ftrackData')['Project']['root']
             self.log.debug(root)
 
             publishFile = ft_pathUtils.getPathsYaml(taskid,
@@ -55,10 +55,12 @@ class ConformFlipbook(pyblish.api.Conformer):
             shutil.move(sourcePath, publishFile)
 
             # ftrack data
-            components = instance.data('ftrackComponents')
-            components['preview']['path'] = publishFile
+            components = instance.data['ftrackComponents'].copy()
+            components['review']['path'] = publishFile
 
-            instance.set_data('ftrackComponents', value=components)
+
+            instance.data['ftrackComponents'] = components
+            self.log.debug('Components3: {}'.format(components))
 
         else:
-            self.log.warning('preview wasn\'t created so it can\'t be published')
+            self.log.warning('review wasn\'t created so it can\'t be published')

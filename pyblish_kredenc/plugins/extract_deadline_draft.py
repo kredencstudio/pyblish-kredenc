@@ -6,10 +6,8 @@ class ExtractDeadlineDraft(pyblish.api.Extractor):
     """ Gathers Draft related data for Deadline
     """
 
-    order = pyblish.api.Extractor.order + 0.41
+    order = pyblish.api.Extractor.order + 0.4
     families = ['deadline.render']
-    hosts = ['*']
-    version = (0, 1, 0)
     optional = True
     label = 'Draft to Deadline'
 

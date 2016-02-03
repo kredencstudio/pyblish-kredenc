@@ -13,11 +13,11 @@ class IntegrateInitialScene(pyblish.api.Integrator):
     label = 'Initial Scene'
     order = pyblish.api.Integrator.order + 0.1
 
-    def process(self, context, instance):
+    def process(self, instance):
 
-        if 'workfile' in context.data:
+        if 'workfile' in instance.context.data:
             host = pyblish.api.current_host()
-            workfile = context.data['workfile']
+            workfile = instance.context.data['workfile']
             self.log.info("workfile '%s'" % workfile)
 
             if host == 'nuke':
@@ -36,4 +36,4 @@ class IntegrateInitialScene(pyblish.api.Integrator):
 
         else:
             raise pyblish.api.ValidationError(
-                "Can't find workfile in context.")
+                "Can't find workfile in instance.context.")

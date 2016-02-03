@@ -5,7 +5,7 @@ import pyblish_kredenc.utils as pyblish_utils
 
 @pyblish.api.log
 class CollectScene(pyblish.api.Collector):
-    """Selects current workfile"""
+    """Collects current workfile"""
 
     order = pyblish.api.Collector.order + 0.1
     label = 'Scene'
@@ -18,7 +18,7 @@ class CollectScene(pyblish.api.Collector):
         if current_file.lower() in ['', '.', 'untitled', 'root']:
             self.log.warning('New scene! Preparing an initial workfile')
             # create instance
-            instance = context.create_instance(name=filename)
+            instance = context.create_instance(name='new_scene')
             instance.data['family'] = 'new_scene'
             instance.data['path'] = ''
             version = 1
@@ -40,7 +40,7 @@ class CollectScene(pyblish.api.Collector):
             else:
                 components['scene'] = {'path': current_file}
 
-            instance.set_data('ftrackComponents', value=components)
+            instance.data['ftrackComponents'] = components
             self.log.info("Added: %s" % components)
 
             if 'asset' in str(current_file):

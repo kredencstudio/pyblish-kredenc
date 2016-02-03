@@ -12,16 +12,16 @@ class ValidatePublishPath(pyblish.api.Validator):
     version = (0, 1, 0)
     label = 'Publish Path'
 
-    def process(self, context, instance):
+    def process(self, instance):
 
-        version = context.data['version']
+        version = instance.context.data['version']
         version = 'v' + str(version).zfill(3)
         self.log.debug(version)
 
-        taskid = context.data('ftrackData')['Task']['id']
+        taskid = instance.context.data('ftrackData')['Task']['id']
         self.log.debug(taskid)
 
-        ftrack_data = context.data['ftrackData']
+        ftrack_data = instance.context.data['ftrackData']
         if 'Asset_Build' not in ftrack_data.keys():
             templates = [
                 'shot.publish.file'
@@ -33,7 +33,7 @@ class ValidatePublishPath(pyblish.api.Validator):
 
         self.log.debug(templates)
 
-        root = context.data('ftrackData')['Project']['root']
+        root = instance.context.data('ftrackData')['Project']['root']
         self.log.debug(root)
 
         publishFiles = ft_pathUtils.getPathsYaml(taskid,
@@ -46,8 +46,8 @@ class ValidatePublishPath(pyblish.api.Validator):
         self.log.debug(publishFile)
 
         if os.path.exists(publishFolder):
-            context.set_data('publishFile', value=publishFile)
-            context.set_data('deadlineInput', value=publishFile)
+            instance.context.set_data('publishFile', value=publishFile)
+            instance.context.set_data('deadlineInput', value=publishFile)
             self.log.debug('Setting publishFile: {}'.format(publishFile))
         else:
             name = instance

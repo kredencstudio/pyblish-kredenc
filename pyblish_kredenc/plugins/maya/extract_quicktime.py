@@ -1,5 +1,5 @@
 import os
-import contextlib
+import instance.contextlib
 
 import pyblish.api
 from pyblish_kredenc.vendor import capture
@@ -29,13 +29,15 @@ class ExtractQuicktime(pyblish.api.Extractor):
 
     """
 
-    families = ["preview"]
+    families = ["review"]
     hosts = ["maya"]
     optional = True
     label = "Quicktime"
 
-    def process(self, instance, context):
+    def process(self, instance):
         self.log.info("Extracting capture..")
+        components = instance.data['ftrackComponents'].copy()
+        self.log.debug('Components: {}'.format(components))
 
         camera = instance[0]
 
@@ -86,7 +88,7 @@ class ExtractQuicktime(pyblish.api.Extractor):
 
 
         # Ensure name of camera is valid
-        sourcePath = os.path.normpath(context.data('currentFile'))
+        sourcePath = os.path.normpath(instance.context.data('currentFile'))
         path, extension = os.path.splitext(sourcePath)
 
 
@@ -119,13 +121,11 @@ class ExtractQuicktime(pyblish.api.Extractor):
                 )
 
 
-        components = instance.data('ftrackComponents')
-        components['preview']['path'] = path
 
-        instance.set_data("outputPath", output)
+        instance.data["outputPath"] = output
 
 
-@contextlib.contextmanager
+@instance.contextlib.instance.contextmanager
 def maintained_time():
     ct = cmds.currentTime(query=True)
     try:
