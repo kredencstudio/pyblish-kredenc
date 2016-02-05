@@ -204,6 +204,40 @@ def snap(*args, **kwargs):
     return output
 
 
+def parse_active_view():
+    """Parse active view for settings"""
+    panel = cmds.getPanel(withFocus=True)
+    assert "model" in panel, "No active viewport"
+    camera = cmds.modelPanel(panel, query=True, camera=True)
+    camera_shape = cmds.listRelatives(camera, shapes=True)[0]
+
+    return {
+        "camera": camera,
+        "width": cmds.getAttr("defaultResolution.width"),
+        "height": cmds.getAttr("defaultResolution.height"),
+        "camera_options": type("CameraOptions", (object, CameraOptions,), {
+            "displayFilmGate": cmds.getAttr(camera_shape + ".displayFilmGate"),
+            "displayResolution": cmds.getAttr(camera_shape + ".displayResolution"),
+            "displaySafeAction": cmds.getAttr(camera_shape + ".displaySafeAction"),
+        }),
+        "viewport_options": type("ViewportOptions", (object, ViewportOptions,), {
+            "useDefaultMaterial": cmds.modelEditor(panel, query=True, useDefaultMaterial=True),
+            "wireframeOnShaded": cmds.modelEditor(panel, query=True, wireframeOnShaded=True),
+            "displayAppearance": cmds.modelEditor(panel, query=True, displayAppearance=True),
+            "displayTextures": cmds.modelEditor(panel, query=True, displayTextures=True),
+            "displayLights": cmds.modelEditor(panel, query=True, displayLights=True),
+            "shadows": cmds.modelEditor(panel, query=True, shadows=True),
+            "xray": cmds.modelEditor(panel, query=True, xray=True),
+        }),
+        "display_options": type("DisplayOptions", (object, DisplayOptions,), {
+            "background": cmds.displayRGBColor('background', q=True),
+            "backgroundTop": cmds.displayRGBColor('backgroundTop', q=True),
+            "backgroundBottom": cmds.displayRGBColor('backgroundBottom', q=True),
+            'displayGradient': cmds.displayPref(dgr=True, q=True),
+        }),
+    }
+
+
 class ViewportOptions:
     """Viewport options for :func:`capture`"""
 
