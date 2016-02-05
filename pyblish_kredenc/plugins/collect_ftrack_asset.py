@@ -35,7 +35,7 @@ class CollectFtrackAsset(pyblish.api.Collector):
 
             if task_type == 'lighting':
                 asset_type = 'render'
-            if task_type == 'rompositing':
+            if task_type == 'compositing':
                 asset_type = 'img'
             if task_type == 'lookdev':
                 asset_type = 'img'

@@ -9,7 +9,7 @@ import pymel.core as pm
 
 
 @pyblish.api.log
-class ExtractQuicktime(pyblish.api.Extractor):
+class ExtractSnapshot(pyblish.api.Extractor):
     """Extract review instances as a quicktime
 
     Arguments:
@@ -57,85 +57,62 @@ class ExtractQuicktime(pyblish.api.Extractor):
         off_screen = instance.data('offScreen', False)
         maintain_aspect_ratio = instance.data('maintainAspectRatio', True)
 
-        preset = capture.parse_active_view()
-
-        # cam_opts = capture.CameraOptions()
+        cam_opts = capture.CameraOptions()
 
         # Set viewport settings
-        # view_opts = capture.ViewportOptions()
-        # view_opts.displayAppearance = "smoothShaded"
-        # view_opts.dtx = True
-        # view_opts.grid = False
+        view_opts = capture.ViewportOptions()
+        view_opts.displayAppearance = "smoothShaded"
+        view_opts.dtx = True
+        view_opts.grid = False
 
         # Set display settings
 
-        # display_options = capture.DisplayOptions()
-        # display_options.background = pm.displayRGBColor('background', q=True)
-        # display_options.backgroundTop = pm.displayRGBColor('backgroundTop', q=True)
-        # display_options.backgroundBottom = pm.displayRGBColor('backgroundBottom', q=True)
-        # display_options.displayGradient = pm.displayPref(dgr=True, q=True)
+        display_options = capture.DisplayOptions()
+        display_options.background = pm.displayRGBColor('background', q=True)
+        display_options.backgroundTop = pm.displayRGBColor('backgroundTop', q=True)
+        display_options.backgroundBottom = pm.displayRGBColor('backgroundBottom', q=True)
+        display_options.displayGradient = pm.displayPref(dgr=True, q=True)
 
-        # if 'show' in instance.data():
-        #     for nodetype in instance.data('show').split():
-        #         self.log.info("Overriding show: %s" % nodetype)
-        #         if hasattr(view_opts, nodetype):
-        #             setattr(view_opts, nodetype, True)
-        #         else:
-        #             self.log.warning("Specified node-type in 'show' not "
-        #                              "recognised: %s" % nodetype)
-        # else:
-        #     view_opts.polymeshes = True
-        #     view_opts.nurbsSurfaces = True
-
+        if 'show' in instance.data():
+            for nodetype in instance.data('show').split():
+                self.log.info("Overriding show: %s" % nodetype)
+                if hasattr(view_opts, nodetype):
+                    setattr(view_opts, nodetype, True)
+                else:
+                    self.log.warning("Specified node-type in 'show' not "
+                                     "recognised: %s" % nodetype)
+        else:
+            view_opts.polymeshes = True
+            view_opts.nurbsSurfaces = True
 
         # Ensure name of camera is valid
         sourcePath = os.path.normpath(instance.context.data('currentFile'))
         path, extension = os.path.splitext(sourcePath)
 
-
         if format == 'image':
             # Append sub-directory for image-sequence
             path = os.path.join(path, camera)
         else:
-            path = (path + ".mov")
+            path = (path + ".png")
 
         self.log.info("Outputting to %s" % path)
-        #
-        # with maintained_time():
-        #     output = capture.capture(
-        #         camera=camera,
-        #         width=width,
-        #         height=height,
-        #         filename=path,
-        #         start_frame=start_frame,
-        #         end_frame=end_frame,
-        #         format=format,
-        #         viewer=False,
-        #         compression=compression,
-        #         off_screen=off_screen,
-        #         maintain_aspect_ratio=maintain_aspect_ratio,
-        #         viewport_options=view_opts,
-        #         camera_options=cam_opts,
-        #         overwrite=True,
-        #         quality=50,
-        #         display_options=display_options,
-        #         )
+
         with maintained_time():
-            output = capture.capture(
+            output = capture.snap(
                 camera=camera,
                 width=width,
                 height=height,
                 filename=path,
-                start_frame=start_frame,
-                end_frame=end_frame,
                 format=format,
                 viewer=False,
                 compression=compression,
                 off_screen=off_screen,
                 maintain_aspect_ratio=maintain_aspect_ratio,
+                viewport_options=view_opts,
+                camera_options=cam_opts,
                 overwrite=True,
                 quality=50,
-                **preset
+                display_options=display_options,
                 )
 
 

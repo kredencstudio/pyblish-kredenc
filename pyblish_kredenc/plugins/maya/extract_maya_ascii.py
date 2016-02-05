@@ -31,7 +31,7 @@ class ExtractMayaAscii(pyblish.api.Extractor):
                            es=True,
                            constructionHistory=False,
                            preserveReferences=False,
-                           shader=False,
+                           shader=True,
                            channels=False,
                            constraints=False,
                            force=True,
