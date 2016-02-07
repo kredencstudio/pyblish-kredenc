@@ -19,8 +19,13 @@ class ConformFlipbook(pyblish.api.Conformer):
 
     def process(self, instance):
 
-        if instance.has_data('outputPath'):
-            sourcePath = os.path.normpath(instance.data('outputPath'))
+        extractedPaths = [v for k,v in instance.data.items() if k.startswith('outputPath')]
+
+        componentPath = ''
+
+        for sourcePath in extractedPaths:
+
+            # sourcePath = os.path.normpath(instance.data('outputPath'))
 
             version = instance.context.data('version')
             version = 'v' + str(version).zfill(3)
@@ -47,20 +52,27 @@ class ConformFlipbook(pyblish.api.Conformer):
                                                     root=root)
 
             path, extension = os.path.splitext(publishFile[0])
-            publishFile = path + ".mov"
+            sourceFile, source_ext = os.path.splitext(sourcePath)
 
+            publishFile = path + source_ext
 
             self.log.info('Moving preview from location: {}'.format(sourcePath))
             self.log.info('Moving preview to location: {}'.format(publishFile))
             shutil.move(sourcePath, publishFile)
 
-            # ftrack data
+            if '.mov' not in componentPath:
+                componentPath = publishFile
+
+
+        if componentPath:
+            self.log.debug('Component Path: {}'.format(componentPath))
             components = instance.data['ftrackComponents'].copy()
-            components['review']['path'] = publishFile
+            components['review']['path'] = componentPath
 
 
             instance.data['ftrackComponents'] = components
-            self.log.debug('Components3: {}'.format(components))
 
-        else:
-            self.log.warning('review wasn\'t created so it can\'t be published')
+            self.log.debug('Components: {}'.format(instance.data['ftrackComponents']))
+    #
+        # else:
+        #     self.log.warning('review wasn\'t created so it can\'t be published')

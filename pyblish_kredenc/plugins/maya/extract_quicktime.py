@@ -47,10 +47,10 @@ class ExtractQuicktime(pyblish.api.Extractor):
         default_width = cmds.getAttr("defaultResolution.width")
         default_height = cmds.getAttr("defaultResolution.height")
 
-        width = instance.data('width') or default_width
-        height = instance.data('height') or default_height
-        start_frame = instance.data('startFrame') or current_min_time
-        end_frame = instance.data('endFrame') or current_max_time
+        # width = instance.data('width') or default_width
+        # height = instance.data('height') or default_height
+        # start_frame = instance.data('startFrame') or current_min_time
+        # end_frame = instance.data('endFrame') or current_max_time
 
         format = instance.data('format') or 'qt'
         compression = instance.data('compression') or 'h264'
@@ -122,12 +122,12 @@ class ExtractQuicktime(pyblish.api.Extractor):
         #         )
         with maintained_time():
             output = capture.capture(
-                camera=camera,
-                width=width,
-                height=height,
+                # camera=camera,
+                # width=width,
+                # height=height,
                 filename=path,
-                start_frame=start_frame,
-                end_frame=end_frame,
+                # start_frame=start_frame,
+                # end_frame=end_frame,
                 format=format,
                 viewer=False,
                 compression=compression,
@@ -139,7 +139,7 @@ class ExtractQuicktime(pyblish.api.Extractor):
                 )
 
 
-        instance.data["outputPath"] = output
+        instance.data["outputPath_qt"] = output
 
 
 @contextlib.contextmanager
