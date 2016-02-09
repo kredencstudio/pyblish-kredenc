@@ -26,11 +26,11 @@ class CollectFtrackAsset(pyblish.api.Collector):
 
             ftrack_data = context.data['ftrackData'].copy()
 
-            instance.data['ftrackAssetName'] = ftrack_data['Task']['name']
-            task_type = ftrack_data['Task']['type'].lower()
+            if not instance.data.get("ftrackAssetName"):
+                instance.data['ftrackAssetName'] = ftrack_data['Task']['name']
 
             # task type filtering
-
+            task_type = ftrack_data['Task']['type'].lower()
             asset_type = ''
 
             if task_type == 'lighting':

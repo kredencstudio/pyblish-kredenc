@@ -53,6 +53,12 @@ class CollectScene(pyblish.api.Collector):
                 self.log.warning('Cannot publish workfile which is not versioned.')
                 return
 
+
+
+        if context.data['ftrackData']['Task']['type'] in [
+                'Modeling']:
+            instance.data['publish'] = False
+
         context.data['version'] = version
         context.data['vprefix'] = prefix
 

@@ -22,11 +22,14 @@ class ExtractMayaAscii(pyblish.api.Extractor):
         path = os.path.join(dir_path, filename)
 
         # Perform extraction
-        self.log.info("Performing extraction..")
+        self.log.info("Performing extraction")
         with pyblish_maya.maintained_selection():
-            self.log.info("instance.." + str(instance))
+            self.log.info("instance: " + str(instance))
             mc.select(instance)
             # cmds.select(instance, noExpand=True)
+            self.log.info(instance.data['preserveReferences'])
+            preserveReferences = instance.data['preserveReferences'] or 'False'
+
             path = mc.file(path,
                            es=True,
                            constructionHistory=False,

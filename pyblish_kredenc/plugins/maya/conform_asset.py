@@ -22,19 +22,15 @@ class ConformAsset(pyblish.api.Conformer):
             filename, ext = os.path.splitext(sourcePath)
             self.log.debug('source filename: ' + filename)
             self.log.debug('source ext: ' + ext)
-            publishFile = instance.data('publishFile')
+            publishFile = instance.data['publishFile']
             publishFile = os.path.splitext(publishFile)[0] + ext
             self.log.debug(publishFile)
 
-            self.log.info('Copying model from location: {}'.format(sourcePath))
-            self.log.info('Copying model to location: {}'.format(publishFile))
-
             components = instance.data['ftrackComponents']
-            self.log.debug('components: {}'.format(str(components)))
 
             components[str(ext)[1:]] = {'path': publishFile}
 
-            self.log.debug('components2: {}'.format(str(components)))
+            self.log.debug('components: {}'.format(str(components)))
 
             if not os.path.exists(os.path.dirname(publishFile)):
                 os.mkdirs(os.path.dirname(publishFile))
