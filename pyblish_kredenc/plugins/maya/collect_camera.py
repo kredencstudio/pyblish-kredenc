@@ -23,6 +23,7 @@ class CollectCameras(pyblish.api.Collector):
 
             instance = context.create_instance(name=name, family='camera')
             instance.add(camera)
+            instance.data["publish"] = False
 
             attrs = cmds.listAttr(camera, userDefined=True) or list()
 
@@ -42,7 +43,7 @@ class CollectCameras(pyblish.api.Collector):
                 instance.data[attr] = value
 
             # ftrack data
-            components = {'mayaAscii': {'path': ''}}
+            components = {'ma': {'path': ''}}
 
             instance.data['ftrackComponents'] = components
             self.log.info("Added: %s" % components)

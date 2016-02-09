@@ -10,11 +10,16 @@ class CollectPreview(pyblish.api.Collector):
     label = "Collect Review"
 
     def process(self, context):
-        for camera_shape in cmds.ls("*_CAM*",
-                                    objectsOnly=True,
-                                    type="camera",
-                                    long=True,
-                                    recursive=True):  # Include namespace
+
+        cameras = cmds.ls("*_CAM*",
+                            objectsOnly=True,
+                            type="camera",
+                            long=True,
+                            recursive=True)
+
+        cameras.append('perspShape')
+
+        for camera_shape in cameras:  # Include namespace
 
             camera = cmds.listRelatives(camera_shape, parent=True)[0]
 
@@ -23,27 +28,25 @@ class CollectPreview(pyblish.api.Collector):
 
             instance = context.create_instance(name=name, family='review')
             instance.add(camera)
+
+            if 'persp' in camera:
+                instance.data['publish'] = False
+
             attrs = cmds.listAttr(camera, userDefined=True) or list()
 
             self.log.info("Found: %s" % camera)
             self.log.info("Overrides: %s" % attrs)
 
-            for attr in attrs:
-                try:
-                    value = cmds.getAttr(camera + "." + attr)
-                except:
-                    self.log.warning("Could not read from: %s" % attr)
-                    continue
+            # task specific overrides
+            if context.data['ftrackData']['Task']['type'] == 'Rigging':
+                instance.data['show'] = ['polymeshes', 'nurbsCurves', 'joints']
 
-                self.log.debug("Adding %s=%s to %s" % (
-                    attr, value, instance))
-
-                instance.data[attr] = value
 
             # ftrack data
             components = {'review': {'path': '',
                                      'reviewable': True,
                                      }}
             instance.data['ftrackComponents'] = components
+
             self.log.info("Added: %s" % components)
             self.log.info("components: %s" % instance.data['ftrackComponents'])
