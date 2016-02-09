@@ -4,10 +4,10 @@ import pyblish_kredenc.utils as pyblish_utils
 
 
 @pyblish.api.log
-class CollectScene(pyblish.api.Collector):
+class CollectScene(pyblish.api.ContextPlugin):
     """Collects current workfile"""
 
-    order = pyblish.api.Collector.order + 0.1
+    order = pyblish.api.Collector.order + 0.3
     label = 'Scene'
 
     def process(self, context):
@@ -54,10 +54,10 @@ class CollectScene(pyblish.api.Collector):
                 return
 
 
-
-        if context.data['ftrackData']['Task']['type'] in [
-                'Modeling']:
-            instance.data['publish'] = False
+        if instance.data['family'] is not 'new_scene':
+            if context.data['ftrackData']['Task']['type'] in [
+                    'Modeling']:
+                instance.data['publish'] = False
 
         context.data['version'] = version
         context.data['vprefix'] = prefix

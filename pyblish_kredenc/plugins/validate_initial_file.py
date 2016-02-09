@@ -3,12 +3,11 @@ from ft_studio import ft_pathUtils
 
 
 @pyblish.api.log
-class ValidateInitialScene(pyblish.api.Validator):
+class ValidateInitialScene(pyblish.api.InstancePlugin):
     """Checks if we are able to create new workfile
     """
-
+    order = pyblish.api.ValidatorOrder
     families = ['new_scene']
-    optional = True
     label = 'Initial scene'
 
     def process(self, instance):

@@ -27,8 +27,8 @@ class ExtractMayaAscii(pyblish.api.Extractor):
             self.log.info("instance: " + str(instance))
             mc.select(instance)
             # cmds.select(instance, noExpand=True)
-            self.log.info(instance.data['preserveReferences'])
-            preserveReferences = instance.data['preserveReferences'] or 'False'
+            # self.log.info(instance.data['preserveReferences'])
+            # preserveReferences = instance.data['preserveReferences'] or 'False'
 
             path = mc.file(path,
                            es=True,
