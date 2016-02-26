@@ -32,11 +32,11 @@ class VersionUpWorkfile(pyblish.api.Conformer):
             ftrack_data = context.data['ftrackData']
             if 'Asset_Build' not in ftrack_data.keys():
                 templates = [
-                    'shot.work.file'
+                    'shot.work.scene'
                 ]
             else:
                 templates = [
-                    'asset.work.file'
+                    'asset.work.scene'
                 ]
 
             root = context.data('ftrackData')['Project']['root']

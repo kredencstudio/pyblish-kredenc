@@ -29,7 +29,7 @@ class CollectPreview(pyblish.api.Collector):
             instance = context.create_instance(name=name, family='review')
             instance.add(camera)
 
-            if 'persp' in camera:
+            if camera == 'persp':
                 instance.data['publish'] = False
 
             attrs = cmds.listAttr(camera, userDefined=True) or list()

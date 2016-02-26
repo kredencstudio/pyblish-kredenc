@@ -9,12 +9,11 @@ class ExtractAlembic(pyblish.api.Extractor):
     """Extracts alembic file to temp location.
     """
 
-    families = ['alembic', 'model', 'cache', 'camera']
+    families = ['alembic', 'cache', 'camera']
     optional = True
 
     def process(self, instance):
 
-        self.log.info(pyblish_utils)
         dir_path = pyblish_utils.temp_dir(instance)
         filename = "{0}.abc".format(instance.name)
         path = os.path.join(dir_path, filename)
@@ -22,8 +21,13 @@ class ExtractAlembic(pyblish.api.Extractor):
         self.log.debug('alembic extraction path: {}'.format(path))
 
         nodesString = ''
-        for node in instance:
-            self.log.info("instance.." + str(node))
+
+        roots = instance.data.get('roots')
+        if not roots:
+            roots = instance
+
+        for node in roots:
+            self.log.debug("root.." + str(node))
             try:
                 nodesString += ' -root ' + node.name()
             except:
@@ -36,6 +40,7 @@ class ExtractAlembic(pyblish.api.Extractor):
 
         cmd = '-frameRange %s %s' % (frame_start, frame_end)
         cmd += ' -noNormals -uvWrite -worldSpace -wholeFrameGeo -dataFormat ogawa'
+        cmd += ' -attr {}'.format('assetid')
         cmd += ' -writeVisibility %s -file "%s"' % (nodesString, path)
 
         pymel.core.AbcExport(j=cmd)

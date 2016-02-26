@@ -40,8 +40,8 @@ class ValidateVersionNumber(pyblish.api.Validator):
         output_v = int(self.version_get(output_path, 'v')[1])
 
         if current_v != output_v:
-            msg = 'Version number %s is not the same as ' % output_v
-            msg += 'file version number %s' % current_v
+            msg = 'Your output has version %s, but you are working on ' % output_v
+            msg += 'version %s' % current_v
             raise Exception(msg)
 
 
@@ -51,7 +51,7 @@ class ValidateVersionNumber(pyblish.api.Validator):
         current_file = instance.context.data('currentFile')
         output_path = instance.data('outputPath')
         if not output_path:
-            output_path = instance.data('deadlineJobData')['job']['OutputFilename0']
+            output_path = instance.data('deadlineData')['job']['OutputFilename0']
 
         current_v = int(instance.context.data('version'))
 

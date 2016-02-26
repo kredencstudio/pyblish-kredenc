@@ -36,13 +36,13 @@ class ValidatePublishPathCache(pyblish.api.Validator):
                 'shot.abccache.file'
             ]
 
-        object_name = instance.data['name']
+        item = instance.data['name']
 
         self.log.debug(templates)
         publishFile = ft_pathUtils.getPathsYaml(taskid,
                                                 templateList=templates,
                                                 version=version,
-                                                object_name=object_name,
+                                                item=item,
                                                 root=root)
         publishFile = publishFile[0]
         instance.data['publishFile'] = publishFile
@@ -51,6 +51,6 @@ class ValidatePublishPathCache(pyblish.api.Validator):
         # ftrack data
         components = instance.data['ftrackComponents']
         self.log.debug(str(components))
-        components[object_name]['path'] = publishFile
+        components[item]['path'] = publishFile
         self.log.debug(str(components))
         instance.data['ftrackComponents'] = components

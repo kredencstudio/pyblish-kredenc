@@ -44,24 +44,55 @@ class ExtractSnapshot(pyblish.api.Extractor):
         off_screen = instance.data('offScreen', False)
         maintain_aspect_ratio = instance.data('maintainAspectRatio', True)
 
+        camera = instance[0]
 
-        preset = capture.parse_active_view()
+        try:
+            preset = capture.parse_active_view()
 
-        if 'show' in instance.data():
-            self.log.info("Overriding show: %s" % instance.data['show'])
-            for nodetype in instance.data['show']:
-                # self.log.info("Overriding show: %s" % nodetype)
-                if hasattr(preset['viewport_options'], nodetype):
-                    setattr(preset['viewport_options'], nodetype, True)
-                else:
-                    self.log.warning("Specified node-type in 'show' not "
-                                     "recognised: %s" % nodetype)
+            if 'show' in instance.data():
+                self.log.info("Overriding show: %s" % instance.data['show'])
+                for nodetype in instance.data['show']:
+                    # self.log.info("Overriding show: %s" % nodetype)
+                    if hasattr(preset['viewport_options'], nodetype):
+                        setattr(preset['viewport_options'], nodetype, True)
+                    else:
+                        self.log.warning("Specified node-type in 'show' not "
+                                         "recognised: %s" % nodetype)
+
+        except:
+            camera_shape = cmds.listRelatives(camera, shapes=True)[0]
+
+            preset = {
+                "camera": camera,
+                "width": cmds.getAttr("defaultResolution.width"),
+                "height": cmds.getAttr("defaultResolution.height"),
+                "camera_options": type("CameraOptions", (object, capture.CameraOptions,), {
+                    "displayFilmGate": cmds.getAttr(camera_shape + ".displayFilmGate"),
+                    "displayResolution": cmds.getAttr(camera_shape + ".displayResolution"),
+                    "displaySafeAction": cmds.getAttr(camera_shape + ".displaySafeAction"),
+                }),
+                "viewport_options": type("ViewportOptions", (object, capture.ViewportOptions,), {
+                    "useDefaultMaterial": False,
+                    # "wireframeOnShaded": cmds.modelEditor(panel, query=True, wireframeOnShaded=True),
+                    # "displayAppearance": cmds.modelEditor(panel, query=True, displayAppearance=True),
+                    # "displayTextures": cmds.modelEditor(panel, query=True, displayTextures=True),
+                    # "displayLights": cmds.modelEditor(panel, query=True, displayLights=True),
+                    # "shadows": cmds.modelEditor(panel, query=True, shadows=True),
+                    # "xray": cmds.modelEditor(panel, query=True, xray=True),
+                }),
+                "display_options": type("DisplayOptions", (object, capture.DisplayOptions,), {
+                    "background": cmds.displayRGBColor('background', q=True),
+                    "backgroundTop": cmds.displayRGBColor('backgroundTop', q=True),
+                    "backgroundBottom": cmds.displayRGBColor('backgroundBottom', q=True),
+                    'displayGradient': cmds.displayPref(dgr=True, q=True),
+                }),
+            }
 
 
         # Ensure name of camera is valid
         sourcePath = os.path.normpath(instance.context.data('currentFile'))
         path, extension = os.path.splitext(sourcePath)
-        path = (path + ".png")
+        path = (path + ".jpg")
 
 
         self.log.info("preset %s" % preset['viewport_options'].polymeshes)
@@ -84,7 +115,7 @@ class ExtractSnapshot(pyblish.api.Extractor):
                 )
 
 
-        instance.data["outputPath_png"] = output
+        instance.data["outputPath_jpg"] = output
 
 
 @contextlib.contextmanager

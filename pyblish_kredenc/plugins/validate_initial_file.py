@@ -3,10 +3,9 @@ from ft_studio import ft_pathUtils
 
 
 @pyblish.api.log
-class ValidateInitialScene(pyblish.api.InstancePlugin):
+class ValidateInitialScene(pyblish.api.Validator):
     """Checks if we are able to create new workfile
     """
-    order = pyblish.api.ValidatorOrder
     families = ['new_scene']
     label = 'Initial scene'
 
@@ -27,20 +26,24 @@ class ValidateInitialScene(pyblish.api.InstancePlugin):
             ftrack_data = instance.context.data['ftrackData']
             if 'Asset_Build' in ftrack_data.keys():
                 templates = [
-                    'asset.work.file'
+                    'asset.work.scene'
                 ]
             else:
                 templates = [
-                    'shot.work.file'
+                    'shot.work.scene'
                 ]
 
+            kwargs = {
+                    'version': version,
+                    }
 
             self.log.debug(templates)
 
             new_workFile = ft_pathUtils.getPathsYaml(taskid,
                                                      templateList=templates,
-                                                     version=version,
-                                                     root=root)[0]
+                                                     root=root,
+                                                     **kwargs
+                                                     )[0]
 
             instance.context.data['workfile'] = new_workFile
 

@@ -51,18 +51,45 @@ class ExtractQuicktime(pyblish.api.Extractor):
         off_screen = instance.data('offScreen', False)
         maintain_aspect_ratio = instance.data('maintainAspectRatio', True)
 
+        try:
+            preset = capture.parse_active_view()
 
-        preset = capture.parse_active_view()
+            if 'show' in instance.data():
+                self.log.info("Overriding show: %s" % instance.data['show'])
+                for nodetype in instance.data['show']:
+                    # self.log.info("Overriding show: %s" % nodetype)
+                    if hasattr(preset['viewport_options'], nodetype):
+                        setattr(preset['viewport_options'], nodetype, True)
+                    else:
+                        self.log.warning("Specified node-type in 'show' not "
+                                         "recognised: %s" % nodetype)
+        except:
+            camera_shape = cmds.listRelatives(camera, shapes=True)[0]
 
-        if 'show' in instance.data():
-            self.log.info("Overriding show: %s" % instance.data['show'])
-            for nodetype in instance.data['show']:
-                # self.log.info("Overriding show: %s" % nodetype)
-                if hasattr(preset['viewport_options'], nodetype):
-                    setattr(preset['viewport_options'], nodetype, True)
-                else:
-                    self.log.warning("Specified node-type in 'show' not "
-                                     "recognised: %s" % nodetype)
+            preset = {
+                "camera": camera,
+                "width": cmds.getAttr("defaultResolution.width"),
+                "height": cmds.getAttr("defaultResolution.height"),
+                "camera_options": type("CameraOptions", (object, capture.CameraOptions,), {
+                    "displayFilmGate": cmds.getAttr(camera_shape + ".displayFilmGate"),
+                    "displayResolution": cmds.getAttr(camera_shape + ".displayResolution"),
+                    "displaySafeAction": cmds.getAttr(camera_shape + ".displaySafeAction"),
+                }),
+                "viewport_options": type("ViewportOptions", (object, capture.ViewportOptions,), {
+                    "useDefaultMaterial": False,
+                    "wireframeOnShaded": False,
+                    # "displayAppearance": cmds.modelEditor(panel, query=True, displayAppearance=True),
+                    "displayTextures": True,
+                    "displayLights": True,
+                    "shadows": True,
+                }),
+                "display_options": type("DisplayOptions", (object, capture.DisplayOptions,), {
+                    "background": cmds.displayRGBColor('background', q=True),
+                    "backgroundTop": cmds.displayRGBColor('backgroundTop', q=True),
+                    "backgroundBottom": cmds.displayRGBColor('backgroundBottom', q=True),
+                    'displayGradient': cmds.displayPref(dgr=True, q=True),
+                }),
+            }
 
 
         # Ensure name of camera is valid
@@ -97,7 +124,7 @@ class ExtractQuicktime(pyblish.api.Extractor):
                 off_screen=off_screen,
                 maintain_aspect_ratio=maintain_aspect_ratio,
                 overwrite=True,
-                quality=50,
+                quality=80,
                 **preset
                 )
 

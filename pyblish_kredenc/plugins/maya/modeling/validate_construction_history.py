@@ -1,5 +1,4 @@
 import pyblish.api
-import maya.cmds as cmds
 import pymel
 
 
@@ -15,14 +14,20 @@ class ValidateConstructionHistory(pyblish.api.Validator):
 
         check = True
 
-        for node in cmds.ls(type='transform'):
-            # skipping references
-            if not pymel.core.PyNode(node).isReferenced():
+        # for node in cmds.ls(type='transform'):
+        for node in instance:
 
-                history = cmds.listHistory(node, pruneDagObjects=True)
+            node = pymel.core.PyNode(node)
+
+            # skipping references
+            if not node.isReferenced():
+
+                self.log.info('Validating: {}'.format(node.name()))
+
+                history = node.listHistory(pruneDagObjects=True)
                 if history:
                     for h in history:
-                        if not pymel.core.PyNode(h).isReferenced():
+                        if not h.isReferenced():
                             msg = 'Node "%s" has construction' % node
                             msg += ' history: %s' % h
                             self.log.error(msg)

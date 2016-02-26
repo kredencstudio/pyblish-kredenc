@@ -35,11 +35,11 @@ class ConformFlipbook(pyblish.api.Conformer):
             ftrack_data = instance.context.data['ftrackData']
             if 'Asset_Build' in ftrack_data.keys():
                 templates = [
-                    'asset.publish.file'
+                    'asset.publish.scene'
                 ]
             else:
                 templates = [
-                    'shot.publish.file'
+                    'shot.publish.scene'
                 ]
 
             self.log.debug(templates)

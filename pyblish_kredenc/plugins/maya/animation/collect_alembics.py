@@ -19,6 +19,8 @@ class CollectCache(pyblish.api.Collector):
 
                 self.log.info("Set: {}".format(obj))
                 name = obj.name().split('_')[0]
+                if ':' in name:
+                    name = name.split(':')[0]
 
                 members = obj.members()
                 nodes = []

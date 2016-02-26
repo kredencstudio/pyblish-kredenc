@@ -5,10 +5,11 @@ import pyblish.api
 
 @pyblish.api.log
 class ValidateDeadlineOutputExistence(pyblish.api.Validator):
-    """Validates that the output directory for the write nodes exists"""
+    """Validates that the output directory for the output exists"""
 
     families = ['deadline.render']
     label = 'Output location existence'
+    hosts = ['nuke']
     optional = True
 
     def process(self, instance):

@@ -3,7 +3,7 @@ import os
 
 
 @pyblish.api.log
-class IntegrateInitialScene(pyblish.api.InstancePlugin):
+class IntegrateInitialScene(pyblish.api.Integrator):
     """Saves version one of the workfile
     """
 
@@ -11,7 +11,7 @@ class IntegrateInitialScene(pyblish.api.InstancePlugin):
     hosts = ['nuke', 'maya']
     optional = True
     label = 'Initial Scene'
-    order = pyblish.api.IntegratorOrder + 0.1
+    order = pyblish.api.Integrator.order + 0.1
 
     def process(self, instance):
 

@@ -246,6 +246,8 @@ class ViewportOptions:
     displayAppearance = 'smoothShaded'
     selectionHiliteDisplay = False
     headsUpDisplay = True
+    displayTextures = True
+    displayLights = True
 
     # Visibility flags
     nurbsCurves = False

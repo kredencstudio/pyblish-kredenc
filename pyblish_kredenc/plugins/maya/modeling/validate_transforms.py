@@ -15,12 +15,15 @@ class ValidateTransforms(pyblish.api.Validator):
     def process(self, instance):
 
         check = True
-        for node in pymel.core.ls(type='mesh'):
+        for node in instance:
             # skipping references
+
+            node = pymel.core.PyNode(node)
+
             if node.isReferenced():
                 return
 
-            transform = node.getParent()
+            transform = node.root()
             v = sum(transform.getRotatePivot(space='world'))
             if (math.ceil(v*100.0)/100.0) > 0.01:
                 msg = '"%s" pivot is not at world zero.' % transform.name()

@@ -4,7 +4,7 @@ import pyblish_kredenc.utils as pyblish_utils
 
 
 @pyblish.api.log
-class CollectScene(pyblish.api.ContextPlugin):
+class CollectScene(pyblish.api.Collector):
     """Collects current workfile"""
 
     order = pyblish.api.Collector.order + 0.3

@@ -30,23 +30,33 @@ class ValidatePublishPathAssets(pyblish.api.Validator):
         ftrack_data = instance.context.data['ftrackData']
         if 'Asset_Build' not in ftrack_data.keys():
             templates = [
-                'shot.publish.file'
+                'shot.publish.item'
             ]
         else:
             templates = [
-                'asset.publish.file'
+                'asset.publish.item'
             ]
 
-        variant = None
-        if instance.data.get('variation'):
-            variant = instance.data['variation']
+        subset = ''
+        if instance.data.get('subset'):
+            subset = instance.data['subset']
+
+        kwargs = {
+                'family': instance.data['family'],
+                'item': instance.data['item'],
+                'version': version,
+                'subset': subset,
+                }
 
         self.log.debug(templates)
+        self.log.debug(kwargs)
         publishFile = ft_pathUtils.getPathsYaml(taskid,
                                                 templateList=templates,
-                                                version=version,
-                                                variant=variant,
-                                                root=root)
+                                                root=root,
+                                                **kwargs
+                                                )
+
+        self.log.debug('paths returned: {}'.format(publishFile))
         publishFile = publishFile[0]
         instance.data['publishFile'] = publishFile
         self.log.debug('saving publishFile to instance: {}'.format(publishFile))

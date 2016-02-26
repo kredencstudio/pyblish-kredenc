@@ -10,7 +10,7 @@ class CollectCameras(pyblish.api.Collector):
     label = "Collect Cameras"
 
     def process(self, context):
-        for camera_shape in cmds.ls("*_CAM*",
+        for camera_shape in cmds.ls("*_cam*",
                                     objectsOnly=True,
                                     type="camera",
                                     long=True,

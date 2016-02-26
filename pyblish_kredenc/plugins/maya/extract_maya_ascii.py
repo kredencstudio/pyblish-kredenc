@@ -24,7 +24,7 @@ class ExtractMayaAscii(pyblish.api.Extractor):
         # Perform extraction
         self.log.info("Performing extraction")
         with pyblish_maya.maintained_selection():
-            self.log.info("instance: " + str(instance))
+            self.log.debug("instance: " + str(instance))
             mc.select(instance)
             # cmds.select(instance, noExpand=True)
             # self.log.info(instance.data['preserveReferences'])

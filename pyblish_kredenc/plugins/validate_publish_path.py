@@ -24,11 +24,11 @@ class ValidatePublishPath(pyblish.api.Validator):
         ftrack_data = instance.context.data['ftrackData']
         if 'Asset_Build' not in ftrack_data.keys():
             templates = [
-                'shot.publish.file'
+                'shot.publish.scene'
             ]
         else:
             templates = [
-                'asset.publish.file'
+                'asset.publish.scene'
             ]
 
         self.log.debug(templates)
