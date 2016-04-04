@@ -4,9 +4,17 @@ import contextlib
 import pyblish.api
 from pyblish_kredenc.vendor import capture
 
+import pyblish_kredenc.utils as pyblish_utils
+
 from maya import cmds
 import pymel.core as pm
 
+import json
+
+def load_preset(path):
+    """Load options json from path"""
+    with open(path, "r") as f:
+        return json.load(f)
 
 @pyblish.api.log
 class ExtractQuicktime(pyblish.api.Extractor):
@@ -43,7 +51,7 @@ class ExtractQuicktime(pyblish.api.Extractor):
 
         if 'persp' in camera:
             self.log.info("If you want movie review, create a camera with \
-                          '_CAM' suffix")
+                          '_cam' suffix")
             return
 
         format = instance.data('format') or 'qt'
@@ -51,84 +59,61 @@ class ExtractQuicktime(pyblish.api.Extractor):
         off_screen = instance.data('offScreen', False)
         maintain_aspect_ratio = instance.data('maintainAspectRatio', True)
 
-        try:
-            preset = capture.parse_active_view()
 
-            if 'show' in instance.data():
-                self.log.info("Overriding show: %s" % instance.data['show'])
-                for nodetype in instance.data['show']:
-                    # self.log.info("Overriding show: %s" % nodetype)
-                    if hasattr(preset['viewport_options'], nodetype):
-                        setattr(preset['viewport_options'], nodetype, True)
-                    else:
-                        self.log.warning("Specified node-type in 'show' not "
-                                         "recognised: %s" % nodetype)
-        except:
-            camera_shape = cmds.listRelatives(camera, shapes=True)[0]
+        check_viewport = False
 
-            preset = {
-                "camera": camera,
-                "width": cmds.getAttr("defaultResolution.width"),
-                "height": cmds.getAttr("defaultResolution.height"),
-                "camera_options": type("CameraOptions", (object, capture.CameraOptions,), {
-                    "displayFilmGate": cmds.getAttr(camera_shape + ".displayFilmGate"),
-                    "displayResolution": cmds.getAttr(camera_shape + ".displayResolution"),
-                    "displaySafeAction": cmds.getAttr(camera_shape + ".displaySafeAction"),
-                }),
-                "viewport_options": type("ViewportOptions", (object, capture.ViewportOptions,), {
-                    "useDefaultMaterial": False,
-                    "wireframeOnShaded": False,
-                    # "displayAppearance": cmds.modelEditor(panel, query=True, displayAppearance=True),
-                    "displayTextures": True,
-                    "displayLights": True,
-                    "shadows": True,
-                }),
-                "display_options": type("DisplayOptions", (object, capture.DisplayOptions,), {
-                    "background": cmds.displayRGBColor('background', q=True),
-                    "backgroundTop": cmds.displayRGBColor('backgroundTop', q=True),
-                    "backgroundBottom": cmds.displayRGBColor('backgroundBottom', q=True),
-                    'displayGradient': cmds.displayPref(dgr=True, q=True),
-                }),
-            }
+        # Choose preset
+        preset_name = 'default'
+
+        if instance.context.data['ftrackData']['Project']['code'] == 'kos':
+            self.log.info('kos')
+            preset_name = 'kos'
+            check_viewport = True
+        if instance.context.data['ftrackData']['Task']['type'] == 'Animation':
+            self.log.info('kos')
+            preset_name = 'kos_anim'
+        if instance.context.data['ftrackData']['Project']['code'] == 'hbt':
+            self.log.info('hbt')
+            preset_name = 'hbt'
+            check_viewport = False
 
 
-        # Ensure name of camera is valid
-        sourcePath = os.path.normpath(instance.context.data('currentFile'))
-        path, extension = os.path.splitext(sourcePath)
-        path = (path + ".png")
+        # load Preset
+        preset_path = os.path.join(os.path.dirname(pyblish_utils.__file__),
+                                   'capture_presets',
+                                   (preset_name + '.json'))
 
-        # Ensure name of camera is valid
-        sourcePath = os.path.normpath(instance.context.data('currentFile'))
-        path, extension = os.path.splitext(sourcePath)
-
-
-        if format == 'image':
-            # Append sub-directory for image-sequence
-            path = os.path.join(path, camera)
+        if check_viewport:
+            try:
+                preset = capture.parse_active_view()
+            except:
+                preset = load_preset(preset_path)
+                preset['camera'] = camera
         else:
-            path = (path + ".mov")
+            preset = load_preset(preset_path)
+            preset['camera'] = camera
+
+
+        # Ensure name of camera is valid
+        sourcePath = os.path.normpath(instance.context.data('currentFile'))
+        path, extension = os.path.splitext(sourcePath)
+
+        path = (path + ".mov")
 
         self.log.info("Outputting to %s" % path)
 
         with maintained_time():
             output = capture.capture(
-                # camera=camera,
-                # width=width,
-                # height=height,
                 filename=path,
-                # start_frame=start_frame,
-                # end_frame=end_frame,
                 format=format,
                 viewer=False,
                 compression=compression,
                 off_screen=off_screen,
                 maintain_aspect_ratio=maintain_aspect_ratio,
                 overwrite=True,
-                quality=80,
+                quality=70,
                 **preset
                 )
-
-
         instance.data["outputPath_qt"] = output
 
 

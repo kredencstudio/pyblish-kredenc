@@ -4,9 +4,17 @@ import contextlib
 import pyblish.api
 from pyblish_kredenc.vendor import capture
 
+import pyblish_kredenc.utils as pyblish_utils
+
 from maya import cmds
 import pymel.core as pm
 
+import json
+
+def load_preset(path):
+    """Load options json from path"""
+    with open(path, "r") as f:
+        return json.load(f)
 
 @pyblish.api.log
 class ExtractSnapshot(pyblish.api.Extractor):
@@ -46,71 +54,35 @@ class ExtractSnapshot(pyblish.api.Extractor):
 
         camera = instance[0]
 
+        preset_name = 'default'
+
+        preset_path = os.path.join(os.path.dirname(pyblish_utils.__file__),
+                                   'capture_presets',
+                                   (preset_name + '.json'))
+
         try:
             preset = capture.parse_active_view()
-
-            if 'show' in instance.data():
-                self.log.info("Overriding show: %s" % instance.data['show'])
-                for nodetype in instance.data['show']:
-                    # self.log.info("Overriding show: %s" % nodetype)
-                    if hasattr(preset['viewport_options'], nodetype):
-                        setattr(preset['viewport_options'], nodetype, True)
-                    else:
-                        self.log.warning("Specified node-type in 'show' not "
-                                         "recognised: %s" % nodetype)
-
         except:
-            camera_shape = cmds.listRelatives(camera, shapes=True)[0]
-
-            preset = {
-                "camera": camera,
-                "width": cmds.getAttr("defaultResolution.width"),
-                "height": cmds.getAttr("defaultResolution.height"),
-                "camera_options": type("CameraOptions", (object, capture.CameraOptions,), {
-                    "displayFilmGate": cmds.getAttr(camera_shape + ".displayFilmGate"),
-                    "displayResolution": cmds.getAttr(camera_shape + ".displayResolution"),
-                    "displaySafeAction": cmds.getAttr(camera_shape + ".displaySafeAction"),
-                }),
-                "viewport_options": type("ViewportOptions", (object, capture.ViewportOptions,), {
-                    "useDefaultMaterial": False,
-                    # "wireframeOnShaded": cmds.modelEditor(panel, query=True, wireframeOnShaded=True),
-                    # "displayAppearance": cmds.modelEditor(panel, query=True, displayAppearance=True),
-                    # "displayTextures": cmds.modelEditor(panel, query=True, displayTextures=True),
-                    # "displayLights": cmds.modelEditor(panel, query=True, displayLights=True),
-                    # "shadows": cmds.modelEditor(panel, query=True, shadows=True),
-                    # "xray": cmds.modelEditor(panel, query=True, xray=True),
-                }),
-                "display_options": type("DisplayOptions", (object, capture.DisplayOptions,), {
-                    "background": cmds.displayRGBColor('background', q=True),
-                    "backgroundTop": cmds.displayRGBColor('backgroundTop', q=True),
-                    "backgroundBottom": cmds.displayRGBColor('backgroundBottom', q=True),
-                    'displayGradient': cmds.displayPref(dgr=True, q=True),
-                }),
-            }
-
+            self.log.debug(pyblish_utils.__file__)
+            preset = load_preset(preset_path)
+            preset['camera'] = camera
 
         # Ensure name of camera is valid
         sourcePath = os.path.normpath(instance.context.data('currentFile'))
         path, extension = os.path.splitext(sourcePath)
         path = (path + ".jpg")
 
-
-        self.log.info("preset %s" % preset['viewport_options'].polymeshes)
-
         self.log.info("Outputting to %s" % path)
 
         with maintained_time():
             output = capture.snap(
-                # camera=camera,
-                # width=width,
-                # height=height,
                 filename=path,
                 format=format,
                 viewer=False,
                 off_screen=off_screen,
                 maintain_aspect_ratio=maintain_aspect_ratio,
                 overwrite=True,
-                quality=50,
+                quality=80,
                 **preset
                 )
 
