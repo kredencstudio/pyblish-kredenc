@@ -35,6 +35,8 @@ class CollectCache(pyblish.api.Collector):
                 instance = context.create_instance(name, family="cache")
                 instance[:] = nodes
 
+                instance.data['publish'] = False
+
                 components = {}
                 components[name] = {'path': ''}
                 instance.data['ftrackComponents'] = components
