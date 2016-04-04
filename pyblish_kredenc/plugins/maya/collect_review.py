@@ -11,11 +11,17 @@ class CollectPreview(pyblish.api.Collector):
 
     def process(self, context):
 
-        cameras = cmds.ls("*_CAM*",
-                            objectsOnly=True,
-                            type="camera",
-                            long=True,
-                            recursive=True)
+        all_cameras = cmds.ls(objectsOnly=True,
+                              type="camera",
+                              long=True,
+                              recursive=True)
+
+        self.log.info(all_cameras)
+
+        cameras = []
+        for cam in all_cameras:
+            if 'cam' in cam.lower():
+                cameras.append(cam)
 
         cameras.append('perspShape')
 
@@ -24,12 +30,15 @@ class CollectPreview(pyblish.api.Collector):
             camera = cmds.listRelatives(camera_shape, parent=True)[0]
 
             # Use short name
-            name = cmds.ls(camera, long=False)[0].rsplit("_CAM", 1)[0]
+            name = cmds.ls(camera, long=False)[0].lower().rsplit("_cam", 1)[0]
 
             instance = context.create_instance(name=name, family='review')
             instance.add(camera)
 
             if camera == 'persp':
+                instance.data['publish'] = False
+
+            if context.data['ftrackData']['Task']['type'] in ['Lighting']:
                 instance.data['publish'] = False
 
             attrs = cmds.listAttr(camera, userDefined=True) or list()
