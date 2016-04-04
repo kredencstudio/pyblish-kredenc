@@ -10,7 +10,7 @@ import contextlib
 
 from maya import cmds
 
-version_info = (1, 1, 0)
+version_info = (2, 1, 0)
 
 __version__ = "%s.%s.%s" % version_info
 __license__ = "MIT"
@@ -33,8 +33,9 @@ def capture(camera=None,
             overwrite=False,
             raw_frame_numbers=False,
             camera_options=None,
-            viewport_options=None,
             display_options=None,
+            viewport_options=None,
+            viewport2_options=None,
             complete_filename=None):
     """Playblast in an independent panel
 
@@ -63,12 +64,14 @@ def capture(camera=None,
             frame numbers from the scene or capture to a sequence starting at
             zero. Defaults to False. When set to True `viewer` can't be used
             and will be forced to False.
-        camera_options (CameraOptions, optional): Supplied camera options,
-            using :class:`CameraOptions`
-        viewport_options (ViewportOptions, optional): Supplied viewport
-            options, using :class:`ViewportOptions`
-        display_options (DisplayOptions, optional): Supplied display
-            options, using :class:`DisplayOptions`
+        camera_options (dict, optional): Supplied camera options,
+            using `CameraOptions`
+        display_options (dict, optional): Supplied display
+            options, using `DisplayOptions`
+        viewport_options (dict, optional): Supplied viewport
+            options, using `ViewportOptions`
+        viewport2_options (dict, optional): Supplied display
+            options, using `Viewport2Options`
         complete_filename (str, optional): Exact name of output file. Use this
             to override the output of `filename` so it excludes frame padding.
 
@@ -76,15 +79,17 @@ def capture(camera=None,
         >>> # Launch default capture
         >>> capture()
         >>> # Launch capture with custom viewport settings
-        >>> view_opts = ViewportOptions()
-        >>> view_opts.grid = False
-        >>> view_opts.polymeshes = True
-        >>> view_opts.displayAppearance = "wireframe"
-        >>> cam_opts = CameraOptions()
-        >>> cam_opts.displayResolution = True
-        >>> capture('myCamera', 800, 600,
-        ...         viewport_options=view_opts,
-        ...         camera_options=cam_opts)
+        >>> capture('persp', 800, 600,
+        ...         viewport_options={
+        ...             "displayAppearance": "wireframe",
+        ...             "grid": False,
+        ...             "polymeshes": True,
+        ...         },
+        ...         camera_options={
+        ...             "displayResolution": True
+        ...         }
+        ... )
+
 
     """
 
@@ -119,14 +124,16 @@ def capture(camera=None,
 
     padding = 10  # Extend panel to accommodate for OS window manager
     with _independent_panel(width=width + padding,
-                            height=height + padding) as panel:
+                            height=height + padding,
+                            off_screen=off_screen) as panel:
         cmds.setFocus(panel)
 
         with contextlib.nested(
              _maintain_camera(panel, camera),
              _applied_viewport_options(viewport_options, panel),
-             _applied_camera_options(camera_options, panel, camera),
+             _applied_camera_options(camera_options, panel),
              _applied_display_options(display_options),
+             _applied_viewport2_options(viewport2_options),
              _isolated_nodes(isolate, panel),
              _maintained_time()):
 
@@ -163,6 +170,7 @@ def snap(*args, **kwargs):
 
     Keywords:
         See `capture`.
+
     """
 
     # capture single frame
@@ -204,123 +212,278 @@ def snap(*args, **kwargs):
     return output
 
 
+CameraOptions = {
+    "displayGateMask": False,
+    "displayResolution": False,
+    "displayFilmGate": False,
+    "displayFieldChart": False,
+    "displaySafeAction": False,
+    "displaySafeTitle": False,
+    "displayFilmPivot": False,
+    "displayFilmOrigin": False,
+    "overscan": 1.0,
+    "depthOfField": False,
+}
+
+DisplayOptions = {
+    "displayGradient": True,
+    "background": (0.631, 0.631, 0.631),
+    "backgroundTop": (0.535, 0.617, 0.702),
+    "backgroundBottom": (0.052, 0.052, 0.052),
+}
+
+# These display options require a different command to be queried and set
+_DisplayOptionsRGB = set(["background", "backgroundTop", "backgroundBottom"])
+
+ViewportOptions = {
+    # renderer
+    "rendererName": "vp2Renderer",
+    "fogging": False,
+    "fogMode": "linear",
+    "fogDensity": 1,
+    "fogStart": 1,
+    "fogEnd": 1,
+    "fogColor": (0, 0, 0, 0),
+    "shadows": False,
+    "displayTextures": True,
+    "displayLights": "default",
+    "useDefaultMaterial": False,
+    "wireframeOnShaded": False,
+    "displayAppearance": 'smoothShaded',
+    "selectionHiliteDisplay": False,
+    "headsUpDisplay": True,
+    # object display
+    "nurbsCurves": False,
+    "nurbsSurfaces": False,
+    "polymeshes": True,
+    "subdivSurfaces": False,
+    "cameras": False,
+    "lights": False,
+    "grid": False,
+    "joints": False,
+    "ikHandles": False,
+    "deformers": False,
+    "dynamics": False,
+    "fluids": False,
+    "hairSystems": False,
+    "follicles": False,
+    "nCloths": False,
+    "nParticles": False,
+    "nRigids": False,
+    "dynamicConstraints": False,
+    "locators": False,
+    "manipulators": False,
+    "dimensions": False,
+    "handles": False,
+    "pivots": False,
+    "textures": False,
+    "strokes": False
+}
+
+Viewport2Options = {
+    "consolidateWorld": True,
+    "enableTextureMaxRes": False,
+    "bumpBakeResolution": 64,
+    "colorBakeResolution": 64,
+    "floatingPointRTEnable": True,
+    "floatingPointRTFormat": 1,
+    "gammaCorrectionEnable": False,
+    "gammaValue": 2.2,
+    "lineAAEnable": False,
+    "maxHardwareLights": 8,
+    "motionBlurEnable": False,
+    "motionBlurSampleCount": 8,
+    "motionBlurShutterOpenFraction": 0.2,
+    "motionBlurType": 0,
+    "multiSampleCount": 8,
+    "multiSampleEnable": False,
+    "singleSidedLighting": False,
+    "ssaoEnable": False,
+    "ssaoAmount": 1.0,
+    "ssaoFilterRadius": 16,
+    "ssaoRadius": 16,
+    "ssaoSamples": 16,
+    "textureMaxResolution": 4096,
+    "threadDGEvaluation": False,
+    "transparencyAlgorithm": 1,
+    "transparencyQuality": 0.33,
+    "useMaximumHardwareLights": True,
+    "vertexAnimationCache": 0
+}
+
+
+def apply_view(panel, **options):
+    """Apply options to panel"""
+
+    camera = cmds.modelPanel(panel, camera=True, query=True)
+
+    # Display options
+    display_options = options.get("display_options", {})
+    for key, value in display_options.iteritems():
+        if key in _DisplayOptionsRGB:
+            cmds.displayRGBColor(key, *value)
+        else:
+            cmds.displayPref(**{key: value})
+
+    # Camera options
+    camera_options = options.get("camera_options", {})
+    for key, value in camera_options.iteritems():
+        cmds.setAttr("{0}.{1}".format(camera, key), value)
+
+    # Viewport options
+    viewport_options = options.get("viewport_options", {})
+    for key, value in viewport_options.iteritems():
+        cmds.modelEditor(panel, edit=True, **{key: value})
+
+    viewport2_options = options.get("viewport2_options", {})
+    for key, value in viewport2_options.iteritems():
+        attr = "hardwareRenderingGlobals.{0}".format(key)
+        cmds.setAttr(attr, value)
+
+
 def parse_active_view():
-    """Parse active view for settings"""
-    panel = cmds.getPanel(withFocus=True)
-    assert "model" in panel, "No active viewport"
+    """Parse the current settings from the active view"""
+
+    panel = cmds.getPanel(wf=True)
+
+    # This happens when last focus was on panel
+    # that got deleted (e.g. `capture()` then `parse_active_view()`)
+    if not panel or "modelPanel" not in panel:
+        raise RuntimeError("No acive model panel found")
+
+    return parse_view(panel)
+
+
+def parse_view(panel):
+    """Parse the scene, panel and camera for their current settings
+
+    Example:
+        >>> parse_view("modelPanel1")
+
+    Arguments:
+        panel (str): Name of modelPanel
+
+    """
+
     camera = cmds.modelPanel(panel, query=True, camera=True)
-    camera_shape = cmds.listRelatives(camera, shapes=True)[0]
+
+    # Display options
+    display_options = {}
+    for key in DisplayOptions:
+        if key in _DisplayOptionsRGB:
+            display_options[key] = cmds.displayRGBColor(key, query=True)
+        else:
+            display_options[key] = cmds.displayPref(query=True, **{key: True})
+
+    # Camera options
+    camera_options = {}
+    for key in CameraOptions:
+        camera_options[key] = cmds.getAttr("{0}.{1}".format(camera, key))
+
+    # Viewport options
+    viewport_options = {}
+    for key in ViewportOptions:
+        viewport_options[key] = cmds.modelEditor(
+            panel, query=True, **{key: True})
+
+    viewport2_options = {}
+    for key in Viewport2Options.keys():
+        attr = "hardwareRenderingGlobals.{0}".format(key)
+        try:
+            viewport2_options[key] = cmds.getAttr(attr)
+        except ValueError:
+            continue
 
     return {
         "camera": camera,
-        "width": cmds.getAttr("defaultResolution.width"),
-        "height": cmds.getAttr("defaultResolution.height"),
-        "camera_options": type("CameraOptions", (object, CameraOptions,), {
-            "displayFilmGate": cmds.getAttr(camera_shape + ".displayFilmGate"),
-            "displayResolution": cmds.getAttr(camera_shape + ".displayResolution"),
-            "displaySafeAction": cmds.getAttr(camera_shape + ".displaySafeAction"),
-        }),
-        "viewport_options": type("ViewportOptions", (object, ViewportOptions,), {
-            "useDefaultMaterial": cmds.modelEditor(panel, query=True, useDefaultMaterial=True),
-            "wireframeOnShaded": cmds.modelEditor(panel, query=True, wireframeOnShaded=True),
-            "displayAppearance": cmds.modelEditor(panel, query=True, displayAppearance=True),
-            "displayTextures": cmds.modelEditor(panel, query=True, displayTextures=True),
-            "displayLights": cmds.modelEditor(panel, query=True, displayLights=True),
-            "shadows": cmds.modelEditor(panel, query=True, shadows=True),
-            "xray": cmds.modelEditor(panel, query=True, xray=True),
-        }),
-        "display_options": type("DisplayOptions", (object, DisplayOptions,), {
-            "background": cmds.displayRGBColor('background', q=True),
-            "backgroundTop": cmds.displayRGBColor('backgroundTop', q=True),
-            "backgroundBottom": cmds.displayRGBColor('backgroundBottom', q=True),
-            'displayGradient': cmds.displayPref(dgr=True, q=True),
-        }),
+        "display_options": display_options,
+        "camera_options": camera_options,
+        "viewport_options": viewport_options,
+        "viewport2_options": viewport2_options
     }
 
 
-class ViewportOptions:
-    """Viewport options for :func:`capture`"""
+def parse_active_scene():
+    """Parse active scene for arguments for capture()
 
-    useDefaultMaterial = False
-    wireframeOnShaded = False
-    displayAppearance = 'smoothShaded'
-    selectionHiliteDisplay = False
-    headsUpDisplay = True
-    displayTextures = True
-    displayLights = True
-
-    # Visibility flags
-    nurbsCurves = False
-    nurbsSurfaces = False
-    polymeshes = True
-    subdivSurfaces = False
-    cameras = False
-    lights = False
-    grid = False
-    joints = False
-    ikHandles = False
-    deformers = False
-    dynamics = False
-    fluids = False
-    hairSystems = False
-    follicles = False
-    nCloths = False
-    nParticles = False
-    nRigids = False
-    dynamicConstraints = False
-    locators = False
-    manipulators = False
-    dimensions = False
-    handles = False
-    pivots = False
-    textures = False
-    strokes = False
-
-
-class CameraOptions:
-    """Camera settings for :func:`capture`
-
-    Camera options are applied to the specified camera and
-    then reverted once the capture is complete.
+    *Resolution taken from render settings.
 
     """
 
-    displayGateMask = False
-    displayResolution = False
-    displayFilmGate = False
-    displayFieldChart = False
-    displaySafeAction = False
-    displaySafeTitle = False
-    displayFilmPivot = False
-    displayFilmOrigin = False
-    overscan = 1.0
+    return {
+        "start_frame": cmds.playbackOptions(minTime=True, query=True),
+        "end_frame": cmds.playbackOptions(maxTime=True, query=True),
+        "width": cmds.getAttr("defaultResolution.width"),
+        "height": cmds.getAttr("defaultResolution.height"),
+        "compression": cmds.optionVar(query="playblastCompression"),
+        "filename": (cmds.optionVar(query="playblastFile")
+                     if cmds.optionVar(query="playblastSaveToFile") else None),
+        "format": cmds.optionVar(query="playblastFormat"),
+        "off_screen": (True if cmds.optionVar(query="playblastOffscreen")
+                       else False),
+        "quality": cmds.optionVar(query="playblastQuality")
+    }
 
 
-class DisplayOptions:
-    """Display options for :func:`capture`
+def apply_scene(**options):
+    """Apply options from scene
 
-    Use this struct for background color, anti-alias and other
-    display-related options.
+    Example:
+        >>> apply_scene({"start_frame": 1009})
+
+    Arguments:
+        options (dict): Scene options
 
     """
-    displayGradient = True
-    background = (0.631, 0.631, 0.631)
-    backgroundTop = (0.535, 0.617, 0.702)
-    backgroundBottom = (0.052, 0.052, 0.052)
 
+    if "start_frame" in options:
+        cmds.playbackOptions(minTime=options["start_frame"])
 
-def _parse_options(options):
-    """Return dictionary of properties from option-objects"""
-    opts = dict()
-    for attr in dir(options):
-        if attr.startswith("__"):
-            continue
-        opts[attr] = getattr(options, attr)
-    return opts
+    if "end_frame" in options:
+        cmds.playbackOptions(maxTime=options["end_frame"])
+
+    if "width" in options:
+        cmds.setAttr("defaultResolution.width", options["width"])
+
+    if "height" in options:
+        cmds.setAttr("defaultResolution.height", options["height"])
+
+    if "compression" in options:
+        cmds.optionVar(
+            stringValue=["playblastCompression", options["compression"]])
+
+    if "filename" in options:
+        cmds.optionVar(
+            stringValue=["playblastFile", options["filename"]])
+
+    if "format" in options:
+        cmds.optionVar(
+            stringValue=["playblastFormat", options["format"]])
+
+    if "off_screen" in options:
+        cmds.optionVar(
+            intValue=["playblastFormat", options["off_screen"]])
+
+    if "quality" in options:
+        cmds.optionVar(
+            floatValue=["playblastQuality", options["quality"]])
 
 
 @contextlib.contextmanager
-def _independent_panel(width, height):
+def _applied_view(panel, **options):
+    """Apply options to panel"""
+
+    original = parse_view(panel)
+    apply_view(panel, **options)
+
+    try:
+        yield
+    finally:
+        apply_view(panel, **original)
+
+
+@contextlib.contextmanager
+def _independent_panel(width, height, off_screen=False):
     """Create capture-window context without decorations
 
     Arguments:
@@ -342,21 +505,23 @@ def _independent_panel(width, height):
                          height=height,
                          topLeftCorner=topLeft,
                          menuBarVisible=False,
-                         titleBar=False)
+                         titleBar=False,
+                         visible=not off_screen)
     cmds.paneLayout()
     panel = cmds.modelPanel(menuBarVisible=False,
                             label='CapturePanel')
 
     # Hide icons under panel menus
     bar_layout = cmds.modelPanel(panel, q=True, barLayout=True)
-    cmds.frameLayout(bar_layout, e=True, collapse=True)
+    cmds.frameLayout(bar_layout, edit=True, collapse=True)
 
-    cmds.showWindow(window)
+    if not off_screen:
+        cmds.showWindow(window)
 
     # Set the modelEditor of the modelPanel as the active view so it takes
     # the playback focus. Does seem redundant with the `refresh` added in.
     editor = cmds.modelPanel(panel, query=True, modelEditor=True)
-    cmds.modelEditor(editor, e=1, activeView=True)
+    cmds.modelEditor(editor, edit=True, activeView=True)
 
     # Force a draw refresh of Maya so it keeps focus on the new panel
     # This focus is required to force preview playback in the independent panel
@@ -371,36 +536,20 @@ def _independent_panel(width, height):
 
 
 @contextlib.contextmanager
-def _applied_viewport_options(options, panel):
-    """Context manager for applying `options` to `panel`"""
-
-    options = options or ViewportOptions()
-    options = _parse_options(options)
-    cmds.modelEditor(panel,
-                     edit=True,
-                     allObjects=False,
-                     grid=False,
-                     manipulators=False)
-    cmds.modelEditor(panel, edit=True, **options)
-
-    yield
-
-
-@contextlib.contextmanager
-def _applied_camera_options(options, panel, camera):
+def _applied_camera_options(options, panel):
     """Context manager for applying `options` to `camera`"""
 
-    options = options or CameraOptions()
-    options = _parse_options(options)
+    camera = cmds.modelPanel(panel, query=True, camera=True)
+    options = dict(CameraOptions, **(options or {}))
 
     old_options = dict()
-    for opt in options:
+    for opt in options.copy():
         try:
             old_options[opt] = cmds.getAttr(camera + "." + opt)
         except:
             sys.stderr.write("Could not get camera attribute "
                              "for capture: %s" % opt)
-            delattr(options, opt)
+            options.pop(opt)
 
     for opt, value in options.iteritems():
         cmds.setAttr(camera + "." + opt, value)
@@ -417,7 +566,7 @@ def _applied_camera_options(options, panel, camera):
 def _applied_display_options(options):
     """Context manager for setting background color display options."""
 
-    options = options or DisplayOptions()
+    options = dict(DisplayOptions, **(options or {}))
 
     colors = ['background', 'backgroundTop', 'backgroundBottom']
     preferences = ['displayGradient']
@@ -428,15 +577,16 @@ def _applied_display_options(options):
         original[color] = cmds.displayRGBColor(color, query=True) or []
 
     for preference in preferences:
-        original[preference] = cmds.displayPref(query=True, **{preference: True})
+        original[preference] = cmds.displayPref(
+            query=True, **{preference: True})
 
     # Apply settings
     for color in colors:
-        value = getattr(options, color)
+        value = options[color]
         cmds.displayRGBColor(color, *value)
 
     for preference in preferences:
-        value = getattr(options, preference)
+        value = options[preference]
         cmds.displayPref(**{preference: value})
 
     try:
@@ -448,6 +598,53 @@ def _applied_display_options(options):
             cmds.displayRGBColor(color, *original[color])
         for preference in preferences:
             cmds.displayPref(**{preference: original[preference]})
+
+
+@contextlib.contextmanager
+def _applied_viewport_options(options, panel):
+    """Context manager for applying `options` to `panel`"""
+
+    options = dict(ViewportOptions, **(options or {}))
+
+    cmds.modelEditor(panel,
+                     edit=True,
+                     allObjects=False,
+                     grid=False,
+                     manipulators=False)
+    cmds.modelEditor(panel, edit=True, **options)
+
+    yield
+
+
+@contextlib.contextmanager
+def _applied_viewport2_options(options):
+    """Context manager for setting viewport 2.0 options.
+
+    These options are applied by setting attributes on the
+    "hardwareRenderingGlobals" node.
+
+    """
+
+    options = dict(Viewport2Options, **(options or {}))
+
+    # Store current settings
+    original = {}
+    for opt in options.copy():
+        try:
+            original[opt] = cmds.getAttr("hardwareRenderingGlobals." + opt)
+        except ValueError:
+            options.pop(opt)
+
+    # Apply settings
+    for opt, value in options.iteritems():
+        cmds.setAttr("hardwareRenderingGlobals." + opt, value)
+
+    try:
+        yield
+    finally:
+        # Restore previous settings
+        for opt, value in original.iteritems():
+            cmds.setAttr("hardwareRenderingGlobals." + opt, value)
 
 
 @contextlib.contextmanager
@@ -513,3 +710,26 @@ def _get_screen_size():
 
 def _in_standalone():
     return not hasattr(cmds, "about") or cmds.about(batch=True)
+
+
+# --------------------------------
+#
+# Apply version specific settings
+#
+# --------------------------------
+
+version = cmds.about(version=True)
+if "2016" in version:
+    Viewport2Options.update({
+        "hwFogAlpha": 1.0,
+        "hwFogFalloff": 0,
+        "hwFogDensity": 0.1,
+        "hwFogEnable": False,
+        "holdOutDetailMode": 1,
+        "hwFogEnd": 100.0,
+        "holdOutMode": True,
+        "hwFogColorR": 0.5,
+        "hwFogColorG": 0.5,
+        "hwFogColorB": 0.5,
+        "hwFogStart": 0.0,
+    })
