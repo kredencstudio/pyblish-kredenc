@@ -10,7 +10,7 @@ class ValidateDeadlineOutputLocation(pyblish.api.Validator):
 
     families = ['deadline.render']
     optional = True
-    label = 'Output location path'
+    label = 'Render network path'
 
     def process(self, instance):
         # checking output
