@@ -1,8 +1,20 @@
 import re
 import tempfile
-
+import json
 
 print 'pyblish_utils loaded'
+
+
+def save_preset(path, preset):
+    """Save options to path"""
+    with open(path, "w") as f:
+        json.dump(preset, f)
+
+
+def load_preset(path):
+    """Load options json from path"""
+    with open(path, "r") as f:
+        return json.load(f)
 
 
 def temp_dir(context):
