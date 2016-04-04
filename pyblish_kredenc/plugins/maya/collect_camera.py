@@ -10,11 +10,23 @@ class CollectCameras(pyblish.api.Collector):
     label = "Collect Cameras"
 
     def process(self, context):
-        for camera_shape in cmds.ls("*_cam*",
-                                    objectsOnly=True,
-                                    type="camera",
-                                    long=True,
-                                    recursive=True):  # Include namespace
+
+        if context.data['ftrackData']['Task']['type'] in ['Modelling']:
+            return
+
+        all_cameras = cmds.ls(objectsOnly=True,
+                              type="camera",
+                              long=True,
+                              recursive=True)
+
+        self.log.info(all_cameras)
+
+        cameras = []
+        for cam in all_cameras:
+            if 'cam' in cam.lower():
+                cameras.append(cam)
+
+        for camera_shape in cameras:  # Include namespace
 
             camera = cmds.listRelatives(camera_shape, parent=True)[0]
 
@@ -24,6 +36,9 @@ class CollectCameras(pyblish.api.Collector):
             instance = context.create_instance(name=name, family='camera')
             instance.add(camera)
             instance.data["publish"] = False
+
+            if context.data['ftrackData']['Task']['type'] in ['Lighting']:
+                instance.data['publish'] = True
 
             attrs = cmds.listAttr(camera, userDefined=True) or list()
 
