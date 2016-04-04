@@ -8,7 +8,7 @@ class IntegrateInitialScene(pyblish.api.Integrator):
     """
 
     families = ['new_scene']
-    hosts = ['nuke', 'maya']
+    hosts = ['nuke', 'maya', 'houdini']
     optional = True
     label = 'Initial Scene'
     order = pyblish.api.Integrator.order + 0.1
@@ -33,6 +33,12 @@ class IntegrateInitialScene(pyblish.api.Integrator):
                 proj_path = os.path.dirname(workfile)
                 self.log.info("Setting Maya project to '%s'" % proj_path)
                 pm.mel.setProject(proj_path)
+            elif host == 'houdini':
+                import hou
+                if os.path.exists(workfile):
+                    hou.hipFile.open(hou.expandString(workfile).replace('\\', '/'))
+                else:
+                    hou.hipFile.save(hou.expandString(workfile).replace('\\', '/'))
 
         else:
             raise pyblish.api.ValidationError(

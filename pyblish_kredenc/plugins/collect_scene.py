@@ -14,8 +14,11 @@ class CollectScene(pyblish.api.Collector):
 
         current_file = context.data('currentFile')
         directory, filename = os.path.split(str(current_file))
+        self.log.info(current_file)
 
-        if current_file.lower() in ['', '.', 'untitled', 'root']:
+        patterns = ['', 'untitled', 'root']
+
+        if any(pattern == current_file.lower() for pattern in patterns):
             self.log.warning('New scene! Preparing an initial workfile')
             # create instance
             instance = context.create_instance(name='new_scene')
@@ -42,9 +45,6 @@ class CollectScene(pyblish.api.Collector):
 
             instance.data['ftrackComponents'] = components
             self.log.info("Added: %s" % components)
-
-            if 'asset' in str(current_file):
-                instance.set_data('ftrackAssetType', value='img')
 
             # version data
             try:
