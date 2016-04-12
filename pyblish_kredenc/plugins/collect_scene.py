@@ -18,7 +18,7 @@ class CollectScene(pyblish.api.Collector):
 
         patterns = ['', 'untitled', 'root']
 
-        if any(pattern == current_file.lower() for pattern in patterns):
+        if any(pattern in current_file.lower() for pattern in patterns):
             self.log.warning('New scene! Preparing an initial workfile')
             # create instance
             instance = context.create_instance(name='new_scene')
