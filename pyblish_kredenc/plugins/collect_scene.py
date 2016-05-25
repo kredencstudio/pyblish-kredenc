@@ -14,11 +14,11 @@ class CollectScene(pyblish.api.Collector):
 
         current_file = context.data('currentFile')
         directory, filename = os.path.split(str(current_file))
-        self.log.info(current_file)
+        self.log.info('current file: ' + current_file)
 
-        patterns = ['', 'untitled', 'root']
+        patterns = ['.', 'untitled', 'root', 'untitled.hip']
 
-        if any(pattern in current_file.lower() for pattern in patterns):
+        if any(pattern == filename.lower() for pattern in patterns):
             self.log.warning('New scene! Preparing an initial workfile')
             # create instance
             instance = context.create_instance(name='new_scene')
