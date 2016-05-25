@@ -39,13 +39,18 @@ class ValidatePublishPathPack(pyblish.api.Validator):
 
         subset = ''
         if instance.data.get('subset'):
-            subset = instance.data['subset']
+            subset = str(instance.data['subset'])
+
+        if instance.data.get('item'):
+            item = str(instance.data['item'])
 
         kwargs = {
-                'version': version,
-                'subset': subset,
-                'ext': 'fbx'
-                }
+            'family': instance.data['family'],
+            'item': item,
+            'version': version,
+            'subset': subset,
+            'ext': 'fbx'
+            }
 
         self.log.debug(templates)
         self.log.debug(kwargs)
@@ -56,7 +61,8 @@ class ValidatePublishPathPack(pyblish.api.Validator):
                                                 )
 
         self.log.debug('paths returned: {}'.format(publishFile))
-        publishFile = publishFile[0]
+        # publishFile = publishFile[0]
+        publishFile = 'K:/Projects/F002_king_of_sumava/sequences/a02/a02sh001/anim/publish/packs/kos_a02sh001_anim_v006/kos_a02sh001_anim_v006.fbx'
         instance.data['publishFile'] = publishFile
         self.log.debug('saving publishFile to instance: {}'.format(publishFile))
 

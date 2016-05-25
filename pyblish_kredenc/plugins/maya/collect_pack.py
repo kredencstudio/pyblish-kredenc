@@ -24,7 +24,7 @@ class CollectPack(pyblish.api.Collector):
 
                 self.log.debug("name_list: {}".format(name_list))
 
-                subset = None
+                subset = ''
                 if name_list:
                     if len(name_list) == 2:
                         name = name_list[0]
@@ -39,7 +39,7 @@ class CollectPack(pyblish.api.Collector):
                 instance = context.create_instance(name, family="pack")
 
                 instance.data['item'] = item
-                instance.data['subset'] = item
+                instance.data['subset'] = subset
 
 
                 self.log.debug("Collecting instance contents: {}".format(name))
