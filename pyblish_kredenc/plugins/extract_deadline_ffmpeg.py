@@ -1,4 +1,5 @@
 import pyblish.api
+import os
 
 
 @pyblish.api.log
@@ -30,8 +31,11 @@ class ExtractDeadlineFFMPEG(pyblish.api.Extractor):
             FFMPEGInputArgs = '-framerate 25.0'
             FFMPEGOutputArgs = '-q:v 0 -pix_fmt yuv420p -vf scale=trunc(iw/2)*2:trunc(ih/2)*2'
 
+        output = os.path.splitext(os.path.splitext(job_data['OutputFilename0'])[0])[0]+'.mp4'
+
         extra_info_key_value['FFMPEGInputArgs0'] = FFMPEGInputArgs
         extra_info_key_value['FFMPEGOutputArgs0'] = FFMPEGOutputArgs
+        extra_info_key_value['FFMPEGOutput0'] = output
         extra_info_key_value['FFMPEGUploadToFtrack'] = 'True'
 
 
