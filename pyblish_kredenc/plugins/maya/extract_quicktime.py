@@ -1,5 +1,6 @@
 import os
 import contextlib
+import subprocess
 
 import pyblish.api
 from pyblish_kredenc.vendor import capture
@@ -54,8 +55,8 @@ class ExtractQuicktime(pyblish.api.Extractor):
                           '_cam' suffix")
             return
 
-        format = instance.data('format') or 'qt'
-        compression = instance.data('compression') or 'h264'
+        fmt = instance.data('format') or 'image'
+        compression = instance.data('compression') or 'png'
         off_screen = instance.data('offScreen', False)
         maintain_aspect_ratio = instance.data('maintainAspectRatio', True)
 
@@ -65,13 +66,15 @@ class ExtractQuicktime(pyblish.api.Extractor):
         # Choose preset
         preset_name = 'default'
 
+        ### PROJECT FILTERING
+
+        # KOS Presets
         if instance.context.data['ftrackData']['Project']['code'] == 'kos':
-            self.log.info('kos')
             preset_name = 'kos'
             check_viewport = True
-        if instance.context.data['ftrackData']['Task']['type'] == 'Animation':
-            self.log.info('kos')
-            preset_name = 'kos_anim'
+            if instance.context.data['ftrackData']['Task']['type'] in ['Animation', 'Layout', 'Lookdev']:
+                preset_name = 'kos_anim'
+        # HBT Presets
         if instance.context.data['ftrackData']['Project']['code'] == 'hbt':
             self.log.info('hbt')
             preset_name = 'hbt'
@@ -93,19 +96,21 @@ class ExtractQuicktime(pyblish.api.Extractor):
             preset = load_preset(preset_path)
             preset['camera'] = camera
 
+        dir_path = pyblish_utils.temp_dir(instance)
 
         # Ensure name of camera is valid
         sourcePath = os.path.normpath(instance.context.data('currentFile'))
         path, extension = os.path.splitext(sourcePath)
+        image_folder, filename = os.path.split(path)
+        output_images = os.path.join(dir_path, filename)
 
-        path = (path + ".mov")
 
-        self.log.info("Outputting to %s" % path)
+        self.log.info("Outputting images to %s" % output_images)
 
         with maintained_time():
-            output = capture.capture(
-                filename=path,
-                format=format,
+            outputI = capture.capture(
+                filename=output_images,
+                format=fmt,
                 viewer=False,
                 compression=compression,
                 off_screen=off_screen,
@@ -114,7 +119,21 @@ class ExtractQuicktime(pyblish.api.Extractor):
                 quality=70,
                 **preset
                 )
-        instance.data["outputPath_qt"] = output
+
+        audio = ''
+
+        if audio != '':
+            audio = '-i ' + audio + ' -map 0 -map 1 -c:a libtwolame'
+        paddingExp = ".%4d"
+        filename, extension = os.path.splitext(outputI)
+        filename, padding = os.path.splitext(filename)
+        outputI = filename + paddingExp + extension
+        outputV = (path + ".mov")
+        instance.data["outputPath_qt"] = outputV
+        self.log.info("Outputting video to %s" % outputV)
+        output = subprocess.call('ffmpeg -i {0} {2} -c:v libx264 -preset veryslow -vf "scale=trunc(iw/2)*2:trunc(ih/2)*2" -crf 22 -y {1}'.format(outputI, outputV, audio))
+
+
 
 
 @contextlib.contextmanager

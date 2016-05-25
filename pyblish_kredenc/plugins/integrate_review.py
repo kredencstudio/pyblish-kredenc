@@ -22,8 +22,11 @@ class ConformFlipbook(pyblish.api.Conformer):
         extractedPaths = [v for k,v in instance.data.items() if k.startswith('outputPath')]
 
         componentPath = ''
+        
+        self.log.debug('Extracted Paths: {}'.format(extractedPaths))
 
         for sourcePath in extractedPaths:
+
 
             # sourcePath = os.path.normpath(instance.data('outputPath'))
 

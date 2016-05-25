@@ -29,9 +29,9 @@ def makeMovie(outputI, outputV, audio):
     if audio != '':
         audio = '-i ' + audio + ' -map 0 -map 1 -c:a libtwolame'
     paddingExp = ".%4d"
-    file, extension = os.path.splitext(outputI)
-    file, padding = os.path.splitext(file)
-    input = file + paddingExp + extension
+    filename, extension = os.path.splitext(outputI)
+    filename, padding = os.path.splitext(filename)
+    input = filename + paddingExp + extension
     output = subprocess.call('ffmpeg -i {0} {2} -c:v libx264 -preset slow -vf "scale=trunc(iw/2)*2:trunc(ih/2)*2" -crf 28 -y {1}'.format(input, outputV, audio))
     return outputV
 
@@ -74,7 +74,7 @@ def flip(node):
     desktop = hou.ui.curDesktop()
 
     # Get the scene viewer
-    scene_view = desktop.createFloatingPaneTab(hou.paneTabType.SceneViewer, size=[1280,720])
+    scene_view = desktop.createFloatingPaneTab(hou.paneTabType.SceneViewer, size=[1920,1080])
 
     #check of we are good to go
     if scene_view is None or scene_view.type() != hou.paneTabType.SceneViewer:

@@ -48,7 +48,7 @@ class ExtractSnapshot(pyblish.api.Extractor):
         self.log.debug('Components: {}'.format(components))
 
         format = instance.data('format') or 'image'
-        # # compression = instance.data('compression') or 'h264'
+        compression = instance.data('compression') or 'jpg'
         off_screen = instance.data('offScreen', False)
         maintain_aspect_ratio = instance.data('maintainAspectRatio', True)
 
@@ -78,6 +78,7 @@ class ExtractSnapshot(pyblish.api.Extractor):
             output = capture.snap(
                 filename=path,
                 format=format,
+                compression=compression,
                 viewer=False,
                 off_screen=off_screen,
                 maintain_aspect_ratio=maintain_aspect_ratio,

@@ -185,7 +185,7 @@ def snap(*args, **kwargs):
 
     # override capture defaults
     format = kwargs.pop('format', "image")
-    compression = kwargs.pop('compression', "png")
+    compression = kwargs.pop('compression', "jpg")
     viewer = kwargs.pop('viewer', False)
     raw_frame_numbers = kwargs.pop('raw_frame_numbers', True)
     kwargs['compression'] = compression
@@ -303,7 +303,7 @@ Viewport2Options = {
     "ssaoFilterRadius": 16,
     "ssaoRadius": 16,
     "ssaoSamples": 16,
-    "textureMaxResolution": 4096,
+    "textureMaxResolution": 1024,
     "threadDGEvaluation": False,
     "transparencyAlgorithm": 1,
     "transparencyQuality": 0.33,
