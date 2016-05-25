@@ -12,7 +12,7 @@ class ValidatePublishPathAssets(pyblish.api.Validator):
     'version' - version of publish
     """
 
-    families = ['model', 'rig']
+    families = ['model', 'rig', 'camera']
     label = 'Validate Asset Paths'
 
     def process(self, instance):
@@ -43,7 +43,7 @@ class ValidatePublishPathAssets(pyblish.api.Validator):
 
         kwargs = {
                 'family': instance.data['family'],
-                'item': instance.data['item'],
+                'item': str(instance.data['item']),
                 'version': version,
                 'subset': subset,
                 }

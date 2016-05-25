@@ -8,7 +8,7 @@ class ConformAsset(pyblish.api.Conformer):
     """Copies asset to it's final location
     """
 
-    families = ['model', 'rig', 'cache']
+    families = ['model', 'rig', 'cache', 'camera']
     label = 'Conform Assets'
 
     def process(self, instance):

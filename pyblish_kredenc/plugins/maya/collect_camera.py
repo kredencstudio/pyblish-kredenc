@@ -37,6 +37,11 @@ class CollectCameras(pyblish.api.Collector):
             instance.add(camera)
             instance.data["publish"] = False
 
+            item = name.split('_')[0]
+            instance.data['item'] = item
+
+            self.log.debug("item {}, name {}".format(item, name))
+
             if context.data['ftrackData']['Task']['type'] in ['Lighting']:
                 instance.data['publish'] = True
 

@@ -25,6 +25,8 @@ class CollectCache(pyblish.api.Collector):
                 members = obj.members()
                 nodes = []
 
+                subset = None
+
                 self.log.info("Collecting instance contents: {}".format(name))
 
                 for mesh in pymel.core.ls(members, dag=True, exactType='transform'):
@@ -32,8 +34,12 @@ class CollectCache(pyblish.api.Collector):
 
                 self.log.info(nodes)
 
+
                 instance = context.create_instance(name, family="cache")
                 instance[:] = nodes
+
+                instance.data['item'] = name
+                instance.data['subset'] = ''
 
                 instance.data['publish'] = False
 

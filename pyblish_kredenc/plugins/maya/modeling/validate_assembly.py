@@ -21,7 +21,7 @@ class ValidateAssembly(pyblish.api.Validator):
             root = node.root()
 
 
-            asset = os.environ["ASSET_BUILD"]
+            asset = os.getenv("ASSET_BUILD")
 
             msg = 'Your model needs to be grouped\
                 as |%s_geo_grp' % asset

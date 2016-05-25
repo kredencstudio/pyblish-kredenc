@@ -6,7 +6,7 @@ class ExtractSceneSave(pyblish.api.Extractor):
     """
     """
     hosts = ['maya']
-    order = pyblish.api.Extractor.order - 0.1
+    order = pyblish.api.Extractor.order - 0.45
     families = ['scene']
     label = 'Scene Save'
 
