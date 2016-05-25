@@ -6,13 +6,34 @@ import pyblish.api
 from ft_studio import ft_maya, ft_pathUtils
 reload(ft_maya)
 
+def get_path(context):
+
+    ftrack_data = context.data('ftrackData')
+    taskid = context.data('ftrackData')['Task']['id']
+
+    if 'Asset_Build' not in ftrack_data.keys():
+        templates = [
+            'shot.task.output'
+        ]
+    else:
+        templates = [
+            'asset.task.output'
+        ]
+
+    root = context.data('ftrackData')['Project']['root']
+    renderFolder = ft_pathUtils.getPathsYaml(taskid,
+                                             templateList=templates,
+                                             root=root)
+    renderFolder = renderFolder[0]
+
+    return renderFolder.replace('\\', '/')
 
 class RepairRenderSettings(pyblish.api.Action):
     label = "Repair"
     on = "failed"
     icon = "wrench"
 
-    def process(self, instance):
+    def process(self, plugin, context):
 
         render_globals = pymel.core.PyNode('defaultRenderGlobals')
 
@@ -45,11 +66,11 @@ class RepairRenderSettings(pyblish.api.Action):
         # repairing default lighting
         render_globals.enableDefaultLight.set(False)
 
-        version = instance.context.data['version']
+        version = context.data['version']
         render_globals.renderVersion.set('v' + version)
 
         # repairing image path
-        output = self.get_path(instance)
+        output = get_path(context)
         pymel.core.system.Workspace.fileRules['images'] = output
         pymel.core.system.Workspace.save()
 
@@ -59,7 +80,7 @@ class RepairRenderSettings(pyblish.api.Action):
 class ValidateRenderSettings(pyblish.api.Validator):
     """ Validates settings """
 
-    families = ['deadline.render']
+    families = ['render']
     optional = True
     label = 'Render Settings'
 
@@ -93,6 +114,8 @@ class ValidateRenderSettings(pyblish.api.Validator):
             return
         else:
             instance.context.set_data('renderOutputChecked', value=True)
+
+
 
         render_globals = pymel.core.PyNode('defaultRenderGlobals')
 
@@ -139,7 +162,7 @@ class ValidateRenderSettings(pyblish.api.Validator):
             return
 
         # validate image path
-        expected_output = self.get_path(instance)
+        expected_output = get_path(instance.context)
         output = str(pymel.core.system.Workspace.fileRules['images'])
         msg = 'Project Images directory is incorrect.'
         msg += ' Expected: %s' % expected_output

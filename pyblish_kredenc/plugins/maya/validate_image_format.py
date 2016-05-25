@@ -7,7 +7,7 @@ import pyblish.api
 class ValidateImageFormat(pyblish.api.Validator):
     """ Validates settings """
     hosts = ['maya']
-    families = ['deadline.render']
+    families = ['render']
     optional = True
     label = 'Image Format'
 

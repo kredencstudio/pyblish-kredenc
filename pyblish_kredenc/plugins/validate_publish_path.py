@@ -47,7 +47,7 @@ class ValidatePublishPath(pyblish.api.Validator):
 
         if os.path.exists(publishFolder):
             instance.context.set_data('publishFile', value=publishFile)
-            instance.context.set_data('deadlineInput', value=publishFile)
+            instance.context.data['deadlineInput'] = publishFile
             self.log.debug('Setting publishFile: {}'.format(publishFile))
         else:
             name = instance

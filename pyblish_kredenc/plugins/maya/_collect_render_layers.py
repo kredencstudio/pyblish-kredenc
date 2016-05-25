@@ -34,14 +34,14 @@ class CollectRenderlayers(pyblish.api.Collector):
         tmp = str(pymel.core.system.Workspace.getPath().expand())
         plugin_data['ProjectPath'] = tmp
 
-        plugin_data['Version'] = pymel.versions.flavor()
-        plugin_data['Build'] = pymel.versions.bitness()
+        plugin_data['Version'] = pymel.versions.fullName()
+        # plugin_data['Build'] = pymel.versions.bitness()
 
         drg = pymel.core.PyNode('defaultRenderGlobals')
 
-        # arnold specifics
-        if drg.currentRenderer.get() == 'arnold':
-            plugin_data['Animation'] = 1
+        # # arnold specifics
+        # if drg.currentRenderer.get() == 'arnold':
+        #     plugin_data['Animation'] = 1
 
         # getting render layers data
         data = {}
@@ -52,11 +52,11 @@ class CollectRenderlayers(pyblish.api.Collector):
                 continue
 
             # skipping defaultRenderLayers
-            if layer.name().endswith('defaultRenderLayer'):
+            if 'defaultRenderLayer' in layer.name():
                 continue
 
-            if 'defaultRenderLayer' in layer.name() and layer.isReferenced():
-                continue
+            # if 'defaultRenderLayer' in layer.name() and layer.isReferenced():
+            #     continue
 
             layer_data = {}
             if layer.adjustments.get(multiIndices=True):
@@ -69,84 +69,96 @@ class CollectRenderlayers(pyblish.api.Collector):
             else:
                 data[layer.name()] = {}
 
-        # getting path
-        paths = [str(pymel.core.system.Workspace.getPath().expand())]
-        try:
-            paths.append(str(pymel.core.system.Workspace.fileRules['images']))
-        except:
-            pass
+        # # getting output path
+        # paths = [str(pymel.core.system.Workspace.getPath().expand())]
+        # try:
+        #     paths.append(str(pymel.core.system.Workspace.fileRules['images']))
+        # except:
+        #     pass
+        #
+        #
+        #
+        # output_path = os.path.join(*paths)
+        # tmp = pymel.core.rendering.renderSettings(firstImageName=True)[0]
+        # paths.append(str(tmp))
+        #
+        # path = os.path.join(*paths)
+        #
 
-        output_path = os.path.join(*paths)
-        tmp = pymel.core.rendering.renderSettings(firstImageName=True)[0]
-        paths.append(str(tmp))
 
-        path = os.path.join(*paths)
-
-        padding = render_globals.extensionPadding.get()
-        firstFrame = int(render_globals.startFrame.get())
-        stringFrame = str(firstFrame).zfill(padding)
-        if stringFrame in os.path.basename(path):
-            tmp = '#' * padding
-            basename = os.path.basename(path).replace(stringFrame, tmp)
-            dirname = os.path.dirname(path)
-            path = os.path.join(dirname, basename)
-
-        extension = os.path.splitext(os.path.basename(path))[1]
-        path = path.replace(extension, '{ext}')
-
-        current_layer = pymel.core.nodetypes.RenderLayer.currentLayer()
-        if current_layer.name() == 'defaultRenderLayer':
-            path = path.replace('masterLayer', '{layer}')
-        else:
-            path = path.replace(current_layer.name(), '{layer}')
+        # firstFrame = int(render_globals.startFrame.get())
+        # stringFrame = str(firstFrame).zfill(padding)
+        # if stringFrame in os.path.basename(path):
+        #     tmp = '#' * padding
+        #     basename = os.path.basename(path).replace(stringFrame, tmp)
+        #     dirname = os.path.dirname(path)
+        #     path = os.path.join(dirname, basename)
+        #
+        # extension = os.path.splitext(os.path.basename(path))[1]
+        # path = path.replace(extension, '{ext}')
+        #
+        # current_layer = pymel.core.nodetypes.RenderLayer.currentLayer()
+        # # if current_layer.name() == 'defaultRenderLayer':
+        # #     path = path.replace('masterLayer', '{layer}')
+        # # else:
+        # path = path.replace(current_layer.name(), '{layer}')
 
         # getting frames
         start_frame = int(render_globals.startFrame.get())
         end_frame = int(render_globals.endFrame.get())
 
+        frames = '%s-%s' % (start_frame, end_frame)
+
+        padding = render_globals.extensionPadding.get()
+        padString = '#' * padding
+
         for layer in data:
+
+            path = pymel.core.renderSettings(fp=True, gin=padString, lyr=layer)[0]
 
             instance = context.create_instance(name=layer)
             instance.set_data('family', value='deadline.render')
 
+            instance.set_data('deadlineFrames', value=frames)
+
             instance.set_data('data', value=data[layer])
 
-            # getting layer name
-            if layer == 'defaultRenderLayer':
-                layer_name = 'masterLayer'
-            else:
-                layer_name = layer
+            # # getting layer name
+            # if layer == 'defaultRenderLayer':
+            #     layer_name = 'masterLayer'
+            # else:
+
+            # ext = extension[1:]
+            # try:
+            #     for key in self.imageFormats:
+            #         if self.imageFormats[key] == int(data[layer]['imageFormat']):
+            #             ext = key
+            # except:
+            #     pass
+            # ext = '.' + ext
+
+            # setting job data
+            job_data = job_data.copy()
+
+            safe_layer_name = layer.replace(':', '_')
+            # outputFilename = path.format(layer=safe_layer_name,ext=ext)
+            outputFilename = path.format(layer=safe_layer_name)
+            job_data['OutputFilename0'] = outputFilename
 
             # setting plugin_data
             plugin_data = plugin_data.copy()
-            plugin_data['RenderLayer'] = layer_name
+            plugin_data['RenderLayer'] = layer
 
             try:
                 plugin_data['Renderer'] = data[layer]['currentRenderer']
             except:
                 plugin_data['Renderer'] = drg.currentRenderer.get()
 
+
             # setting job data
-            job_data = job_data.copy()
-
-            frames = '%s-%s' % (start_frame, end_frame)
-            instance.set_data('deadlineFrames', value=frames)
-
-            ext = extension[1:]
-            try:
-                for key in self.imageFormats:
-                    if self.imageFormats[key] == int(data[layer]['imageFormat']):
-                        ext = key
-            except:
-                pass
-            ext = '.' + ext
-
-            safe_layer_name = layer.replace(':', '_')
-            job_data['OutputFilename0'] = path.format(layer=safe_layer_name,
-                                                                    ext=ext)
-
             deadline_data = {'job': job_data, 'plugin': plugin_data}
             instance.set_data('deadlineData', value=deadline_data)
+            self.log.info(deadline_data)
 
             # adding ftrack data to activate processing
             instance.set_data('ftrackComponents', value={})

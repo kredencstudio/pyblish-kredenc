@@ -7,6 +7,7 @@ class ExtractDeadlineNuke(pyblish.api.Extractor):
 
     families = ['deadline.render']
     hosts = ['nuke']
+    label = 'Nuke to Deadline'
 
     def process(self, instance):
 

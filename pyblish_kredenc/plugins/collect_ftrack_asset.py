@@ -54,7 +54,7 @@ class CollectFtrackAsset(pyblish.api.Collector):
                 asset_type = 'cam'
             if 'cache' in instance.data['family']:
                 asset_type = 'cache'
-            if 'render' in instance.data['family']:
+            if instance.data['family'] == 'render':
                 asset_type = 'render'
 
             if asset_type:
