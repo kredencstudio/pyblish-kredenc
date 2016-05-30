@@ -70,6 +70,8 @@ class CollectAssExport(pyblish.api.ContextPlugin):
             job_data['Plugin'] = 'Arnold'
             job_data['Frames'] = frames
             plugin_data['InputFile'] = outputPath
+            job_data['Pool'] = 'cg'
+            job_data['group'] = 'arnold'
 
             # setting job data
             deadline_data = {'job': job_data, 'plugin': plugin_data}
