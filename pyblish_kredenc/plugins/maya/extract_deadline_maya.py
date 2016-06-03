@@ -26,7 +26,7 @@ class ExtractDeadlineMaya(pyblish.api.Extractor):
         # setting job data
         job_data['Pool'] = 'cg'
         job_data['LimitGroups'] = plugin_data['Renderer']
-        job_data['Group'] = 'maya_' + plugin_data['Version']
+        job_data['Group'] = 'maya_' + plugin_data['Version'].replace('.', '_')
 
         instance.data['deadlineData']['job'] = job_data
 

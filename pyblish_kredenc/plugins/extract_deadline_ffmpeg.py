@@ -19,6 +19,9 @@ class ExtractDeadlineFFMPEG(pyblish.api.Extractor):
         if instance.has_data('deadlineData'):
             job_data = instance.data('deadlineData')['job'].copy()
 
+        if 'ass.render' in instance.data['families']:
+            return
+
         # setting extra info key values
         extra_info_key_value = {}
         if 'ExtraInfoKeyValue' in job_data:

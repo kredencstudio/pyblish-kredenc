@@ -22,6 +22,12 @@ class ExtractAss(pyblish.api.InstancePlugin):
                     -lightLinks 1 \
                     -forceTranslateShadingEngines \
                     -frameStep 1.0 \
-                    -shadowLinks 2'
+                    -shadowLinks 2 \
+                    -binary'
+
+
+        self.log.info('Switching render layer to {}'.format(instance.name))
+        pm.editRenderLayerGlobals(currentRenderLayer=instance.name)
+
 
         pm.exportAll(outputPath, f=1, typ="ASS Export", options=options)

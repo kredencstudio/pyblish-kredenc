@@ -1,7 +1,7 @@
-import os
 import pyblish.api
 import pymel
 import pymel.core as pm
+
 
 @pyblish.api.log
 class CollectRenderlayers(pyblish.api.Collector):
@@ -72,18 +72,14 @@ class CollectRenderlayers(pyblish.api.Collector):
             instance = context.create_instance(name=layer)
             instance.data['family'] = 'deadline.render'
             instance.data['families'] = ['deadline.render', 'render']
-
             instance.data['deadlineFrames'] = frames
-
             instance.data['data'] = data[layer]
-
             instance.data["publish"] = False
 
             # setting job data
             job_data = job_data.copy()
 
             safe_layer_name = layer.replace(':', '_')
-            # outputFilename = path.format(layer=safe_layer_name,ext=ext)
             outputFile = path.format(layer=safe_layer_name)
             job_data['OutputFilename0'] = outputFile
 
@@ -99,7 +95,6 @@ class CollectRenderlayers(pyblish.api.Collector):
             # setting job data
             deadline_data = {'job': job_data, 'plugin': plugin_data}
             instance.data['deadlineData'] = deadline_data
-            self.log.info(deadline_data)
 
             # adding ftrack data to activate processing
             instance.data['ftrackComponents'] = {}

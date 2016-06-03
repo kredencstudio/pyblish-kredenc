@@ -53,10 +53,14 @@ class CollectAssExport(pyblish.api.ContextPlugin):
             first_frame_path = pm.renderSettings(fp=True, gin=numberPadded, lyr=layer.name())[0]
             self.log.info(renderPath)
 
-            path, ext = os.path.splitext(first_frame_path)
-            folder, filename = os.path.split(path)
+            basepath, ext = os.path.splitext(first_frame_path)
+            folder, filename = os.path.split(basepath)
+            inputPath = os.path.join(folder, 'ass', filename + '.ass')
+            self.log.info('ass input: {}'.format(inputPath))
+
+            folder, filename = os.path.split(os.path.splitext(basepath)[0])
             outputPath = os.path.join(folder, 'ass', filename + '.ass')
-            self.log.info(outputPath)
+            self.log.info('ass output: {}'.format(outputPath))
 
             instance = context.create_instance(layer.name(), family='ass.render')
             instance.data['families'] = ['ass.render', 'deadline.render']
@@ -69,7 +73,7 @@ class CollectAssExport(pyblish.api.ContextPlugin):
             job_data['OutputFilename0'] = renderPath
             job_data['Plugin'] = 'Arnold'
             job_data['Frames'] = frames
-            plugin_data['InputFile'] = outputPath
+            plugin_data['InputFile'] = inputPath
             job_data['Pool'] = 'cg'
             job_data['group'] = 'arnold'
 

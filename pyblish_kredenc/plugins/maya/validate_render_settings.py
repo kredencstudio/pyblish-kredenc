@@ -52,7 +52,7 @@ class RepairRenderSettings(pyblish.api.Action):
         render_globals.extensionPadding.set(4)
 
         # repairing file name prefix
-        expected_prefix = '<RenderLayer>/<Version>/<Scene>'
+        expected_prefix = '<RenderLayer>/<Version>/<Scene>_<RenderLayer>'
         render_globals.imageFilePrefix.set(expected_prefix)
 
         # repairing renderpass naming
@@ -80,7 +80,7 @@ class RepairRenderSettings(pyblish.api.Action):
 class ValidateRenderSettings(pyblish.api.Validator):
     """ Validates settings """
 
-    families = ['render']
+    families = ['render', 'ass.render']
     optional = True
     label = 'Render Settings'
 
@@ -138,19 +138,19 @@ class ValidateRenderSettings(pyblish.api.Validator):
         # validate file name prefix
         msg = 'File name prefix is incorrect.'
         prefix = render_globals.imageFilePrefix.get()
-        expected_prefix = '<RenderLayer>/<Version>/<Scene>'
+        expected_prefix = '<RenderLayer>/<Version>/<Scene>_<RenderLayer>'
         if not prefix == expected_prefix:
             fails.append(msg)
 
-        # validate renderpass naming
-        msg = 'Renderpass naming is incorrect:'
-        msg += '\n\n"Frame Buffer Naming": "Custom"'
-        msg += '\n\n"Custom Naming String": "<RenderPass>"'
-        data = instance.data('data')
-        if 'multiCamNamingMode' in data:
-            if (int(data['multiCamNamingMode']) != 1 or
-                    render_globals.bufferName.get() != '<RenderPass>'):
-                fails.append(msg)
+        # # validate renderpass naming
+        # msg = 'Renderpass naming is incorrect:'
+        # msg += '\n\n"Frame Buffer Naming": "Custom"'
+        # msg += '\n\n"Custom Naming String": "<RenderPass>"'
+        # data = instance.data('data')
+        # if 'multiCamNamingMode' in data:
+        #     if (int(data['multiCamNamingMode']) != 1 or
+        #             render_globals.bufferName.get() != '<RenderPass>'):
+        #         fails.append(msg)
 
         # validate default lighting off
         msg = 'Default lighting is enabled.'
