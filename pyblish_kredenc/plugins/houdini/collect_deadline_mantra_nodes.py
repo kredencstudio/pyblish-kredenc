@@ -1,7 +1,6 @@
 import os
 import pyblish.api
 import re
-
 import hou
 
 @pyblish.api.log

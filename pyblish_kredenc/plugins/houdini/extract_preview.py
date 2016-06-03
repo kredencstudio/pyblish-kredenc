@@ -2,7 +2,6 @@ import pyblish.api
 import shutil
 
 import os
-import shutil
 import hou
 import subprocess
 

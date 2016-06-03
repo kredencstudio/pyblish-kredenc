@@ -1,5 +1,4 @@
 import pyblish.api
-import shutil
 import hou
 import os
 
