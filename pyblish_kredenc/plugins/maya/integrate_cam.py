@@ -43,7 +43,7 @@ class IntegrateCamera(pyblish.api.Conformer):
         publishFile = ft_pathUtils.getPathsYaml(taskid,
                                                 templateList=templates,
                                                 version=version,
-                                                item='cam'
+                                                item='cam',
                                                 root=root)[0]
 
         self.log.debug(publishFile)

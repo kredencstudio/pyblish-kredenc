@@ -14,6 +14,7 @@ class ConformScene(pyblish.api.Conformer):
 
     families = ['scene']
     label = 'Scene'
+    optional = True
 
     def process(self, instance):
         sourcePath = os.path.normpath(instance.context.data('currentFile'))
