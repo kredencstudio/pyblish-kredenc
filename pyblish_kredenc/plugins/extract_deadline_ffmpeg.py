@@ -22,16 +22,18 @@ class ExtractDeadlineFFMPEG(pyblish.api.Extractor):
         if 'ass.render' in instance.data['families']:
             return
 
+        start_frame = instance.data['startFrame']
+
         # setting extra info key values
         extra_info_key_value = {}
         if 'ExtraInfoKeyValue' in job_data:
             extra_info_key_value = job_data['ExtraInfoKeyValue']
 
         if '.exr' in job_data['OutputFilename0']:
-            FFMPEGInputArgs = '-gamma 2.2 -framerate 25.0'
+            FFMPEGInputArgs = '-gamma 2.2 -framerate 25.0 -start_number {}'.format(start_frame)
             FFMPEGOutputArgs = '-q:v 0 -pix_fmt yuv420p -vf scale=trunc(iw/2)*2:trunc(ih/2)*2,colormatrix=bt601:bt709'
         else:
-            FFMPEGInputArgs = '-framerate 25.0'
+            FFMPEGInputArgs = '-framerate 25.0 -start_number {}'.format(start_frame)
             FFMPEGOutputArgs = '-q:v 0 -pix_fmt yuv420p -vf scale=trunc(iw/2)*2:trunc(ih/2)*2'
 
         output = os.path.splitext(os.path.splitext(job_data['OutputFilename0'])[0])[0]+'.mp4'
