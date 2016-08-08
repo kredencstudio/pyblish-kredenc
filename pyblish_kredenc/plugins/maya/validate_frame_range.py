@@ -31,8 +31,9 @@ class RepairFR(pyblish.api.Action):
 
 
 @pyblish.api.log
-class ValidateFrameRange(pyblish.api.Validator):
+class ValidateFrameRange(pyblish.api.InstancePlugin):
     """ Validates settings """
+    order = pyblish.api.ValidatorOrder
     hosts = ['maya']
     families = ['deadline.render']
     optional = True
@@ -40,9 +41,9 @@ class ValidateFrameRange(pyblish.api.Validator):
 
     actions = [RepairFR]
 
-    def process(self, context):
+    def process(self, instance):
 
-        if context.data['ftrackData']['Task']['type'] not in ['Lighting']:
+        if instance.context.data['ftrackData']['Task']['type'] not in ['Lighting']:
             return
 
 

@@ -70,6 +70,8 @@ class CollectRenderlayers(pyblish.api.Collector):
             path = pm.renderSettings(fp=True, gin=padString, lyr=layer)[0]
 
             instance = context.create_instance(name=layer)
+            instance.data['startFrame'] = int(start_frame)
+            instance.data['endFrame'] = int(end_frame)
             instance.data['family'] = 'deadline.render'
             instance.data['families'] = ['deadline.render', 'render']
             instance.data['deadlineFrames'] = frames
@@ -82,6 +84,7 @@ class CollectRenderlayers(pyblish.api.Collector):
             safe_layer_name = layer.replace(':', '_')
             outputFile = path.format(layer=safe_layer_name)
             job_data['OutputFilename0'] = outputFile
+            job_data['Plugin'] = 'MayaBatch'
 
             # setting plugin_data
             plugin_data = plugin_data.copy()

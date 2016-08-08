@@ -28,6 +28,10 @@ class CollectDeadlineWriteNodes(pyblish.api.Selector):
 
                 output = node['file'].getValue()
 
+                instance.data['startFrame'] = int(nuke.Root().knob('first_frame').value())
+                instance.data['endFrame'] = int(nuke.Root().knob('last_frame').value())
+                self.log.info(instance.data['startFrame'])
+
                 # setting job data
                 job_data = {}
                 if instance.has_data('deadlineJobData'):

@@ -29,5 +29,4 @@ class ExtractAss(pyblish.api.InstancePlugin):
         self.log.info('Switching render layer to {}'.format(instance.name))
         pm.editRenderLayerGlobals(currentRenderLayer=instance.name)
 
-
         pm.exportAll(outputPath, f=1, typ="ASS Export", options=options)

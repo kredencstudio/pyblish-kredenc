@@ -38,6 +38,23 @@ class CollectAssExport(pyblish.api.ContextPlugin):
 
         for layer in pm.ls(type='renderLayer'):
 
+            self.log.info('Switching render layer to {}'.format(layer))
+            try:
+                pm.editRenderLayerGlobals(currentRenderLayer=layer)
+            except:
+                continue
+
+            # getting job data
+            job_data = {}
+            if context.has_data('deadlineData'):
+                job_data = context.data('deadlineData')['job'].copy()
+
+
+            plugin_data = {}
+            if context.has_data('deadlineData'):
+                plugin_data = context.data('deadlineData')['plugin'].copy()
+
+
             # skipping non renderable layers
             if not layer.renderable.get():
                 continue
@@ -51,7 +68,7 @@ class CollectAssExport(pyblish.api.ContextPlugin):
             numberPadded = start_frame.zfill(padding)
             renderPath = pm.renderSettings(fp=True, gin=padString, lyr=layer.name())[0]
             first_frame_path = pm.renderSettings(fp=True, gin=numberPadded, lyr=layer.name())[0]
-            self.log.info(renderPath)
+            self.log.info('render files: {}'.format(renderPath))
 
             basepath, ext = os.path.splitext(first_frame_path)
             folder, filename = os.path.split(basepath)
