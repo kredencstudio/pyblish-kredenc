@@ -67,10 +67,23 @@ class ExtractSnapshot(pyblish.api.Extractor):
             preset = load_preset(preset_path)
             preset['camera'] = camera
 
+        for key in preset['camera_options']:
+            if 'display' in key:
+                preset['camera_options'][key] = False
+
         # Ensure name of camera is valid
         sourcePath = os.path.normpath(instance.context.data('currentFile'))
         path, extension = os.path.splitext(sourcePath)
         path = (path + ".jpg")
+
+        # CLEAR HUDS
+
+        huds = cmds.headsUpDisplay(lh=True)
+        stored_huds = []
+        for hud in huds:
+            if cmds.headsUpDisplay(hud, vis=True, q=True):
+                stored_huds.append(hud)
+                cmds.headsUpDisplay(hud, vis=False, e=True)
 
         self.log.info("Outputting to %s" % path)
 
@@ -87,8 +100,10 @@ class ExtractSnapshot(pyblish.api.Extractor):
                 **preset
                 )
 
-
         instance.data["outputPath_jpg"] = output
+
+        for hud in stored_huds:
+            cmds.headsUpDisplay(hud, vis=True, e=True)
 
 
 @contextlib.contextmanager

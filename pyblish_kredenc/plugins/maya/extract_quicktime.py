@@ -57,9 +57,10 @@ class ExtractQuicktime(pyblish.api.Extractor):
 
         fmt = instance.data('format') or 'image'
         compression = instance.data('compression') or 'png'
-        off_screen = instance.data('offScreen', False)
+        off_screen = instance.data('offScreen', True)
         maintain_aspect_ratio = instance.data('maintainAspectRatio', True)
 
+        start_frame = int(cmds.playbackOptions(minTime=True, q=True))
 
         check_viewport = False
 
@@ -71,15 +72,15 @@ class ExtractQuicktime(pyblish.api.Extractor):
         # KOS Presets
         if instance.context.data['ftrackData']['Project']['code'] == 'kos':
             preset_name = 'kos'
-            check_viewport = True
-            if instance.context.data['ftrackData']['Task']['type'] in ['Animation', 'Layout', 'Lookdev']:
+            if instance.context.data['ftrackData']['Task']['type'] in ['Rigging']:
                 preset_name = 'kos_anim'
+
         # HBT Presets
         if instance.context.data['ftrackData']['Project']['code'] == 'hbt':
             self.log.info('hbt')
             preset_name = 'hbt'
-            check_viewport = False
 
+        self.log.info('using viewport preset: {}'.format(preset_name))
 
         # load Preset
         preset_path = os.path.join(os.path.dirname(pyblish_utils.__file__),
@@ -91,10 +92,18 @@ class ExtractQuicktime(pyblish.api.Extractor):
                 preset = capture.parse_active_view()
             except:
                 preset = load_preset(preset_path)
-                preset['camera'] = camera
         else:
+            self.log.debug('loading preset: {}'.format(preset_path))
             preset = load_preset(preset_path)
-            preset['camera'] = camera
+            self.log.debug('success loading preset')
+
+        preset['camera'] = camera
+
+        for key in preset['camera_options']:
+            if 'display' in key:
+                preset['camera_options'][key] = False
+
+
 
         dir_path = pyblish_utils.temp_dir(instance)
 
@@ -104,8 +113,18 @@ class ExtractQuicktime(pyblish.api.Extractor):
         image_folder, filename = os.path.split(path)
         output_images = os.path.join(dir_path, filename)
 
-
         self.log.info("Outputting images to %s" % output_images)
+
+        # CLEAR HUDS
+
+        huds = cmds.headsUpDisplay(lh=True)
+        stored_huds = []
+        for hud in huds:
+            if cmds.headsUpDisplay(hud, vis=True, q=True):
+                stored_huds.append(hud)
+                cmds.headsUpDisplay(hud, vis=False, e=True)
+
+        # Export Playblast
 
         with maintained_time():
             outputI = capture.capture(
@@ -120,10 +139,16 @@ class ExtractQuicktime(pyblish.api.Extractor):
                 **preset
                 )
 
+        import maya.mel
+        aPlayBackSliderPython = maya.mel.eval('$tmpVar=$gPlayBackSlider')
+        audioNode = pm.timeControl(aPlayBackSliderPython, q=True, sound=True)
         audio = ''
+        if audioNode:
+            audiofile = pm.PyNode(audioNode).filename.get()
+            audio = audiofile
+            if audio != '':
+                audio = '-i ' + audio + ' -map 0 -map 1 -c:a libtwolame'
 
-        if audio != '':
-            audio = '-i ' + audio + ' -map 0 -map 1 -c:a libtwolame'
         paddingExp = ".%4d"
         filename, extension = os.path.splitext(outputI)
         filename, padding = os.path.splitext(filename)
@@ -131,9 +156,10 @@ class ExtractQuicktime(pyblish.api.Extractor):
         outputV = (path + ".mov")
         instance.data["outputPath_qt"] = outputV
         self.log.info("Outputting video to %s" % outputV)
-        output = subprocess.call('ffmpeg -i {0} {2} -c:v libx264 -preset veryslow -vf "scale=trunc(iw/2)*2:trunc(ih/2)*2" -crf 22 -y {1}'.format(outputI, outputV, audio))
+        output = subprocess.call('ffmpeg -start_number {3} -i {0} {2} -c:v libx264 -preset veryslow -vf "scale=trunc(iw/2)*2:trunc(ih/2)*2" -crf 22 -y {1}'.format(outputI, outputV, audio, start_frame))
 
-
+        for hud in stored_huds:
+            cmds.headsUpDisplay(hud, vis=True, e=True)
 
 
 @contextlib.contextmanager
