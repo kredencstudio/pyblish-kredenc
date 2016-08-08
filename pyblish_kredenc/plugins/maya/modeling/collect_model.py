@@ -31,7 +31,7 @@ class CollectModel(pyblish.api.Collector):
                     if len(name_list) == 3:
                         subset = name_list[0]
                         item = name_list[1]
-                        name = subset + '_' +item
+                        name = subset + '_' + item
 
                 self.log.debug("item {}, name {}, subset {}".format(item, name, subset))
 
