@@ -42,6 +42,7 @@ class ExtractQuicktime(pyblish.api.Extractor):
     hosts = ["maya"]
     optional = True
     label = "Quicktime"
+    active = False
 
     def process(self, instance):
         self.log.info("Extracting capture..")
@@ -83,7 +84,8 @@ class ExtractQuicktime(pyblish.api.Extractor):
         self.log.info('using viewport preset: {}'.format(preset_name))
 
         # load Preset
-        preset_path = os.path.join(os.path.dirname(pyblish_utils.__file__),
+        studio_tools = os.path.abspath(os.environ.get('studio_tools'))
+        preset_path = os.path.join(studio_tools, 'studio',
                                    'capture_presets',
                                    (preset_name + '.json'))
 
