@@ -2,7 +2,7 @@ import pymel.core as pm
 import pyblish.api
 import pyblish_kredenc.utils as pyblish_utils
 reload(pyblish_utils)
-import pyblish_kredenc.plugins.actions_global as act
+import pyblish_kredenc.actions as act
 reload(act)
 
 
@@ -14,7 +14,7 @@ class ExtractAssLocal(pyblish.api.InstancePlugin):
     optional = True
     label = '.ASS export Local'
 
-    actions = [act.OpenOutputFolder, act.OpenOutputFile]
+    actions = [act.folders.OpenOutputFolder, act.folders.OpenOutputFile]
 
     def process(self, instance):
 

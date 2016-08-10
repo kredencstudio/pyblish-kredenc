@@ -2,8 +2,7 @@ import os
 import pymel
 import pyblish.api
 import pyblish_kredenc.utils as pyblish_utils
-reload(pyblish_utils)
-
+import pyblish_kredenc.actions as act
 
 class ExtractAlembic(pyblish.api.Extractor):
     """Extracts alembic file to temp location.
@@ -11,6 +10,7 @@ class ExtractAlembic(pyblish.api.Extractor):
 
     families = ['alembic', 'cache', 'camera']
     optional = True
+    actions = [act.folders.OpenOutputFolder, act.folders.OpenOutputFile]
 
     def process(self, instance):
 

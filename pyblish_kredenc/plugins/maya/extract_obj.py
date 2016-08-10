@@ -3,8 +3,7 @@ import maya.cmds as mc
 import pyblish_maya
 import pyblish.api
 import pyblish_kredenc.utils as pyblish_utils
-reload(pyblish_utils)
-
+import pyblish_kredenc.actions as act
 
 class ExtractMayaOBJ(pyblish.api.Extractor):
     """Extract as Maya OBJ"""
@@ -13,6 +12,8 @@ class ExtractMayaOBJ(pyblish.api.Extractor):
     hosts = ["maya"]
     families = ["model"]
     optional = True
+
+    actions = [act.folders.OpenOutputFolder, act.folders.OpenOutputFile]
 
     def process(self, instance):
 

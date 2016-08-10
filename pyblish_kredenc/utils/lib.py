@@ -1,6 +1,8 @@
 import re
 import tempfile
 import json
+import os
+import sys
 
 print 'pyblish_utils loaded'
 
@@ -72,3 +74,31 @@ def version_up(string):
         raise ValueError, 'Unable to version up File'
 
     return file
+
+
+def open_folder(path):
+    import subprocess
+    path = os.path.abspath(path)
+    if sys.platform == 'win32':
+        subprocess.Popen('explorer "%s"' % path)
+    elif sys.platform == 'darwin':  # macOS
+        subprocess.Popen(['open', path])
+    else:  # linux
+        try:
+            subprocess.Popen(['xdg-open', path])
+        except OSError:
+            raise OSError('unsupported xdg-open call??')
+
+
+def filter_instances(context, plugin):
+    # Get the errored instances
+    allInstances = []
+    for result in context.data["results"]:
+        if (result["instance"] is not None and
+           result["instance"] not in allInstances):
+            allInstances.append(result["instance"])
+
+    # Apply pyblish.logic to get the instances for the plug-in
+    instances = pyblish.api.instances_by_plugin(allInstances, plugin)
+
+    return instances
