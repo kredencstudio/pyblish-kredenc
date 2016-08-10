@@ -4,7 +4,8 @@ import pyblish_maya
 import pyblish.api
 import pyblish_kredenc.utils as pyblish_utils
 reload(pyblish_utils)
-
+from pyblish_kredenc.plugins import actions_global
+reload(actions_global)
 
 class ExtractMayaAscii(pyblish.api.Extractor):
     """Extract as Maya Ascii"""
@@ -13,6 +14,8 @@ class ExtractMayaAscii(pyblish.api.Extractor):
     hosts = ["maya"]
     families = ["model", "rig", "camera"]
     optional = True
+
+    actions = [actions_global.OpenOutputFolder]
 
     def process(self, instance):
 

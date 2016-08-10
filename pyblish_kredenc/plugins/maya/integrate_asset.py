@@ -17,7 +17,6 @@ class ConformAsset(pyblish.api.Conformer):
         self.log.debug(extractedPaths)
         for path in extractedPaths:
 
-            # sourcePath = os.path.normpath(instance.data.get('outputPath'))
             sourcePath = path
             filename, ext = os.path.splitext(sourcePath)
             self.log.debug('source filename: ' + filename)
