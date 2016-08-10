@@ -3,9 +3,9 @@ import pyblish.api
 import maya.cmds as cmds
 
 @pyblish.api.log
-class CollectPreview(pyblish.api.Collector):
+class CollectPreview(pyblish.api.ContextPlugin):
 
-    order = pyblish.api.Collector.order + 0.2
+    order = pyblish.api.CollectorOrder + 0.2
     hosts = ["maya"]
     label = "Collect Review"
 

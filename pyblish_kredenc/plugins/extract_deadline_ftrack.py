@@ -3,11 +3,11 @@ import pyblish.api
 
 
 @pyblish.api.log
-class ExtractDeadlineFtrack(pyblish.api.Extractor):
+class ExtractDeadlineFtrack(pyblish.api.InstancePlugin):
     """ Gathers Ftrack related data for Deadline
     """
-    order = pyblish.api.Extractor.order + 0.4
-    families = ['deadline.render']
+    order = pyblish.api.ExtractorOrder + 0.4
+    families = ['deadline']
     hosts = ['*']
     version = (0, 1, 0)
     optional = True
@@ -15,10 +15,12 @@ class ExtractDeadlineFtrack(pyblish.api.Extractor):
 
     def process(self, instance):
 
-        # getting job data
+        # getting deadline data
         job_data = {}
         if instance.has_data('deadlineData'):
             job_data = instance.data('deadlineData')['job'].copy()
+        else:
+            instance.data['deadlineData'] = {}
 
         # getting data
         username = getpass.getuser()
@@ -56,7 +58,7 @@ class ExtractDeadlineFtrack(pyblish.api.Extractor):
             extra_info = job_data['ExtraInfo']
 
         extra_info.extend([task_name, project_name, asset_name,
-                          version_number,username])
+                          version_number, username])
 
         job_data['ExtraInfo'] = extra_info
 
@@ -78,9 +80,6 @@ class ExtractDeadlineFtrack(pyblish.api.Extractor):
         extra_info_key_value['FT_VersionNumber'] = version_number
         extra_info_key_value['FT_ComponentName'] = component_name
 
-
         job_data['ExtraInfoKeyValue'] = extra_info_key_value
 
-        data = instance.data('deadlineData')
-        data['job'] = job_data
-        instance.set_data('deadlineData', value=data)
+        instance.data['deadlineData']['job'] = job_data

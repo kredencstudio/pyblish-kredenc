@@ -2,6 +2,21 @@ import os
 import pyblish.api
 from ft_studio import ft_pathUtils
 reload(ft_pathUtils)
+import pyblish_kredenc.plugins.actions_global as act
+reload(act)
+
+
+class RepairPublishPath(pyblish.api.Action):
+    label = "Repair"
+    on = "failed"
+    icon = "wrench"
+
+    def process(self, context):
+
+        path = os.path.dirname(context['publishFile'])
+
+        if not os.path.exists(path):
+            os.makedirs(path)
 
 
 @pyblish.api.log
@@ -11,6 +26,12 @@ class ValidatePublishPath(pyblish.api.Validator):
     families = ['scene']
     version = (0, 1, 0)
     label = 'Publish Path'
+
+    actions = [
+        RepairPublishPath,
+        act.OpenOutputFolder,
+        act.OpenOutputFile
+        ]
 
     def process(self, instance):
 
@@ -48,17 +69,10 @@ class ValidatePublishPath(pyblish.api.Validator):
         if os.path.exists(publishFolder):
             instance.context.set_data('publishFile', value=publishFile)
             instance.context.data['deadlineInput'] = publishFile
+            instance.data['outputPath_publish'] = publishFile
             self.log.debug('Setting publishFile: {}'.format(publishFile))
         else:
             name = instance
             msg = 'Publish directory for %s doesn\'t exists' % name
 
             raise ValueError(msg)
-
-
-    def repair(self, instance):
-        """Auto-repair creates the output directory"""
-        path = os.path.dirname(instance[0]['file'].value())
-
-        if not os.path.exists(path):
-            os.makedirs(path)

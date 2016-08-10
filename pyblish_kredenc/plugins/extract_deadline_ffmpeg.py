@@ -3,24 +3,23 @@ import os
 
 
 @pyblish.api.log
-class ExtractDeadlineFFMPEG(pyblish.api.Extractor):
-    """ Gathers Draft related data for Deadline
+class ExtractDeadlineFFMPEG(pyblish.api.InstancePlugin):
+    """ Gathers ffmpeg related data for Deadline
     """
 
-    order = pyblish.api.Extractor.order + 0.4
-    families = ['deadline.render']
+    order = pyblish.api.ExtractorOrder + 0.4
+    families = ['deadline']
     optional = True
     label = 'FFMPEG to Deadline'
 
     def process(self, instance):
 
-        # getting job data
+        # getting deadline data
         job_data = {}
         if instance.has_data('deadlineData'):
             job_data = instance.data('deadlineData')['job'].copy()
-
-        if 'ass.render' in instance.data['families']:
-            return
+        else:
+            instance.data['deadlineData'] = {}
 
         start_frame = instance.data['startFrame']
 
@@ -29,7 +28,7 @@ class ExtractDeadlineFFMPEG(pyblish.api.Extractor):
         if 'ExtraInfoKeyValue' in job_data:
             extra_info_key_value = job_data['ExtraInfoKeyValue']
 
-        if '.exr' in job_data['OutputFilename0']:
+        if '.exr' in instance.data['outputFilename']:
             FFMPEGInputArgs = '-gamma 2.2 -framerate 25.0 -start_number {}'.format(start_frame)
             FFMPEGOutputArgs = '-q:v 0 -pix_fmt yuv420p -vf scale=trunc(iw/2)*2:trunc(ih/2)*2,colormatrix=bt601:bt709'
         else:
@@ -43,9 +42,6 @@ class ExtractDeadlineFFMPEG(pyblish.api.Extractor):
         extra_info_key_value['FFMPEGOutput0'] = output
         extra_info_key_value['FFMPEGUploadToFtrack'] = 'True'
 
-
         job_data['ExtraInfoKeyValue'] = extra_info_key_value
 
-        data = instance.data('deadlineData')
-        data['job'] = job_data
-        instance.set_data('deadlineData', value=data)
+        instance.data['deadlineData']['job'] = job_data

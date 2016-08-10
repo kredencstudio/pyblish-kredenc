@@ -52,7 +52,7 @@ class RepairRenderSettings(pyblish.api.Action):
         render_globals.extensionPadding.set(4)
 
         # repairing file name prefix
-        expected_prefix = '<RenderLayer>/<Version>/<Scene>_<RenderLayer>'
+        expected_prefix = '<RenderLayer>/<Version>/<Scene>_<RenderLayer>_<RenderPass>'
         render_globals.imageFilePrefix.set(expected_prefix)
 
         # repairing renderpass naming
@@ -138,7 +138,7 @@ class ValidateRenderSettings(pyblish.api.Validator):
         # validate file name prefix
         msg = 'File name prefix is incorrect.'
         prefix = render_globals.imageFilePrefix.get()
-        expected_prefix = '<RenderLayer>/<Version>/<Scene>_<RenderLayer>'
+        expected_prefix = '<RenderLayer>/<Version>/<Scene>_<RenderLayer>_<RenderPass>'
         if not prefix == expected_prefix:
             fails.append(msg)
 
