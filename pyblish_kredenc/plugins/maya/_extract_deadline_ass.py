@@ -5,7 +5,7 @@ class ExtractDeadlineAss(pyblish.api.Extractor):
     """ Gathers optional Maya related data for Deadline
     """
     hosts = ['maya']
-    families = ['deadline.render']
+    families = ['deadline']
     label = 'Ass to Deadline'
 
     def process(self, instance):
