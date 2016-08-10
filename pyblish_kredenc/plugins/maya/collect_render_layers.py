@@ -22,14 +22,14 @@ class CollectRenderLayers(pyblish.api.ContextPlugin):
             legacyLayer = layer
             # legacyLayer = pm.PyNode(layer.legacyRenderLayer.get())
 
+            # skipping defaultRenderLayers
+            if 'defaultRenderLayer' in layer.name():
+                continue
+
             # skipping non renderable layers
             if not legacyLayer.renderable.get():
                 continue
 
-            self.log.info('Legacy Layer {}'.format(legacyLayer.name()))
-            # skipping defaultRenderLayers
-            if 'defaultRenderLayer' in layer.name():
-                continue
 
             # Switch to renderlayer
             self.log.info('Switching render layer to {}'.format(layer.name()))
@@ -60,8 +60,7 @@ class CollectRenderLayers(pyblish.api.ContextPlugin):
 
             # add ass family if we're using arnold
             renderer = drg.currentRenderer.get()
-            if renderer == 'arnold':
-                instance.data['families'].append('ass')
+            instance.data['families'].append(renderer)
             self.log.info('families: {}'.format(instance.data['families']))
 
             # populate instance with data
@@ -72,10 +71,11 @@ class CollectRenderLayers(pyblish.api.ContextPlugin):
             instance.data['projectPath'] = projectPath
             instance.data['outputFilename'] = renderPath
             instance.data['padding'] = padding
+            instance.data['renderer'] = renderer
             # instance.data['outputPath_ass'] = outputPath
             # instance.data['inputPath'] = inputPath
 
-            instance.data["publish"] = False
+            instance.data["publish"] = True
 
             # adding ftrack data to activate processing
             instance.data['ftrackComponents'] = {}

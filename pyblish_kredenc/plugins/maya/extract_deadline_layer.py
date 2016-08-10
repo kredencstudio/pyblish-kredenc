@@ -7,7 +7,7 @@ class ExtractDeadlineLayer(pyblish.api.InstancePlugin):
     """ Gathers optional Maya related data for Deadline
     """
 
-    order = pyblish.api.ExtractorOrder
+    order = pyblish.api.ExtractorOrder + 0.3
     hosts = ['maya']
     families = ['deadline']
     label = 'Layer to Deadline'
@@ -26,13 +26,16 @@ class ExtractDeadlineLayer(pyblish.api.InstancePlugin):
         current_file = instance.context.data('currentFile')
         directory, filename = os.path.split(str(current_file))
 
-        version = pymel.versions.fullName()
+        hostversion = pymel.versions.fullName()
         build = pymel.versions.bitness()
 
-        if 'ass' in instance.data['families']:
+
+        if 'ass.farm' in instance.data['families']:
+            self.log.info('ASS export on the farm are not yet supported')
+        elif 'ass.local' in instance.data['families']:
             job_data['Plugin'] = 'Arnold'
             job_data['group'] = 'arnold'
-            job_data['LimitGroups'] = 'arnold'
+            job_data['LimitGroups'] = instance.data['renderer']
             plugin_data['InputFile'] = instance.data['publishFile']
             plugin_data['LocalRendering'] = 'False'
             plugin_data['PluginFolder1'] = ''
@@ -43,11 +46,11 @@ class ExtractDeadlineLayer(pyblish.api.InstancePlugin):
             plugin_data['Verbose'] = '4'
         else:
             job_data['Plugin'] = 'MayaBatch'
-            job_data['LimitGroups'] = plugin_data['Renderer']
-            job_data['Group'] = 'maya_' + abs(version).replace('.', '_')
+            job_data['LimitGroups'] = instance.data['renderer']
+            job_data['Group'] = 'maya_' + hostversion.replace('.', '_')
             plugin_data['scene'] = instance.context.data['publishFile']
             plugin_data['ProjectPath'] = instance.data['projectPath']
-            plugin_data['Version'] = version
+            plugin_data['Version'] = hostversion
             plugin_data['Build'] = build
             plugin_data['UsingRenderLayers'] = '1'
 

@@ -4,11 +4,12 @@ reload(pyblish_utils)
 import os
 
 
-class ValidateAss(pyblish.api.InstancePlugin):
+class Ass(pyblish.api.Validator):
     """Extracts arnold archive file.
     """
-    order = pyblish.api.ValidatorOrder
-    families = ['ass']
+
+    order = pyblish.api.Validator.order
+    families = ['arnold']
     optional = True
 
     def process(self, instance):

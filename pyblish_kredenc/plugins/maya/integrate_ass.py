@@ -8,10 +8,10 @@ reload(act)
 
 
 class IntegrateAss(pyblish.api.InstancePlugin):
-    """Extracts arnold archive file.
+    """Integrates arnold archive files.
     """
     order = pyblish.api.IntegratorOrder
-    families = ['ass']
+    families = ['arnold']
     optional = True
 
     actions = [act.OpenPublishFolder]

@@ -6,22 +6,22 @@ import pyblish_kredenc.plugins.actions_global as act
 reload(act)
 
 
-class ExtractAssLocal(pyblish.api.InstancePlugin):
+class ExtractAssFarm(pyblish.api.InstancePlugin):
     """Extracts arnold archive file.
     """
     order = pyblish.api.ExtractorOrder + 0.1
     families = ['arnold']
-    optional = True
-    label = '.ASS export Local'
+    optional = False
+    label = '.ASS export to Deadline'
+    active = False
 
     actions = [act.OpenOutputFolder, act.OpenOutputFile]
 
     def process(self, instance):
 
-        instance.data['families'].append('ass.local')
+        instance.data['families'].append('ass.farm')
         self.log.debug(instance.data)
 
-        outputPath = instance.data['outputPath_ass']
         start_frame = instance.data['startFrame']
         end_frame = instance.data['endFrame']
         by_frame = instance.data['byFrame']
@@ -35,7 +35,4 @@ class ExtractAssLocal(pyblish.api.InstancePlugin):
                     -shadowLinks 2 \
                     -binary'
 
-        self.log.info('Switching render layer to {}'.format(instance.name))
-        pm.editRenderLayerGlobals(currentRenderLayer=instance.name)
-
-        pm.exportAll(outputPath, f=1, typ="ASS Export", options=options)
+        instance.data['ass_options'] = options

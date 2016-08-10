@@ -31,11 +31,11 @@ class RepairFR(pyblish.api.Action):
 
 
 @pyblish.api.log
-class ValidateFrameRange(pyblish.api.InstancePlugin):
+class ValidateFrameRange(pyblish.api.Validator):
     """ Validates settings """
-    order = pyblish.api.ValidatorOrder
+    order = pyblish.api.Validator.order
     hosts = ['maya']
-    families = ['deadline.render']
+    families = ['render']
     optional = True
     label = 'Frame Range'
 
