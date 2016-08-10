@@ -2,8 +2,6 @@ import pymel.core as pm
 import pyblish.api
 import pyblish_kredenc.utils as pyblish_utils
 reload(pyblish_utils)
-import pyblish_kredenc.actions as act
-reload(act)
 
 
 class ExtractAssFarm(pyblish.api.InstancePlugin):
@@ -14,8 +12,6 @@ class ExtractAssFarm(pyblish.api.InstancePlugin):
     optional = False
     label = '.ASS export to Deadline'
     active = False
-
-    actions = [act.folders.OpenOutputFolder, act.folders.OpenOutputFile]
 
     def process(self, instance):
 

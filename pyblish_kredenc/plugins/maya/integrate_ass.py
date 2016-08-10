@@ -3,8 +3,8 @@ import pyblish_kredenc.utils as pyblish_utils
 reload(pyblish_utils)
 import os
 import shutil
-import pyblish_kredenc.actions as act
-reload(act)
+from pyblish_kredenc.actions import actions_os
+
 
 
 class IntegrateAss(pyblish.api.InstancePlugin):
@@ -14,7 +14,7 @@ class IntegrateAss(pyblish.api.InstancePlugin):
     families = ['arnold']
     optional = True
 
-    actions = [act.folders.OpenPublishFolder]
+    actions = [actions_os.OpenPublishFolder]
 
     def process(self, instance):
 

@@ -2,8 +2,8 @@ import os
 import pyblish.api
 from ft_studio import ft_pathUtils
 reload(ft_pathUtils)
-import pyblish_kredenc.actions as act
-reload(act)
+from pyblish_kredenc.actions import actions_os
+
 
 
 class RepairPublishPath(pyblish.api.Action):
@@ -29,8 +29,8 @@ class ValidatePublishPath(pyblish.api.Validator):
 
     actions = [
         RepairPublishPath,
-        act.folders.OpenOutputFolder,
-        act.folders.OpenOutputFile
+        actions_os.OpenOutputFolder,
+        actions_os.OpenOutputFile
         ]
 
     def process(self, instance):
