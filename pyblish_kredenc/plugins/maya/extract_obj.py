@@ -12,6 +12,7 @@ class ExtractMayaOBJ(pyblish.api.Extractor):
     hosts = ["maya"]
     families = ["model"]
     optional = True
+    active = False
 
     actions = [actions_os.OpenOutputFolder, actions_os.OpenOutputFile]
 

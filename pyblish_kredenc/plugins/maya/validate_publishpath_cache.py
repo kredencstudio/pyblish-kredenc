@@ -2,9 +2,7 @@ import pyblish.api
 from ft_studio import ft_pathUtils
 reload(ft_pathUtils)
 
-
-@pyblish.api.log
-class ValidatePublishPathCache(pyblish.api.Validator):
+class ValidatePublishPathCache(pyblish.api.InstancePlugin):
     """Copies current workfile to it's final location
 
     Expected data members:
@@ -12,8 +10,10 @@ class ValidatePublishPathCache(pyblish.api.Validator):
     'version' - version of publish
     """
 
+    order = pyblish.api.ValidatorOrder
     families = ['cache']
     label = 'Validate Cache Paths'
+    optional = True
 
     def process(self, instance):
 

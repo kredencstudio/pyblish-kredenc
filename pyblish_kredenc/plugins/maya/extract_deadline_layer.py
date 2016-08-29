@@ -48,11 +48,13 @@ class ExtractDeadlineLayer(pyblish.api.InstancePlugin):
             job_data['Plugin'] = 'MayaBatch'
             job_data['LimitGroups'] = instance.data['renderer']
             job_data['Group'] = 'maya_' + hostversion.replace('.', '_')
-            plugin_data['scene'] = instance.context.data['publishFile']
+            plugin_data['SceneFile'] = instance.context.data['publishFile']
             plugin_data['ProjectPath'] = instance.data['projectPath']
             plugin_data['Version'] = hostversion
             plugin_data['Build'] = build
+            plugin_data['Renderer'] = instance.data['renderer']
             plugin_data['UsingRenderLayers'] = '1'
+            plugin_data['RenderLayer'] = instance.name
 
         job_data['Name'] = filename + " - " + instance.name
         job_data['UserName'] = instance.context.data['user']

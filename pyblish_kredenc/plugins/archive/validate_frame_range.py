@@ -8,6 +8,7 @@ class RepairFR(pyblish.api.Action):
     label = "Repair"
     on = "failed"
     icon = "wrench"
+    enabled = False
 
     def process(self, context):
 

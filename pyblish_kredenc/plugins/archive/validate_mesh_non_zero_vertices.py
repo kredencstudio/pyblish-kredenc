@@ -17,6 +17,7 @@ class ValidateMeshNonZeroVertices(pyblish.api.Validator):
     category = 'geometry'
     version = (0, 1, 0)
     label = 'Mesh Non Zero Vertices'
+    optional = True
 
     __tolerance = 1e-8
 

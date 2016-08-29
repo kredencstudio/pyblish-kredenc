@@ -49,13 +49,17 @@ class CollectFtrackAsset(pyblish.api.Collector):
             if task_type == 'animation':
                 asset_type = 'anim'
 
+            families = instance.data['family']
+
             # family filtering
-            if 'camera' in instance.data['family']:
+            if 'camera' in families:
                 asset_type = 'cam'
-            if 'cache' in instance.data['family']:
+            if 'cache' in families:
                 asset_type = 'cache'
-            if instance.data['family'] == 'render':
+            if 'render' in families:
                 asset_type = 'render'
+                if 'writeNode' in families:
+                    asset_type = 'img'
 
             if asset_type:
                 instance.data['ftrackAssetType'] = asset_type

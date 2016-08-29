@@ -33,7 +33,7 @@ class RepairRenderSettings(pyblish.api.Action):
     on = "failed"
     icon = "wrench"
 
-    def process(self, plugin, context):
+    def process(self, context, plugin):
 
         render_globals = pymel.core.PyNode('defaultRenderGlobals')
 
@@ -75,47 +75,25 @@ class RepairRenderSettings(pyblish.api.Action):
         pymel.core.system.Workspace.save()
 
 
-
-
-class ValidateRenderSettings(pyblish.api.Validator):
+class ValidateRenderSettings(pyblish.api.InstancePlugin):
     """ Validates settings """
 
-    families = ['render', 'ass.render']
-    optional = True
+    order = pyblish.api.ValidatorOrder
+    families = ['render']
+    # optional = True
     label = 'Render Settings'
 
     actions = [RepairRenderSettings]
 
-    def get_path(self, instance):
-
-        ftrack_data = instance.context.data('ftrackData')
-        taskid = instance.context.data('ftrackData')['Task']['id']
-
-        if 'Asset_Build' not in ftrack_data.keys():
-            templates = [
-                'shot.task.output'
-            ]
-        else:
-            templates = [
-                'asset.task.output'
-            ]
-
-        root = instance.context.data('ftrackData')['Project']['root']
-        renderFolder = ft_pathUtils.getPathsYaml(taskid,
-                                                 templateList=templates,
-                                                 root=root)
-        renderFolder = renderFolder[0]
-
-        return renderFolder.replace('\\', '/')
-
     def process(self, instance):
+
+        if instance.context.data['ftrackData']['Task']['type'].lower() != 'lighting':
+            return
 
         if instance.context.has_data('renderOutputChecked'):
             return
         else:
             instance.context.set_data('renderOutputChecked', value=True)
-
-
 
         render_globals = pymel.core.PyNode('defaultRenderGlobals')
 
@@ -180,4 +158,6 @@ class ValidateRenderSettings(pyblish.api.Validator):
             for fail in fails:
                 self.log.error(fail)
 
-        assert len(fails) == 0, 'Some things need to be fixed'
+        if len(fails)!=0:
+            raise ValueError('Some things need to be fixed')
+        assert len(fails) == 0, 'Some things need to be fixed/'

@@ -2,10 +2,12 @@ import pymel
 import pyblish.api
 
 
-class CollectCache(pyblish.api.Collector):
+class CollectCache(pyblish.api.ContextPlugin):
     """
     Collect Animation Caches
     """
+
+    order = pyblish.api.CollectorOrder
 
     def process(self, context):
 
@@ -25,7 +27,6 @@ class CollectCache(pyblish.api.Collector):
                 members = obj.members()
                 nodes = []
 
-                subset = None
 
                 self.log.info("Collecting instance contents: {}".format(name))
 
@@ -34,14 +35,12 @@ class CollectCache(pyblish.api.Collector):
 
                 self.log.info(nodes)
 
-
-                instance = context.create_instance(name, family="cache")
+                instance = context.create_instance(name)
                 instance[:] = nodes
-
+                instance.data['families'] = ['cache']
                 instance.data['item'] = name
                 instance.data['subset'] = ''
-
-                instance.data['publish'] = False
+                # instance.data['publish'] = False
 
                 components = {}
                 components[name] = {'path': ''}

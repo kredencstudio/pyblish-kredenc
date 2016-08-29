@@ -1,6 +1,4 @@
 import pyblish.api
-import pyblish_kredenc.utils as pyblish_utils
-reload(pyblish_utils)
 import os
 import shutil
 from pyblish_kredenc.actions import actions_os
@@ -29,5 +27,10 @@ class IntegrateAss(pyblish.api.InstancePlugin):
 
         publish_folder = os.path.split(publish_file)[0]
         self.log.debug('publishFolder: {}'.format(publish_folder))
+
+        # if os.path.exists(publish_folder):
+        #     self.log.debug('removing old path: {}'.format(publish_folder))
+        #     # remove if exists
+        #     shutil.rmtree(publish_folder)
 
         shutil.copytree(output_folder, publish_folder)

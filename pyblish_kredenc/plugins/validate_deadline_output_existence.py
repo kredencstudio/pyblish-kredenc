@@ -7,11 +7,10 @@ class RepairOutputLocation(pyblish.api.Action):
     on = "failed"
     icon = "wrench"
 
-    def process(self, plugin, context):
+    def process(self, context, plugin):
         for instance in context:
-            if instance.data['family'] == 'deadline.render':
-                job_data = instance.data('deadlineData')['job'].copy()
-                path, file = os.path.split(job_data['OutputFilename0'])
+            if instance.data['family'] == 'deadline':
+                path, file = os.path.split(instance.data['outputFilename'])
 
                 if not os.path.exists(path):
                     os.makedirs(path)
@@ -20,24 +19,16 @@ class RepairOutputLocation(pyblish.api.Action):
 class ValidateDeadlineOutputExistence(pyblish.api.Validator):
     """Validates that the output directory for the output exists"""
 
-    families = ['deadline.render']
+    families = ['deadline']
     label = 'Output location existence'
     hosts = ['nuke']
     optional = True
     actions = [RepairOutputLocation]
 
     def process(self, instance):
-        job_data = instance.data('deadlineData')['job'].copy()
-        path, file = os.path.split(job_data['OutputFilename0'])
+        # job_data = instance.data('deadlineData')['job'].copy()
+        path, file = os.path.split(instance.data['outputFilename'])
         if not os.path.exists(path):
             msg = 'Output directory for %s doesn\'t exists: %s' % (instance,
                                                                    path)
             raise ValueError(msg)
-
-    # def repair(self, instance):
-    #     """Auto-repair creates the output directory"""
-    #     job_data = instance.data('deadlineData')['job'].copy()
-    #     path, file = os.path.split(job_data['OutputFilename0'])
-    #
-    #     if not os.path.exists(path):
-    #         os.makedirs(path)

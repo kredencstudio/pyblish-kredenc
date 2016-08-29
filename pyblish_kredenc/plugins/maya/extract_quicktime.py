@@ -42,7 +42,6 @@ class ExtractQuicktime(pyblish.api.Extractor):
     hosts = ["maya"]
     optional = True
     label = "Quicktime"
-    active = False
 
     def process(self, instance):
         self.log.info("Extracting capture..")

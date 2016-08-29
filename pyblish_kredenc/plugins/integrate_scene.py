@@ -4,7 +4,7 @@ import pyblish.api
 
 
 @pyblish.api.log
-class ConformScene(pyblish.api.Conformer):
+class IntegrateScene(pyblish.api.InstancePlugin):
     """Copies current workfile to it's final location
 
     Expected data members:
@@ -12,8 +12,9 @@ class ConformScene(pyblish.api.Conformer):
     'version' - version of publish
     """
 
+    order = pyblish.api.IntegratorOrder
     families = ['scene']
-    label = 'Scene'
+    label = 'Integrate Scene'
     optional = True
 
     def process(self, instance):

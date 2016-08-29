@@ -23,21 +23,14 @@ class CollectDeadlineWriteNodes(pyblish.api.Selector):
         for node in nuke.allNodes():
             if node.Class() == 'Write' and not node['disable'].getValue():
                 instance = context.create_instance(name=node.name())
-                instance.data['family'] = 'deadline.render'
-                instance.data['families'] = ['deadline.render', 'render']
+                instance.data['family'] = 'render'
+                instance.data['families'] = ['deadline', 'render', 'writeNode']
 
-                output = node['file'].getValue()
+                output_file = node['file'].getValue()
 
                 instance.data['startFrame'] = int(nuke.Root().knob('first_frame').value())
                 instance.data['endFrame'] = int(nuke.Root().knob('last_frame').value())
                 self.log.info(instance.data['startFrame'])
-
-                # setting job data
-                job_data = {}
-                if instance.has_data('deadlineJobData'):
-                    job_data = instance.data('deadlineJobData').copy()
-
-                output_file = output
 
                 if '%' in output_file:
                     padding = int(output_file.split('%')[1][0:2])
@@ -45,7 +38,8 @@ class CollectDeadlineWriteNodes(pyblish.api.Selector):
                     tmp = '#' * padding
                     output_file = output_file.replace(padding_string, tmp)
 
-                job_data['OutputFilename0'] = output_file
+                # populate instance with data
+                instance.data['outputFilename'] = output_file
 
                 # frame range
                 start_frame = int(nuke.root()['first_frame'].getValue())
@@ -55,15 +49,10 @@ class CollectDeadlineWriteNodes(pyblish.api.Selector):
                     end_frame = int(node['last'].getValue())
 
                 frames = '%s-%s\n' % (start_frame, end_frame)
-                instance.data['deadlineFrames'] = frames
+                instance.data['startFrame'] = start_frame
+                instance.data['endFrame'] = end_frame
+                instance.data['frames'] = frames
 
-                # setting plugin data
-                plugin_data = plugin_data.copy()
-                plugin_data['WriteNode'] = node.name()
-
-                # setting job data
-                data = {'job': job_data, 'plugin': plugin_data}
-                instance.data['deadlineData'] = data
 
                 # adding ftrack data to activate processing
                 instance.data['ftrackComponents'] = {}

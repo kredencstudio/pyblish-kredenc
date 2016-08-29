@@ -20,12 +20,12 @@ class RepairPublishPath(pyblish.api.Action):
 
 
 @pyblish.api.log
-class ValidatePublishPath(pyblish.api.Validator):
+class ValidatePublishPath(pyblish.api.InstancePlugin):
     """Validates that the publish directory for the workFile exists"""
 
-    families = ['scene']
-    version = (0, 1, 0)
+    order = pyblish.api.ValidatorOrder
     label = 'Publish Path'
+    families = ['scene']
 
     actions = [
         RepairPublishPath,
@@ -64,7 +64,7 @@ class ValidatePublishPath(pyblish.api.Validator):
 
         publishFile = publishFiles[0]
         publishFolder = os.path.dirname(publishFile)
-        self.log.debug(publishFile)
+        self.log.debug(publishFolder)
 
         if os.path.exists(publishFolder):
             instance.context.set_data('publishFile', value=publishFile)

@@ -3,6 +3,7 @@ import tempfile
 import json
 import os
 import sys
+import pyblish.api
 
 print 'pyblish_utils loaded'
 
@@ -77,6 +78,7 @@ def version_up(string):
 
 
 def open_folder(path):
+    """Provide a temporary directory in which to store extracted files"""
     import subprocess
     path = os.path.abspath(path)
     if sys.platform == 'win32':
@@ -91,6 +93,7 @@ def open_folder(path):
 
 
 def filter_instances(context, plugin):
+    """Provide a temporary directory in which to store extracted files"""
     # Get the errored instances
     allInstances = []
     for result in context.data["results"]:

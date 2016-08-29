@@ -35,7 +35,7 @@ class CollectCameras(pyblish.api.Collector):
 
             instance = context.create_instance(name=name, family='camera')
             instance.add(camera)
-            instance.data["publish"] = False
+            instance.data["publish"] = True
 
             item = name.split('_')[0]
             instance.data['item'] = item

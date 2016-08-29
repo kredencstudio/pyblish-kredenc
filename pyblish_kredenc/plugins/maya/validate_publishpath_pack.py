@@ -4,14 +4,14 @@ reload(ft_pathUtils)
 
 
 @pyblish.api.log
-class ValidatePublishPathPack(pyblish.api.Validator):
+class ValidatePublishPathPack(pyblish.api.InstancePlugin):
     """Validates and attaches publishPath to assets
 
     Expected data members:
     'ftrackData' - Necessary frack information gathered by select_ftrack
     'version' - version of publish
     """
-
+    order = pyblish.api.ValidatorOrder
     families = ['pack']
     label = 'Validate Packing Path'
 

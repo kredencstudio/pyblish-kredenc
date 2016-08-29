@@ -39,8 +39,9 @@ class ExtractAlembic(pyblish.api.Extractor):
             frame_end = frame_start
 
         cmd = '-frameRange %s %s' % (frame_start, frame_end)
-        cmd += ' -noNormals -uvWrite -worldSpace -wholeFrameGeo -dataFormat ogawa'
-        cmd += ' -attr {}'.format('assetid')
+        cmd += ' -uvWrite -worldSpace -wholeFrameGeo -dataFormat ogawa'
+        cmd += ' -writeColorSets -writeFaceSets -attr {}'.format('assetid')
+        cmd += ' -eulerFilter -writeVisibility'
         cmd += ' -writeVisibility %s -file "%s"' % (nodesString, path)
 
         pymel.core.AbcExport(j=cmd)

@@ -60,7 +60,9 @@ class ExtractSnapshot(pyblish.api.Extractor):
 
         preset_name = 'default'
 
-        preset_path = os.path.join(os.path.dirname(pyblish_utils.__file__),
+        # load Preset
+        studio_tools = os.path.abspath(os.environ.get('studio_tools'))
+        preset_path = os.path.join(studio_tools, 'studio',
                                    'capture_presets',
                                    (preset_name + '.json'))
 

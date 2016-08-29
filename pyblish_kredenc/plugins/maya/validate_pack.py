@@ -4,10 +4,10 @@ import pymel
 
 
 @pyblish.api.log
-class ValidatePack(pyblish.api.Validator):
+class ValidatePack(pyblish.api.InstancePlugin):
     """Inject all models from the scene into the context"""
 
-    order = pyblish.api.Validator.order
+    order = pyblish.api.ValidatorOrder
     families = ['pack']
 
     def process(self, instance):

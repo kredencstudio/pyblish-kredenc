@@ -50,18 +50,19 @@ class CollectRenderLayers(pyblish.api.ContextPlugin):
             # start_frame_padded = start_frame.zfill(padding)
             renderPath = pm.renderSettings(fp=True, cts='RenderPass=beauty', gin=padString, lut=True, lyr=legacyLayer.name())[0]
             # first_frame_path = pm.renderSettings(fp=True, gin=start_frame_padded, lyr=layer.name())[0]
-            self.log.info('render files: {}'.format(renderPath))
+            self.log.debug('render files: {}'.format(renderPath))
+            self.log.debug('frames: {}'.format(frames))
 
             # create renderlayer instance
             instance = context.create_instance(layer.name(), family='render')
 
             # set basic render layer familier
-            instance.data['families'] = ['render', 'deadline']
+            instance.data['families'] = ['deadline']
 
             # add ass family if we're using arnold
             renderer = drg.currentRenderer.get()
             instance.data['families'].append(renderer)
-            self.log.info('families: {}'.format(instance.data['families']))
+            self.log.debug('families: {}'.format(instance.data['families']))
 
             # populate instance with data
             instance.data['startFrame'] = start_frame

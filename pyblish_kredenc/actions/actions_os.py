@@ -1,6 +1,7 @@
 import os
 import pyblish.api
 import pyblish_kredenc.utils as pyblish_utils
+reload(pyblish_utils)
 
 class OpenOutputFolder(pyblish.api.Action):
     label = "Open folders"

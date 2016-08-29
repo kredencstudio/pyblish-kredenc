@@ -4,14 +4,14 @@ reload(ft_pathUtils)
 
 
 @pyblish.api.log
-class ValidatePublishPathAssets(pyblish.api.Validator):
+class ValidatePublishPathAssets(pyblish.api.InstancePlugin):
     """Validates and attaches publishPath to assets
 
     Expected data members:
     'ftrackData' - Necessary frack information gathered by select_ftrack
     'version' - version of publish
     """
-
+    order = pyblish.api.ValidatorOrder
     families = ['model', 'rig', 'camera']
     label = 'Validate Asset Paths'
 
