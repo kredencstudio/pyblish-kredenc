@@ -13,7 +13,6 @@ class ValidatePublishPathCache(pyblish.api.InstancePlugin):
     order = pyblish.api.ValidatorOrder
     families = ['cache']
     label = 'Validate Cache Paths'
-    optional = True
 
     def process(self, instance):
 
@@ -30,20 +29,32 @@ class ValidatePublishPathCache(pyblish.api.InstancePlugin):
         ftrack_data = instance.context.data['ftrackData']
         if 'Asset_Build' in ftrack_data.keys():
             templates = [
+                'asset.abccache.file'
             ]
         else:
             templates = [
                 'shot.abccache.file'
             ]
 
+        subset = ''
+        if instance.data.get('subset'):
+            subset = instance.data['subset']
+
         item = instance.data['name']
+        kwargs = {
+                'family': instance.data['family'],
+                'item': instance.data['item'],
+                'version': version,
+                'subset': subset,
+                }
 
         self.log.debug(templates)
         publishFile = ft_pathUtils.getPathsYaml(taskid,
                                                 templateList=templates,
-                                                version=version,
-                                                item=item,
-                                                root=root)
+                                                root=root,
+                                                **kwargs
+                                                )
+
         publishFile = publishFile[0]
         instance.data['publishFile'] = publishFile
         self.log.debug('saving publishFile to instance: {}'.format(publishFile))

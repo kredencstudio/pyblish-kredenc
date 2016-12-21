@@ -2,18 +2,22 @@ import os
 
 import pyblish.api
 
+@pyblish.api.log
 class RepairOutputLocation(pyblish.api.Action):
     label = "Repair"
     on = "failed"
     icon = "wrench"
 
-    def process(self, context, plugin):
+    def process(self, context):
         for instance in context:
-            if instance.data['family'] == 'deadline':
-                path, file = os.path.split(instance.data['outputFilename'])
+            if instance.has_data('families'):
+                if 'deadline' in instance.data['families']:
+                    path, file = os.path.split(instance.data['outputFilename'])
+                    self.log.info(path)
 
-                if not os.path.exists(path):
-                    os.makedirs(path)
+                    if not os.path.exists(path):
+                        self.log.info(path)
+                        os.makedirs(path)
 
 @pyblish.api.log
 class ValidateDeadlineOutputExistence(pyblish.api.Validator):

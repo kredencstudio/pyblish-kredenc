@@ -12,21 +12,25 @@ class AddFtrackData(pyblish.api.InstancePlugin):
         files = instance.data["files"]
         self.log.info("Integrating files: " + str(files))
 
-        instance.data['ftrackComponents'] = {}
+        ftrack_components = instance.data.get('ftrackComponents')
+        upload = False
+
+        if ftrack_components:
+            component_name = ftrack_components.keys()[0]
+            upload = ftrack_components[component_name].get('reviewable')
+        else:
+            instance.data['ftrackComponents'] = {}
+            component_name = 'deadline'
 
         families = instance.data['families']
 
-        upload = False
         if 'render' in families:
             component_name = 'main'
-        elif 'mov.*' in families:
-            component_name = 'review'
-            upload = True
-        else:
-            component_name = 'dealine'
 
         for filename in files:
             instance.data['ftrackComponents'][component_name] = {
                 'path': filename,
                 'reviewable': upload
                 }
+
+            self.log.info("Integrating Component: " + str(instance.data['ftrackComponents'][component_name]))

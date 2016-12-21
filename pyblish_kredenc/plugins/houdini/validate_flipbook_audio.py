@@ -6,7 +6,7 @@ import pyblish.api
 class ValidateFlipbookAudio(pyblish.api.Validator):
     """Validates that the output directory for the instance exists"""
 
-    families = ['preview']
+    families = ['review']
     hosts = ['houdini']
     version = (0, 1, 0)
 
@@ -22,7 +22,6 @@ class ValidateFlipbookAudio(pyblish.api.Validator):
             else:
                 if not os.path.isfile(audio):
                     raise pyblish.api.ValidationError('audio: %s, could not be found' % audio)
-
 
 
     #

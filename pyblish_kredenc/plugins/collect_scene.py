@@ -31,6 +31,7 @@ class CollectScene(pyblish.api.Collector):
             # create instance
             instance = context.create_instance(name=filename)
             instance.data['family'] = 'scene'
+            instance.data['families'] = ['scene']
             instance.data['path'] = current_file
 
             self.log.warning('Collected instance: {}'.format(instance))

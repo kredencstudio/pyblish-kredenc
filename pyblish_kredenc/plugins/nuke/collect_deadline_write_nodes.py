@@ -24,7 +24,7 @@ class CollectDeadlineWriteNodes(pyblish.api.Selector):
             if node.Class() == 'Write' and not node['disable'].getValue():
                 instance = context.create_instance(name=node.name())
                 instance.data['family'] = 'render'
-                instance.data['families'] = ['deadline', 'render', 'writeNode']
+                instance.data['families'] = ['deadline', 'writeNode']
 
                 output_file = node['file'].getValue()
 
@@ -53,9 +53,13 @@ class CollectDeadlineWriteNodes(pyblish.api.Selector):
                 instance.data['endFrame'] = end_frame
                 instance.data['frames'] = frames
 
+                if str(node.name()) in ['Write1', 'Write_dpx']:
+                    compname = 'main'
+                else:
+                    compname = node.name()
 
                 # adding ftrack data to activate processing
-                instance.data['ftrackComponents'] = {}
-                instance.data['ftrackAssetType'] = 'img'
+                instance.data['ftrackComponents'] = {compname: {}}
+                self.log.debug('component name: {}'.format(compname))
 
                 instance.add(node)

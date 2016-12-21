@@ -34,6 +34,7 @@ class CollectPreview(pyblish.api.ContextPlugin):
 
             instance = context.create_instance(name=name, family='review')
             instance.add(camera)
+            instance.data["families"] = ['review']
 
             if camera == 'persp':
                 instance.data['publish'] = False

@@ -51,8 +51,10 @@ class RepairRenderSettings(pyblish.api.Action):
         # repairing frame padding
         render_globals.extensionPadding.set(4)
 
+        publish_file = os.path.splitext(os.path.basename(context.data['publishFile']))[0]
+
         # repairing file name prefix
-        expected_prefix = '<RenderLayer>/<Version>/<Scene>_<RenderLayer>_<RenderPass>'
+        expected_prefix = '<RenderLayer>/<Version>/{}_<RenderLayer>_<RenderPass>'.format(publish_file)
         render_globals.imageFilePrefix.set(expected_prefix)
 
         # repairing renderpass naming
@@ -80,15 +82,15 @@ class ValidateRenderSettings(pyblish.api.InstancePlugin):
 
     order = pyblish.api.ValidatorOrder
     families = ['render']
-    # optional = True
+    optional = True
     label = 'Render Settings'
 
     actions = [RepairRenderSettings]
 
     def process(self, instance):
 
-        if instance.context.data['ftrackData']['Task']['type'].lower() != 'lighting':
-            return
+        # if instance.context.data['ftrackData']['Task']['type'].lower() not in ['lighting', 'lookdev']:
+        #     return
 
         if instance.context.has_data('renderOutputChecked'):
             return
@@ -116,7 +118,10 @@ class ValidateRenderSettings(pyblish.api.InstancePlugin):
         # validate file name prefix
         msg = 'File name prefix is incorrect.'
         prefix = render_globals.imageFilePrefix.get()
-        expected_prefix = '<RenderLayer>/<Version>/<Scene>_<RenderLayer>_<RenderPass>'
+        publish_file = os.path.splitext(os.path.basename(instance.context.data['publishFile']))[0]
+
+        # repairing file name prefix
+        expected_prefix = '<RenderLayer>/<Version>/{}_<RenderLayer>_<RenderPass>'.format(publish_file)
         if not prefix == expected_prefix:
             fails.append(msg)
 

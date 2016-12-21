@@ -7,7 +7,7 @@ class ValidateInitialScene(pyblish.api.Validator):
     """Checks if we are able to create new workfile
     """
     families = ['new_scene']
-    label = 'Initial scene'
+    label = 'Validate Initial scene'
 
     def process(self, instance):
 

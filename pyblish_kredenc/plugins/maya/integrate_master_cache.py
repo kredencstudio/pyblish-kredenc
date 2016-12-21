@@ -5,21 +5,22 @@ import pyblish_kredenc.utils as utils
 
 
 @pyblish.api.log
-class IntegrateMasterRig(pyblish.api.InstancePlugin):
+class IntegrateMasterCache(pyblish.api.InstancePlugin):
     """Copies asset to it's final location
     """
 
     order = pyblish.api.IntegratorOrder
     # order = pyblish.api.ValidatorOrder
-    families = ['scene']
-    label = 'Master Rig'
+    families = ['cache']
+    label = 'Master Cache'
+    optional = True
 
     def process(self, instance):
 
-        sourcePath = os.path.normpath(instance.context.data('currentFile'))
+        sourcePath = os.path.normpath(instance.data['outputPath_abc'])
         self.log.debug(sourcePath)
 
-        publishFile = instance.context.data('publishFile')
+        publishFile = instance.data['publishFile']
         self.log.debug(publishFile)
 
         vstring, version = utils.version_get(publishFile, 'v')

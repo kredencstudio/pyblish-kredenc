@@ -34,12 +34,12 @@ class CollectFtrackAsset(pyblish.api.Collector):
             task_type = ftrack_data['Task']['type'].lower()
             asset_type = ''
 
-            self.log.info('task type {}'.format(task_type))
+            self.log.debug('task type {}'.format(task_type))
 
             if task_type == 'lighting':
                 asset_type = 'render'
             if task_type == 'compositing':
-                asset_type = 'img'
+                asset_type = 'comp'
             if task_type == 'lookdev':
                 asset_type = 'look'
             if task_type == 'modeling':
@@ -48,8 +48,12 @@ class CollectFtrackAsset(pyblish.api.Collector):
                 asset_type = 'rig'
             if task_type == 'animation':
                 asset_type = 'anim'
+            if task_type == 'fx':
+                asset_type = 'fx'
+            if task_type == 'layout':
+                asset_type = 'layout'
 
-            families = instance.data['family']
+            families = instance.data['families']
 
             # family filtering
             if 'camera' in families:
@@ -59,10 +63,10 @@ class CollectFtrackAsset(pyblish.api.Collector):
             if 'render' in families:
                 asset_type = 'render'
                 if 'writeNode' in families:
-                    asset_type = 'img'
+                    asset_type = 'comp'
 
             if asset_type:
                 instance.data['ftrackAssetType'] = asset_type
-                self.log.info(instance.data['ftrackAssetType'])
+                self.log.debug('asset type: {}'.format(instance.data['ftrackAssetType']))
 
-            self.log.info(instance.data['ftrackAssetName'])
+            self.log.debug('asset name: {}'.format(instance.data['ftrackAssetName']))

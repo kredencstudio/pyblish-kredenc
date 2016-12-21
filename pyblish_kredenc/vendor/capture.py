@@ -692,10 +692,10 @@ def _image_to_clipboard(path):
     if _in_standalone():
         raise Exception("Cannot copy to clipboard from Maya Standalone")
 
-    import PySide.QtGui
-    image = PySide.QtGui.QImage(path)
-    clipboard = PySide.QtGui.QApplication.clipboard()
-    clipboard.setImage(image, mode=PySide.QtGui.QClipboard.Clipboard)
+    import Qt.QtWidgets
+    image = Qt.QtWidgets.QImage(path)
+    clipboard = Qt.QtWidgets.QApplication.clipboard()
+    clipboard.setImage(image, mode=Qt.QtWidgets.QClipboard.Clipboard)
 
 
 def _get_screen_size():
@@ -703,8 +703,8 @@ def _get_screen_size():
     if _in_standalone():
         return [0, 0]
 
-    import PySide.QtGui
-    rect = PySide.QtGui.QDesktopWidget().screenGeometry(-1)
+    import Qt.QtWidgets
+    rect = Qt.QtWidgets.QDesktopWidget().screenGeometry(-1)
     return [rect.width(), rect.height()]
 
 

@@ -5,8 +5,8 @@ import pyblish.api
 from pyblish_kredenc.vendor import capture
 
 import pyblish_kredenc.utils as pyblish_utils
-from pyblish_kredenc.plugins import actions_global
-reload(actions_global)
+from pyblish_kredenc.actions import actions_os
+reload(actions_os)
 
 from maya import cmds
 import pymel.core as pm
@@ -44,7 +44,7 @@ class ExtractSnapshot(pyblish.api.Extractor):
     optional = True
     label = "Snapshot"
 
-    actions = [actions_global.OpenOutputFolder]
+    actions = [actions_os.OpenOutputFolder]
 
     def process(self, instance):
         self.log.info("Extracting capture..")

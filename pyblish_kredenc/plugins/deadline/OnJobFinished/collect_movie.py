@@ -26,12 +26,23 @@ class CollectMovie(pyblish.api.InstancePlugin):
 
         for path in instance.data["files"]:
 
+            if '_mask' in path:
+                return
+
             new_instance = instance.context.create_instance(name=str(instance))
 
             for key in data:
                 instance.data[key] = data[key]
                 if 'ftrack' in key:
                     new_instance.data[key] = data[key]
+                    if 'ftrackComponents' in key:
+                        for component in data[key]:
+                            if component in ['main', 'beauty']:
+                                new_instance.data['ftrackComponents'] = {
+                                    "review": {"reviewable": True}}
+                            else:
+                                new_instance.data['ftrackComponents'] = {
+                                    component + '_movie': {}}
 
             # prevent resubmitting same job
             del instance.data["deadlineData"]
@@ -50,7 +61,7 @@ class CollectMovie(pyblish.api.InstancePlugin):
             job_data["Frames"] = job.JobFrames
             job_data["Name"] = job.Name
             job_data['Pool'] = 'comp'
-            job_data['Priority'] = '51'
+            job_data['Priority'] = job.Priority + 1
             job_data["UserName"] = job.UserName
             job_data["OutputFilename0"] = output_path
             job_data["ChunkSize"] = job.JobFramesList[-1]
@@ -68,10 +79,14 @@ class CollectMovie(pyblish.api.InstancePlugin):
             plugin_data["InputArgs0"] = inputs_args
 
             output_args = "-q:v 0 -pix_fmt yuv420p -vf scale=trunc(iw/2)*2:"
-            output_args += "trunc(ih/2)*2,colormatrix=bt601:bt709"
+            output_args += "trunc(ih/2)*2,colormatrix=bt601:bt709 -crf 16"
             output_args += " -timecode 00:00:00:01"
             plugin_data["OutputArgs"] = output_args
 
             # setting data
             data = {"job": job_data, "plugin": plugin_data}
             new_instance.data["deadlineData"] = data
+
+            self.log.info("Instance name: " + new_instance.name)
+            self.log.info("Families: " + str(new_instance.data["families"]))
+            self.log.info("data: " + str(new_instance.data))

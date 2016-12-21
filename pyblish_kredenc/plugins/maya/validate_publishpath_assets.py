@@ -2,8 +2,6 @@ import pyblish.api
 from ft_studio import ft_pathUtils
 reload(ft_pathUtils)
 
-
-@pyblish.api.log
 class ValidatePublishPathAssets(pyblish.api.InstancePlugin):
     """Validates and attaches publishPath to assets
 
@@ -12,20 +10,15 @@ class ValidatePublishPathAssets(pyblish.api.InstancePlugin):
     'version' - version of publish
     """
     order = pyblish.api.ValidatorOrder
-    families = ['model', 'rig', 'camera']
+    families = ['model', 'rig', 'camera', 'look']
     label = 'Validate Asset Paths'
 
     def process(self, instance):
 
         version = instance.context.data['version']
         version = 'v' + str(version).zfill(3)
-        self.log.debug(version)
-
         taskid = instance.context.data('ftrackData')['Task']['id']
-        self.log.debug(taskid)
-
         root = instance.context.data('ftrackData')['Project']['root']
-        self.log.debug(root)
 
         ftrack_data = instance.context.data['ftrackData']
         if 'Asset_Build' not in ftrack_data.keys():
@@ -59,11 +52,4 @@ class ValidatePublishPathAssets(pyblish.api.InstancePlugin):
         self.log.debug('paths returned: {}'.format(publishFile))
         publishFile = publishFile[0]
         instance.data['publishFile'] = publishFile
-        self.log.debug('saving publishFile to instance: {}'.format(publishFile))
-
-        # ftrack data
-        # components = instance.data['ftrackComponents']
-        # self.log.debug(str(components))
-        # components = {instance.data['variation']: {'path': publishFile}}
-        # self.log.debug(str(components))
-        # instance.data['ftrackComponents'] = components
+        self.log.debug('publishFile data: {}'.format(publishFile))

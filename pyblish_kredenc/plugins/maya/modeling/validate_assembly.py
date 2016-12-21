@@ -23,9 +23,9 @@ class ValidateAssembly(pyblish.api.Validator):
 
             asset = os.getenv("ASSET_BUILD")
 
-            msg = 'Your model needs to be grouped\
-                as |%s_geo_grp' % asset
-            assert root == "|%s_geo_grp" % asset, msg
+            # msg = 'Your model needs to be grouped\
+            #     as |%s_geo_grp' % asset
+            # assert root == "|%s_geo_grp" % asset, msg
 
             nodes = None
             nodes = pymel.core.ls(node.getChildren(), dag=True, exactType="transform")

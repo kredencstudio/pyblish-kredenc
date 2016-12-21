@@ -10,7 +10,7 @@ import subprocess
 class ExtractFlipbook(pyblish.api.Extractor):
     """Creates preview movie from a Flipbook bode"""
 
-    families = ['preview']
+    families = ['review']
     hosts = ['houdini']
     version = (0, 1, 0)
 
@@ -19,20 +19,21 @@ class ExtractFlipbook(pyblish.api.Extractor):
 
         preview = flip(instance[0])
         if os.path.isfile(preview):
-            instance.set_data('outputPath', value=preview)
+            instance.data['outputPath_qt'] = preview
         else:
             raise pyblish.api.ValidationError('didn\'t create flipbook.')
 
 
 def makeMovie(outputI, outputV, audio):
     if audio != '':
-        audio = '-i ' + audio + ' -map 0 -map 1 -c:a libtwolame'
+        audio = '-i ' + str(audio) + ' -map 0 -map 1 -c:a libtwolame'
     paddingExp = ".%4d"
     filename, extension = os.path.splitext(outputI)
     filename, padding = os.path.splitext(filename)
     input = filename + paddingExp + extension
-    output = subprocess.call('ffmpeg -i {0} {2} -c:v libx264 -preset slow -vf "scale=trunc(iw/2)*2:trunc(ih/2)*2" -crf 28 -y {1}'.format(input, outputV, audio))
+    output = subprocess.call('ffmpeg -i {0} {2} -c:v libx264 -preset slow -vf "scale=trunc(iw/2)*2:trunc(ih/2)*2" -crf 19 -y {1}'.format(input, outputV, audio))
     return outputV
+
 
 
 def flip(node):

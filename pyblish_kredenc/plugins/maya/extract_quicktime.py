@@ -104,8 +104,6 @@ class ExtractQuicktime(pyblish.api.Extractor):
             if 'display' in key:
                 preset['camera_options'][key] = False
 
-
-
         dir_path = pyblish_utils.temp_dir(instance)
 
         # Ensure name of camera is valid

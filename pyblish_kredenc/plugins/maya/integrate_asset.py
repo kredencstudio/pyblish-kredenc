@@ -8,8 +8,8 @@ class ConformAsset(pyblish.api.Conformer):
     """Copies asset to it's final location
     """
 
-    families = ['model', 'rig', 'cache', 'camera']
-    label = 'Conform Assets'
+    families = ['model', 'rig', 'cache', 'camera', 'look']
+    label = 'Integrate Assets'
 
     def process(self, instance):
 
@@ -32,7 +32,7 @@ class ConformAsset(pyblish.api.Conformer):
             self.log.debug('components: {}'.format(str(components)))
 
             if not os.path.exists(os.path.dirname(publishFile)):
-                os.mkdirs(os.path.dirname(publishFile))
+                os.makedirs(os.path.dirname(publishFile))
 
             self.log.info('Copying model from location: {}'.format(sourcePath))
             self.log.info('Copying model to location: {}'.format(publishFile))

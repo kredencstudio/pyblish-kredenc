@@ -20,9 +20,10 @@ class CollectCache(pyblish.api.ContextPlugin):
             if any(ext in obj.name().lower() for ext in extensions):
 
                 self.log.info("Set: {}".format(obj))
-                name = obj.name().split('_')[0]
-                if ':' in name:
-                    name = name.split(':')[0]
+
+                if ':' in obj.name():
+                    name = obj.name().split(':')[0]
+                    # name = name.replace(':', '-')
 
                 members = obj.members()
                 nodes = []
@@ -30,13 +31,14 @@ class CollectCache(pyblish.api.ContextPlugin):
 
                 self.log.info("Collecting instance contents: {}".format(name))
 
-                for mesh in pymel.core.ls(members, dag=True, exactType='transform'):
+                for mesh in members:
                     nodes.append(mesh)
 
                 self.log.info(nodes)
 
                 instance = context.create_instance(name)
                 instance[:] = nodes
+                instance.data['family'] = 'cache'
                 instance.data['families'] = ['cache']
                 instance.data['item'] = name
                 instance.data['subset'] = ''

@@ -22,8 +22,10 @@ class CollectRenderLayers(pyblish.api.ContextPlugin):
             legacyLayer = layer
             # legacyLayer = pm.PyNode(layer.legacyRenderLayer.get())
 
+            layer_name = layer.name()
+
             # skipping defaultRenderLayers
-            if 'defaultRenderLayer' in layer.name():
+            if 'defaultRenderLayer' in layer_name:
                 continue
 
             # skipping non renderable layers
@@ -32,7 +34,7 @@ class CollectRenderLayers(pyblish.api.ContextPlugin):
 
 
             # Switch to renderlayer
-            self.log.info('Switching render layer to {}'.format(layer.name()))
+            self.log.info('Switching render layer to {}'.format(layer_name))
             try:
                 pm.editRenderLayerGlobals(currentRenderLayer=legacyLayer)
             except:
@@ -48,13 +50,14 @@ class CollectRenderLayers(pyblish.api.ContextPlugin):
             padding = drg.extensionPadding.get()
             padString = '#' * padding
             # start_frame_padded = start_frame.zfill(padding)
-            renderPath = pm.renderSettings(fp=True, cts='RenderPass=beauty', gin=padString, lut=True, lyr=legacyLayer.name())[0]
+            renderPath = pm.renderSettings(fp=True, cts='RenderPass=beauty', gin=padString, lut=True, lyr=layer_name)[0]
             # first_frame_path = pm.renderSettings(fp=True, gin=start_frame_padded, lyr=layer.name())[0]
+            renderPath = renderPath.replace((layer_name.split('_')[1]), (layer_name))
             self.log.debug('render files: {}'.format(renderPath))
             self.log.debug('frames: {}'.format(frames))
 
             # create renderlayer instance
-            instance = context.create_instance(layer.name(), family='render')
+            instance = context.create_instance(layer_name, family='render')
 
             # set basic render layer familier
             instance.data['families'] = ['deadline']
@@ -78,6 +81,16 @@ class CollectRenderLayers(pyblish.api.ContextPlugin):
 
             instance.data["publish"] = True
 
+            components = {}
+            compname = None
+
+            if ('beauty' in layer_name) or ('main' in layer_name):
+                compname = 'main'
+            else:
+                compname = layer_name
+            #
+            if compname:
+                components[compname] = {}
+
             # adding ftrack data to activate processing
-            instance.data['ftrackComponents'] = {}
-            instance.data['ftrackAssetType'] = 'render'
+            instance.data['ftrackComponents'] = components

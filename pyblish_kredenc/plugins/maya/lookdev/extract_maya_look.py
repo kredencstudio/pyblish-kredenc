@@ -5,12 +5,12 @@ import pyblish.api
 import pyblish_kredenc.utils as pyblish_utils
 from pyblish_kredenc.actions import actions_os
 
-class ExtractMayaAscii(pyblish.api.Extractor):
+class ExtractMayaLook(pyblish.api.Extractor):
     """Extract as Maya Ascii"""
 
-    label = "Maya Ascii"
+    label = "Extrack Look"
     hosts = ["maya"]
-    families = ["model", "camera"]
+    families = ['look']
     optional = True
 
     actions = [actions_os.OpenOutputFolder, actions_os.OpenOutputFile]
@@ -33,11 +33,11 @@ class ExtractMayaAscii(pyblish.api.Extractor):
 
             path = mc.file(path,
                            es=True,
-                           constructionHistory=False,
-                           preserveReferences=False,
+                           constructionHistory=True,
+                           preserveReferences=True,
                            shader=True,
-                           channels=False,
-                           constraints=False,
+                           channels=True,
+                           constraints=True,
                            force=True,
                            type='mayaAscii')
 

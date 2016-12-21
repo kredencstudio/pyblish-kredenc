@@ -23,7 +23,7 @@ class RepairPublishPath(pyblish.api.Action):
 class ValidatePublishPath(pyblish.api.InstancePlugin):
     """Validates that the publish directory for the workFile exists"""
 
-    order = pyblish.api.ValidatorOrder
+    order = pyblish.api.ValidatorOrder - 0.1
     label = 'Publish Path'
     families = ['scene']
 
@@ -37,10 +37,7 @@ class ValidatePublishPath(pyblish.api.InstancePlugin):
 
         version = instance.context.data['version']
         version = 'v' + str(version).zfill(3)
-        self.log.debug(version)
-
         taskid = instance.context.data('ftrackData')['Task']['id']
-        self.log.debug(taskid)
 
         ftrack_data = instance.context.data['ftrackData']
         if 'Asset_Build' not in ftrack_data.keys():
@@ -55,24 +52,14 @@ class ValidatePublishPath(pyblish.api.InstancePlugin):
         self.log.debug(templates)
 
         root = instance.context.data('ftrackData')['Project']['root']
-        self.log.debug(root)
-
         publishFiles = ft_pathUtils.getPathsYaml(taskid,
                                                  templateList=templates,
                                                  version=version,
                                                  root=root)
 
         publishFile = publishFiles[0]
-        publishFolder = os.path.dirname(publishFile)
-        self.log.debug(publishFolder)
 
-        if os.path.exists(publishFolder):
-            instance.context.set_data('publishFile', value=publishFile)
-            instance.context.data['deadlineInput'] = publishFile
-            instance.data['outputPath_publish'] = publishFile
-            self.log.debug('Setting publishFile: {}'.format(publishFile))
-        else:
-            name = instance
-            msg = 'Publish directory for %s doesn\'t exists' % name
-
-            raise ValueError(msg)
+        instance.context.data['publishFile'] = publishFile
+        instance.context.data['deadlineInput'] = publishFile
+        instance.data['outputPath_publish'] = publishFile
+        self.log.debug('Setting publishFile: {}'.format(publishFile))
