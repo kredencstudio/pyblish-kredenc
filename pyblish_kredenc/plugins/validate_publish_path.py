@@ -1,9 +1,9 @@
 import os
+import pyblish
 import pyblish.api
 from ft_studio import ft_pathUtils
 reload(ft_pathUtils)
 from pyblish_kredenc.actions import actions_os
-
 
 
 class RepairPublishPath(pyblish.api.Action):
@@ -24,7 +24,7 @@ class ValidatePublishPath(pyblish.api.InstancePlugin):
     """Validates that the publish directory for the workFile exists"""
 
     order = pyblish.api.ValidatorOrder - 0.1
-    label = 'Publish Path'
+    label = 'Validate Publish Path'
     families = ['scene']
 
     actions = [
@@ -40,14 +40,19 @@ class ValidatePublishPath(pyblish.api.InstancePlugin):
         taskid = instance.context.data('ftrackData')['Task']['id']
 
         ftrack_data = instance.context.data['ftrackData']
-        if 'Asset_Build' not in ftrack_data.keys():
-            templates = [
-                'shot.publish.scene'
-            ]
-        else:
+
+        templates = None
+
+        if 'Asset_Build' in ftrack_data:
             templates = [
                 'asset.publish.scene'
             ]
+        else:
+            templates = [
+                'shot.publish.scene'
+            ]
+
+        assert templates, "Could not recognize entity"
 
         self.log.debug(templates)
 

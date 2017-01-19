@@ -22,7 +22,7 @@ class ConformFlipbook(pyblish.api.Conformer):
         extractedPaths = [v for k,v in instance.data.items() if k.startswith('outputPath')]
 
         componentPath = ''
-        
+
         self.log.debug('Extracted Paths: {}'.format(extractedPaths))
 
         for sourcePath in extractedPaths:
@@ -61,6 +61,10 @@ class ConformFlipbook(pyblish.api.Conformer):
 
             self.log.info('Moving preview from location: {}'.format(sourcePath))
             self.log.info('Moving preview to location: {}'.format(publishFile))
+
+            d = os.path.dirname(publishFile)
+            if not os.path.exists(d):
+                os.makedirs(d)
             shutil.move(sourcePath, publishFile)
 
             if '.mov' not in componentPath:

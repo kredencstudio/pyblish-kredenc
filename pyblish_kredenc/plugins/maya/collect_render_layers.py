@@ -60,7 +60,7 @@ class CollectRenderLayers(pyblish.api.ContextPlugin):
             instance = context.create_instance(layer_name, family='render')
 
             # set basic render layer familier
-            instance.data['families'] = ['deadline']
+            instance.data['families'] = ['deadline', 'render']
 
             # add ass family if we're using arnold
             renderer = drg.currentRenderer.get()
@@ -84,7 +84,7 @@ class CollectRenderLayers(pyblish.api.ContextPlugin):
             components = {}
             compname = None
 
-            if ('beauty' in layer_name) or ('main' in layer_name):
+            if 'main' in layer_name:
                 compname = 'main'
             else:
                 compname = layer_name

@@ -18,9 +18,11 @@ class IntegrateMasterCache(pyblish.api.InstancePlugin):
     def process(self, instance):
 
         sourcePath = os.path.normpath(instance.data['outputPath_abc'])
+        filename, ext = os.path.splitext(sourcePath)
         self.log.debug(sourcePath)
 
         publishFile = instance.data['publishFile']
+        publishFile = os.path.splitext(publishFile)[0] + ext
         self.log.debug(publishFile)
 
         vstring, version = utils.version_get(publishFile, 'v')

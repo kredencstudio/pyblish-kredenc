@@ -26,15 +26,15 @@ class CollectLook(pyblish.api.ContextPlugin):
                 subset = None
                 if name_list:
                     if len(name_list) == 2:
-                        item = 'base'
+                        item = 'main'
                     if len(name_list) == 3:
                         item = name_list[0]
 
                 name = item + '_look'
 
-                self.log.debug("item {}, subset {}".format(name, subset))
+                self.log.debug("item {}, subset {}".format(item, subset))
 
-                instance = context.create_instance(name, family='look')
+                instance = context.create_instance(item, family='look')
                 instance.data['families'] = ['look']
                 instance.data['item'] = item
 

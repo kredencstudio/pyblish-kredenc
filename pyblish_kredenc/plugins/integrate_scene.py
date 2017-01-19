@@ -24,6 +24,11 @@ class IntegrateScene(pyblish.api.InstancePlugin):
         publishFile = instance.context.data('publishFile')
         self.log.debug(publishFile)
 
+        d = os.path.dirname(publishFile)
+
+        if not os.path.exists(d):
+            os.makedirs(d)
+
         shutil.copy(sourcePath, publishFile)
 
         # ftrack data

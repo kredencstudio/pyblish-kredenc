@@ -23,6 +23,8 @@ class CollectCache(pyblish.api.ContextPlugin):
 
                 if ':' in obj.name():
                     name = obj.name().split(':')[0]
+                else:
+                    name = obj.name().split('_')[0]
                     # name = name.replace(':', '-')
 
                 members = obj.members()

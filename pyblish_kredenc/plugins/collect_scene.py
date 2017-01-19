@@ -58,7 +58,7 @@ class CollectScene(pyblish.api.Collector):
         if instance.data['family'] is not 'new_scene':
             if context.data['ftrackData']['Task']['type'] in [
                     'Modeling']:
-                instance.data['publish'] = False
+                instance.data['publish'] = True
 
         context.data['version'] = version
         context.data['vprefix'] = prefix

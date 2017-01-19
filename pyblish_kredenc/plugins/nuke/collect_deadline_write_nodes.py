@@ -38,6 +38,7 @@ class CollectDeadlineWriteNodes(pyblish.api.Selector):
                     tmp = '#' * padding
                     output_file = output_file.replace(padding_string, tmp)
 
+                self.log.info(output_file)
                 # populate instance with data
                 instance.data['outputFilename'] = output_file
 

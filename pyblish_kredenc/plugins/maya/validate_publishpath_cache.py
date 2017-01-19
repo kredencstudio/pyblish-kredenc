@@ -2,6 +2,7 @@ import pyblish.api
 from ft_studio import ft_pathUtils
 reload(ft_pathUtils)
 
+
 class ValidatePublishPathCache(pyblish.api.InstancePlugin):
     """Copies current workfile to it's final location
 
@@ -11,20 +12,15 @@ class ValidatePublishPathCache(pyblish.api.InstancePlugin):
     """
 
     order = pyblish.api.ValidatorOrder
-    families = ['cache']
+    families = ['cacher']
     label = 'Validate Cache Paths'
 
     def process(self, instance):
 
         version = instance.context.data['version']
         version = 'v' + str(version).zfill(3)
-        self.log.debug(version)
-
         taskid = instance.context.data('ftrackData')['Task']['id']
-        self.log.debug(taskid)
-
         root = instance.context.data('ftrackData')['Project']['root']
-        self.log.debug(root)
 
         ftrack_data = instance.context.data['ftrackData']
         if 'Asset_Build' in ftrack_data.keys():

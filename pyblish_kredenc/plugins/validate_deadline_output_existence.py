@@ -1,6 +1,7 @@
 import os
-
+import pyblish_kredenc.utils as pyblish_utils
 import pyblish.api
+
 
 @pyblish.api.log
 class RepairOutputLocation(pyblish.api.Action):
@@ -8,21 +9,22 @@ class RepairOutputLocation(pyblish.api.Action):
     on = "failed"
     icon = "wrench"
 
-    def process(self, context):
-        for instance in context:
-            if instance.has_data('families'):
-                if 'deadline' in instance.data['families']:
-                    path, file = os.path.split(instance.data['outputFilename'])
-                    self.log.info(path)
+    def process(self, context, plugin):
 
-                    if not os.path.exists(path):
-                        self.log.info(path)
-                        os.makedirs(path)
+        instances = pyblish_utils.filter_instances(context, plugin)
+        for instance in instances:
+            path, file = os.path.split(instance.data['outputFilename'])
+            self.log.info(path)
+
+            if not os.path.exists(path):
+                self.log.info(path)
+                os.makedirs(path)
 
 @pyblish.api.log
-class ValidateDeadlineOutputExistence(pyblish.api.Validator):
+class ValidateDeadlineOutputExistence(pyblish.api.InstancePlugin):
     """Validates that the output directory for the output exists"""
 
+    order = pyblish.api.ValidatorOrder
     families = ['deadline']
     label = 'Output location existence'
     hosts = ['nuke']

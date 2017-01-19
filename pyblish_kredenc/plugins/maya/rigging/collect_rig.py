@@ -15,7 +15,6 @@ class CollectRig(pyblish.api.Collector):
         directory, filename = os.path.split(str(current_file))
         self.log.info('current file: ' + current_file)
 
-
         # create instance
         instance = context.create_instance(name='control_rig')
         instance.data['family'] = 'rig'

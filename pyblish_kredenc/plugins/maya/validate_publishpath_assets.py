@@ -2,6 +2,7 @@ import pyblish.api
 from ft_studio import ft_pathUtils
 reload(ft_pathUtils)
 
+
 class ValidatePublishPathAssets(pyblish.api.InstancePlugin):
     """Validates and attaches publishPath to assets
 
@@ -9,8 +10,9 @@ class ValidatePublishPathAssets(pyblish.api.InstancePlugin):
     'ftrackData' - Necessary frack information gathered by select_ftrack
     'version' - version of publish
     """
+
     order = pyblish.api.ValidatorOrder
-    families = ['model', 'rig', 'camera', 'look']
+    families = ['model', 'rig', 'camera', 'look', 'cache']
     label = 'Validate Asset Paths'
 
     def process(self, instance):
@@ -35,11 +37,11 @@ class ValidatePublishPathAssets(pyblish.api.InstancePlugin):
             subset = instance.data['subset']
 
         kwargs = {
-                'family': instance.data['family'],
-                'item': str(instance.data['item']),
-                'version': version,
-                'subset': subset,
-                }
+            'family': instance.data['family'],
+            'item': str(instance.data['item']),
+            'version': version,
+            'subset': subset,
+            }
 
         self.log.debug(templates)
         self.log.debug(kwargs)

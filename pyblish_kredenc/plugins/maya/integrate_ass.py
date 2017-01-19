@@ -17,16 +17,16 @@ class IntegrateAss(pyblish.api.InstancePlugin):
     def process(self, instance):
 
         output_path = instance.data['outputPath_ass']
-        self.log.debug('outputPath: {}'.format(output_path))
+        self.log.debug('integrating outputPath: {}'.format(output_path))
 
         output_folder = os.path.split(output_path)[0]
-        self.log.debug('outputFolder: {}'.format(output_folder))
+        self.log.debug('integrating outputFolder: {}'.format(output_folder))
 
         publish_file = instance.data['publishFile']
-        self.log.debug('publishFile: {}'.format(publish_file))
+        self.log.debug('integrating publishFile: {}'.format(publish_file))
 
         publish_folder = os.path.split(publish_file)[0]
-        self.log.debug('publishFolder: {}'.format(publish_folder))
+        self.log.debug('integrating publishFolder: {}'.format(publish_folder))
 
         # if os.path.exists(publish_folder):
         #     self.log.debug('removing old path: {}'.format(publish_folder))

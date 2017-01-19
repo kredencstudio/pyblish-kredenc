@@ -41,7 +41,7 @@ class ExtractAlembic(pyblish.api.Extractor):
         cmd = '-frameRange %s %s' % (frame_start, frame_end)
         cmd += ' -uvWrite -worldSpace -wholeFrameGeo -dataFormat ogawa'
         cmd += ' -writeFaceSets -attr {}'.format('assetid')
-        cmd += ' -eulerFilter -writeVisibility'
+        cmd += ' -eulerFilter -writeVisibility -writeUVSets'
         cmd += ' -writeVisibility %s -file "%s"' % (nodesString, path)
         cmd += ' -attr innerRadius -attr outerRadius -attr attractionBias'
         cmd += ' -attr tipAttraction -attr baseAttraction'
