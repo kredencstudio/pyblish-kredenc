@@ -19,7 +19,7 @@ class CollectRenderLayers(pyblish.api.ContextPlugin):
 
         for layer in pm.ls(type='renderLayer'):
 
-            legacyLayer = layer
+            # legacyLayer = layer
             # legacyLayer = pm.PyNode(layer.legacyRenderLayer.get())
 
             layer_name = layer.name()
@@ -29,16 +29,16 @@ class CollectRenderLayers(pyblish.api.ContextPlugin):
                 continue
 
             # skipping non renderable layers
-            if not legacyLayer.renderable.get():
-                continue
+            # if not legacyLayer.renderable.get():
+            #     continue
 
 
             # Switch to renderlayer
             self.log.info('Switching render layer to {}'.format(layer_name))
-            try:
-                pm.editRenderLayerGlobals(currentRenderLayer=legacyLayer)
-            except:
-                continue
+            # try:
+            #     pm.editRenderLayerGlobals(currentRenderLayer=legacyLayer)
+            # except:
+            #     continue
 
             # getting frames
             start_frame = str(int(drg.startFrame.get()))
@@ -50,9 +50,9 @@ class CollectRenderLayers(pyblish.api.ContextPlugin):
             padding = drg.extensionPadding.get()
             padString = '#' * padding
             # start_frame_padded = start_frame.zfill(padding)
-            renderPath = pm.renderSettings(fp=True, cts='RenderPass=beauty', gin=padString, lut=True, lyr=layer_name)[0]
+            renderPath = pm.renderSettings(fp=True, cts='RenderPass=beauty RenderLayer={}'.format(layer_name), gin=padString, lut=True)[0]
             # first_frame_path = pm.renderSettings(fp=True, gin=start_frame_padded, lyr=layer.name())[0]
-            renderPath = renderPath.replace((layer_name.split('_')[1]), (layer_name))
+            # renderPath = renderPath.replace((layer_name.split('_')[1]), (layer_name))
             self.log.debug('render files: {}'.format(renderPath))
             self.log.debug('frames: {}'.format(frames))
 
