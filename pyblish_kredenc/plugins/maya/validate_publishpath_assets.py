@@ -22,16 +22,6 @@ class ValidatePublishPathAssets(pyblish.api.InstancePlugin):
         taskid = instance.context.data('ftrackData')['Task']['id']
         root = instance.context.data('ftrackData')['Project']['root']
 
-        ftrack_data = instance.context.data['ftrackData']
-        if 'Asset_Build' not in ftrack_data.keys():
-            templates = [
-                'shot.publish.item'
-            ]
-        else:
-            templates = [
-                'asset.publish.item'
-            ]
-
         subset = ''
         if instance.data.get('subset'):
             subset = instance.data['subset']
@@ -42,16 +32,47 @@ class ValidatePublishPathAssets(pyblish.api.InstancePlugin):
             'version': version,
             'subset': subset,
             }
-
-        self.log.debug(templates)
         self.log.debug(kwargs)
-        publishFile = ft_pathUtils.getPathsYaml(taskid,
-                                                templateList=templates,
-                                                root=root,
-                                                **kwargs
-                                                )
 
-        self.log.debug('paths returned: {}'.format(publishFile))
-        publishFile = publishFile[0]
+        ftrack_data = instance.context.data['ftrackData']
+
+        if 'Asset_Build' not in ftrack_data.keys():
+
+            templates = ['shot.publish.item']
+            self.log.debug(templates)
+            publishFile = ft_pathUtils.getPathsYaml(taskid,
+                                                    templateList=templates,
+                                                    root=root,
+                                                    **kwargs
+                                                    )[0]
+
+            templates = ['shot.publish.master']
+            self.log.debug(templates)
+            masterFile = ft_pathUtils.getPathsYaml(taskid,
+                                                   templateList=templates,
+                                                   root=root,
+                                                   **kwargs
+                                                   )[0]
+        else:
+
+            templates = ['asset.publish.item']
+            self.log.debug(templates)
+            publishFile = ft_pathUtils.getPathsYaml(taskid,
+                                                     templateList=templates,
+                                                     root=root,
+                                                     **kwargs
+                                                     )[0]
+
+            templates = ['asset.publish.master']
+            self.log.debug(templates)
+            masterFile = ft_pathUtils.getPathsYaml(taskid,
+                                                   templateList=templates,
+                                                   root=root,
+                                                   **kwargs
+                                                   )[0]
+
         instance.data['publishFile'] = publishFile
         self.log.debug('publishFile data: {}'.format(publishFile))
+
+        instance.data['masterFile'] = masterFile
+        self.log.debug('masterFile data: {}'.format(masterFile))

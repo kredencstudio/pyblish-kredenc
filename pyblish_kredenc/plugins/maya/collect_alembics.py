@@ -1,4 +1,4 @@
-import pymel
+import pymel.core as pm
 import pyblish.api
 
 
@@ -9,27 +9,55 @@ class CollectCache(pyblish.api.ContextPlugin):
 
     order = pyblish.api.CollectorOrder
 
+    def transform_set(self, object_set):
+        if not object_set.members():
+            return False
+
+        for member in object_set.members():
+            if (member.nodeType() != "transform" and
+               member.nodeType() != "objectSet"):
+                return False
+
+        return True
+
     def process(self, context):
 
-        sets = pymel.core.ls(sets=True)
+        # FAMILY FILTERING
 
-        for obj in sets:
+        sets = pm.ls(type="objectSet")
 
-            extensions = ['cache']
+        for object_set in sets:
 
-            if any(ext in obj.name().lower() for ext in extensions):
+            if not self.transform_set(object_set):
+                continue
 
-                self.log.info("Set: {}".format(obj))
+            attrName = 'family'
+            if hasattr(object_set, attrName):
+                family_main = pm.Attribute(object_set.name() + "." + attrName).get(asString=1)
+            else:
+                continue
 
-                if ':' in obj.name():
-                    name = obj.name().split(':')[0]
+            if family_main == 'cache':
+
+                ###################################
+                # CACHE SPECIFIC COLLECTION
+
+                # Remove illegal disk characters
+                name = object_set.name().replace(":", "_")
+
+                attrName = 'publish'
+                if hasattr(object_set, attrName):
+                    publish = pm.Attribute(object_set.name() + "." + attrName).get()
+
+                self.log.info("Set: {}".format(object_set))
+
+                if ':' in object_set.name():
+                    name = object_set.name().split(':')[0]
                 else:
-                    name = obj.name().split('_')[0]
-                    # name = name.replace(':', '-')
+                    name = object_set.name().split('_')[0]
 
-                members = obj.members()
+                members = object_set.members()
                 nodes = []
-
 
                 self.log.info("Collecting instance contents: {}".format(name))
 
@@ -40,8 +68,10 @@ class CollectCache(pyblish.api.ContextPlugin):
 
                 instance = context.create_instance(name)
                 instance[:] = nodes
-                instance.data['family'] = 'cache'
-                instance.data['families'] = ['cache']
+                instance.data["label"] = name + ' ' + family_main
+                instance.data["publish"] = publish
+                instance.data["family"] = family_main
+                instance.data['families'] = [family_main, 'alembic']
                 instance.data['item'] = name
                 instance.data['subset'] = ''
                 # instance.data['publish'] = False

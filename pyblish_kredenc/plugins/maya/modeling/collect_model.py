@@ -6,45 +6,80 @@ import pymel
 class CollectModel(pyblish.api.Collector):
     """Inject all models from the scene into the context"""
 
+    def transform_set(self, object_set):
+        if not object_set.members():
+            return False
+
+        for member in object_set.members():
+            if (member.nodeType() != "transform" and
+               member.nodeType() != "objectSet"):
+                return False
+
+        return True
+
     def process(self, context):
 
-        sets = pymel.core.ls(sets=True)
+        # FAMILY FILTERING
 
-        for obj in sets:
+        sets = pymel.core.ls(type="objectSet")
 
-            patterns = ['geo', 'hires', 'proxy', 'geh', 'gep', 'lod']
-            if any(ext in obj.name().lower() for ext in patterns):
+        for object_set in sets:
 
-                name = item = obj.name()
+            if not self.transform_set(object_set):
+                continue
+
+            attrName = 'family'
+            if hasattr(object_set, attrName):
+                family_main = pymel.core.Attribute(object_set.name() + "." + attrName).get(asString=1)
+            else:
+                continue
+
+            if family_main == 'model':
+
+                ###################################
+                # MODEL SPECIFIC COLLECTION
+
+                # Remove illegal disk characters
+                name = object_set.name().replace(":", "_")
+
+                attrName = 'publish'
+                if not hasattr(object_set, attrName):
+                    pymel.core.addAttr(
+                        object_set,
+                        longName=attrName,
+                        at='bool'
+                    )
+                publish = pymel.core.Attribute(object_set.name() + "." + attrName).get()
+
+                item = name
 
                 name_list = None
                 if '_' in name:
                     name_list = name.split('_')
 
-                self.log.debug("name_list: {}".format(name_list))
-
                 subset = None
                 if name_list:
                     if len(name_list) == 2:
-                        name = name_list[0]
-                        item = name
+                        item = name_list[0]
                     if len(name_list) == 3:
                         subset = name_list[0]
                         item = name_list[1]
-                        name = subset + '_' + item
 
                 self.log.debug("item {}, name {}, subset {}".format(item, name, subset))
 
-                instance = context.create_instance(name, family="model")
-                instance.data['families'] = ['model', 'alembic']
-
+                instance = context.create_instance(name=name)
+                instance.add(object_set)
+                instance.data["label"] = item + ' ' + family_main
+                instance.data["publish"] = publish
+                instance.data["family"] = family_main
+                instance.data['families'] = [family_main, 'alembic']
                 instance.data['item'] = item
 
                 self.log.debug("Collecting instance contents: {}".format(name))
                 nodes = []
                 meshes = []
                 roots = set()
-                members = obj.members()
+                members = object_set.members()
 
                 for mesh in pymel.core.ls(members, dag=True, l=True, exactType="transform"):
                     nodes.append(mesh.name())
@@ -52,7 +87,7 @@ class CollectModel(pyblish.api.Collector):
                     if shape:
                         meshes.append(shape.fullPath())
                     roots.add(mesh.root())
-
+            #
                 self.log.debug('nodes: {}'.format(nodes))
                 self.log.debug('meshes: {}'.format(meshes))
                 self.log.debug('roots: {}'.format(roots))
