@@ -86,7 +86,7 @@ class CollectModel(pyblish.api.Collector):
                     shape = mesh.getShape()
                     if shape:
                         meshes.append(shape.fullPath())
-                    roots.add(mesh.root())
+                    roots.add(mesh)
             #
                 self.log.debug('nodes: {}'.format(nodes))
                 self.log.debug('meshes: {}'.format(meshes))

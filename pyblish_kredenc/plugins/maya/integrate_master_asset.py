@@ -4,14 +4,14 @@ import pyblish.api
 
 
 @pyblish.api.log
-class IntegrateMasterModel(pyblish.api.InstancePlugin):
+class IntegrateMasterAsset(pyblish.api.InstancePlugin):
     """Copies asset to it's final location
     """
 
     order = pyblish.api.IntegratorOrder
     # order = pyblish.api.ValidatorOrder
-    families = ['model']
-    label = 'Master Model'
+    families = ['model', 'rig', 'cache', 'look']
+    label = 'Master Asset'
     optional = True
 
     def process(self, instance):

@@ -18,9 +18,11 @@ class AddFtrackData(pyblish.api.InstancePlugin):
         if ftrack_components:
             component_name = ftrack_components.keys()[0]
             upload = ftrack_components[component_name].get('reviewable')
+            self.log.info("Reviewable: " + str(upload))
         else:
             instance.data['ftrackComponents'] = {}
             component_name = 'deadline'
+
 
         families = instance.data['families']
 

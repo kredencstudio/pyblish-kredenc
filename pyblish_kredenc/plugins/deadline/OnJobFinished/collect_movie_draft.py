@@ -1,10 +1,12 @@
 import os
 import json
+import re
 
 import pyblish.api
+from Deadline.Scripting import *
 
 
-class CollectMovie(pyblish.api.InstancePlugin):
+class CollectMovieDraft(pyblish.api.InstancePlugin):
     """ Generate movie job """
 
     order = pyblish.api.CollectorOrder + 0.1
@@ -52,13 +54,25 @@ class CollectMovie(pyblish.api.InstancePlugin):
             new_instance.data["families"] = ["mov.*", "mov.farm.*", "deadline"]
             new_instance.data["files"] = {}
 
-            output_path = path.replace(".%04d", "")
+
+            #regex .%..d + (_|).#{2,20}
+
+            output_path = re.sub(r'.%..d', '', path)
+            output_path = re.sub(r"(_|).#{2,20}", '', output_path)
             output_path = os.path.splitext(output_path)[0] + ".mov"
+            output_folder = os.path.split(output_path)[0]
+            start_frame = str(job.JobFramesList[0])
+            end_frame = str(job.JobFramesList[-1])
+            frame_list = '{}-{}'.format(start_frame, end_frame)
+
+            # ensure hashes in filename
+            path = FrameUtils.ReplacePaddingWithFrameNumber(path, 1)
+            path = FrameUtils.ReplaceFrameNumberWithPadding(path, '#')
 
             # setting job data
             job_data = {}
-            job_data["Plugin"] = "FFmpeg"
-            job_data["Frames"] = job.JobFrames
+            job_data["Plugin"] = "DraftPlugin"
+            job_data["Frames"] = frame_list
             job_data["Name"] = job.Name
             job_data['Pool'] = 'comp'
             job_data['Priority'] = job.Priority + 1
@@ -68,20 +82,18 @@ class CollectMovie(pyblish.api.InstancePlugin):
 
             # setting plugin data
             plugin_data = {}
-            plugin_data["InputFile0"] = path
-            plugin_data["OutputFile"] = output_path
-            plugin_data["ReplacePadding0"] = False
-            plugin_data["UseSameInputArgs"] = False
+            plugin_data["scriptFile"] = r'K:\.core\dev\deadline-custom\draft\encode_to_MOV_H264_1080p_with_audio.py'
+            plugin_data["ScriptArg0"] = "username=\"\""
+            plugin_data["ScriptArg1"] = "entity=\"\""
+            plugin_data["ScriptArg2"] = "version=\"\""
+            plugin_data["ScriptArg3"] = "isDistributed=\"False\""
+            plugin_data["ScriptArg4"] = "frameList={}".format(frame_list)
+            plugin_data["ScriptArg5"] = "startFrame={}".format(start_frame)
+            plugin_data["ScriptArg6"] = "endFrame={}".format(end_frame)
+            plugin_data["ScriptArg7"] = "outFolder=\"{}\"".format(output_folder)
+            plugin_data["ScriptArg8"] = "outFile=\"{}\"".format(output_path)
+            plugin_data["ScriptArg9"] = "inFile=\"{}\"".format(path)
 
-            start_frame = str(job.JobFramesList[0])
-            inputs_args = "-gamma 2.2 -framerate 25 -start_number "
-            inputs_args += start_frame
-            plugin_data["InputArgs0"] = inputs_args
-
-            output_args = "-q:v 0 -pix_fmt yuv420p -vf scale=trunc(iw/2)*2:"
-            output_args += "trunc(ih/2)*2,colormatrix=bt601:bt709 -crf 16"
-            output_args += " -timecode 00:00:00:01"
-            plugin_data["OutputArgs"] = output_args
 
             # setting data
             data = {"job": job_data, "plugin": plugin_data}

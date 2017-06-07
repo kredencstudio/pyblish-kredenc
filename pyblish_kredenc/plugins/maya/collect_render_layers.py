@@ -40,19 +40,26 @@ class CollectRenderLayers(pyblish.api.ContextPlugin):
             # except:
             #     continue
 
+            if context.data['ftrackData']['Project']['code'] == 'hbt':
+                renderpass = 'diffuse_color'
+            else:
+                renderpass = 'beauty'
+
             # getting frames
             start_frame = str(int(drg.startFrame.get()))
             end_frame = str(int(drg.endFrame.get()))
             by_frame = int(drg.byFrameStep.get())
             frames = '{}-{}x{}'.format(start_frame, end_frame, by_frame)
 
+            layer_name_clean = layer_name.replace('rs_', '')
+
             # Get the frame padding from render settings
             padding = drg.extensionPadding.get()
             padString = '#' * padding
             # start_frame_padded = start_frame.zfill(padding)
-            renderPath = pm.renderSettings(fp=True, cts='RenderPass=beauty RenderLayer={}'.format(layer_name), gin=padString, lut=True)[0]
+            renderPath = pm.renderSettings(fp=True, cts='RenderPass={} RenderLayer={}'.format(renderpass, layer_name), gin=padString, lut=True)[0]
             # first_frame_path = pm.renderSettings(fp=True, gin=start_frame_padded, lyr=layer.name())[0]
-            # renderPath = renderPath.replace((layer_name.split('_')[1]), (layer_name))
+            renderPath = renderPath.replace(layer_name, layer_name_clean)
             self.log.debug('render files: {}'.format(renderPath))
             self.log.debug('frames: {}'.format(frames))
 

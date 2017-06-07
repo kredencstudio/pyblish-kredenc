@@ -28,7 +28,7 @@ class ExtractAssLocal(pyblish.api.InstancePlugin):
         options = '-startFrame {} '.format(start_frame)
         options += '-endFrame {} '.format(end_frame)
         options += '-frameStep {} '.format(by_frame)
-        options += '-mask 255 \
+        options += '-mask 2303 \
                     -lightLinks 1 \
                     -forceTranslateShadingEngines \
                     -shadowLinks 2\

@@ -1,5 +1,6 @@
 import pyblish.api
 
+
 @pyblish.api.log
 class CollectFtrackAsset(pyblish.api.Collector):
 
@@ -28,7 +29,8 @@ class CollectFtrackAsset(pyblish.api.Collector):
             ftrack_data = context.data['ftrackData'].copy()
 
             if not instance.data.get("ftrackAssetName"):
-                instance.data['ftrackAssetName'] = ftrack_data['Task']['name']
+                asset_name = ftrack_data['Task']['name']
+                instance.data['ftrackAssetName'] = asset_name
 
             # task type filtering
             task_type = ftrack_data['Task']['type'].lower()
@@ -37,20 +39,20 @@ class CollectFtrackAsset(pyblish.api.Collector):
             self.log.debug('task type {}'.format(task_type))
 
             if task_type == 'lighting':
-                asset_type = 'render'
-            if task_type == 'compositing':
+                asset_type = 'scene'
+            elif task_type == 'compositing':
                 asset_type = 'comp'
-            if task_type == 'lookdev':
+            elif task_type == 'lookdev':
                 asset_type = 'look'
-            if task_type == 'modeling':
+            elif task_type == 'modeling':
                 asset_type = 'geo'
-            if task_type == 'rigging':
+            elif task_type == 'rigging':
                 asset_type = 'rig'
-            if task_type == 'animation':
+            elif task_type == 'animation':
                 asset_type = 'anim'
-            if task_type == 'fx':
+            elif task_type == 'fx':
                 asset_type = 'fx'
-            if task_type == 'layout':
+            elif task_type == 'layout':
                 asset_type = 'layout'
 
             families = instance.data['families']
@@ -58,15 +60,21 @@ class CollectFtrackAsset(pyblish.api.Collector):
             # family filtering
             if 'camera' in families:
                 asset_type = 'cam'
-            if 'cache' in families:
+            elif 'model' in families:
+                asset_type = 'geo'
+            elif 'cache' in families:
                 asset_type = 'cache'
-            if 'render' in families:
+            elif 'scene' in families:
+                asset_type = 'scene'
+            elif 'review' in families:
+                asset_type = 'mov'
+            elif 'render' in families:
                 asset_type = 'render'
                 if 'writeNode' in families:
-                    asset_type = 'comp'
+                    asset_type = 'img'
 
             if asset_type:
                 instance.data['ftrackAssetType'] = asset_type
-                self.log.debug('asset type: {}'.format(instance.data['ftrackAssetType']))
+                self.log.debug('asset type: {}'.format(asset_type))
 
-            self.log.debug('asset name: {}'.format(instance.data['ftrackAssetName']))
+            self.log.debug('asset name: {}'.format(asset_name))

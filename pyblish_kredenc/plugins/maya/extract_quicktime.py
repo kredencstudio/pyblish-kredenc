@@ -3,7 +3,7 @@ import contextlib
 import subprocess
 
 import pyblish.api
-from pyblish_kredenc.vendor import capture
+import capture
 
 import pyblish_kredenc.utils as pyblish_utils
 
@@ -56,8 +56,8 @@ class ExtractQuicktime(pyblish.api.Extractor):
             return
 
         fmt = instance.data('format') or 'image'
-        compression = instance.data('compression') or 'png'
-        off_screen = instance.data('offScreen', True)
+        compression = instance.data('compression') or 'jpg'
+        off_screen = True
         maintain_aspect_ratio = instance.data('maintainAspectRatio', True)
 
         start_frame = int(cmds.playbackOptions(minTime=True, q=True))
@@ -153,6 +153,7 @@ class ExtractQuicktime(pyblish.api.Extractor):
         filename, padding = os.path.splitext(filename)
         outputI = filename + paddingExp + extension
         outputV = (path + ".mov")
+        # audio_offset = 1  # seconds FLOAT
         instance.data["outputPath_qt"] = outputV
         self.log.info("Outputting video to %s" % outputV)
         output = subprocess.call('ffmpeg -start_number {3} -i {0} {2} -c:v libx264 -preset veryslow -vf "scale=trunc(iw/2)*2:trunc(ih/2)*2" -crf 22 -y {1}'.format(outputI, outputV, audio, start_frame))

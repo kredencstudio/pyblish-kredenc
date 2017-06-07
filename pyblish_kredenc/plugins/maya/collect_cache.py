@@ -48,6 +48,8 @@ class CollectCache(pyblish.api.ContextPlugin):
                 attrName = 'publish'
                 if hasattr(object_set, attrName):
                     publish = pm.Attribute(object_set.name() + "." + attrName).get()
+                else:
+                    publish = True
 
                 self.log.info("Set: {}".format(object_set))
 
