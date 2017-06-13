@@ -1,5 +1,6 @@
 import nuke
 import pyblish.api
+import clique
 
 
 @pyblish.api.log
@@ -53,6 +54,19 @@ class CollectDeadlineWriteNodes(pyblish.api.Selector):
                 instance.data['startFrame'] = start_frame
                 instance.data['endFrame'] = end_frame
                 instance.data['frames'] = frames
+
+                # Add collection
+                collection = None
+                try:
+                    path = ""
+                    if nuke.filename(node):
+                        path = nuke.filename(node)
+                    path += " [{0}-{1}]".format(start_frame, end_frame)
+                    collection = clique.parse(path)
+                except Exception as e:
+                    self.log.warning(e)
+
+                instance.data["collection"] = collection
 
                 if str(node.name()) in ['Write1', 'Write_dpx']:
                     compname = 'main'

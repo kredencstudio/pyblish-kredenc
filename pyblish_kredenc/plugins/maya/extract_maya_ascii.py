@@ -10,7 +10,7 @@ class ExtractMayaAscii(pyblish.api.Extractor):
 
     label = "Maya Ascii"
     hosts = ["maya"]
-    families = ["model", "camera", 'rig', 'look']
+    families = ["model", 'camera', 'rig', 'look']
     optional = True
 
     actions = [actions_os.OpenOutputFolder, actions_os.OpenOutputFile]
@@ -46,7 +46,7 @@ class ExtractMayaAscii(pyblish.api.Extractor):
                                force=True,
                                type='mayaAscii')
 
-            elif instance.data['family'] in ['rig', 'look']:
+            elif instance.data['family'] in ['rig', 'look', 'camera']:
 
                 self.log.debug("EXTRACTING: " + str(instance))
                 path = mc.file(path,
