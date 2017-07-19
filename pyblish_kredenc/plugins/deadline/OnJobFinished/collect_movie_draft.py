@@ -82,7 +82,7 @@ class CollectMovieDraft(pyblish.api.InstancePlugin):
 
             # setting plugin data
             plugin_data = {}
-            plugin_data["scriptFile"] = r'K:\.core\dev\deadline-custom\draft\encode_to_MOV_H264_1080p_with_audio.py'
+            plugin_data["scriptFile"] = r'K:\core\dev\deadline-custom\draft\encode_to_MOV_H264_1080p_with_audio.py'
             plugin_data["ScriptArg0"] = "username=\"\""
             plugin_data["ScriptArg1"] = "entity=\"\""
             plugin_data["ScriptArg2"] = "version=\"\""
