@@ -1,6 +1,6 @@
 import pyblish.api
 import pymel.core as pm
-
+import maya.app.renderSetup.model.renderSetup as renderSetup
 
 @pyblish.api.log
 class CollectRenderLayers(pyblish.api.ContextPlugin):
@@ -15,9 +15,11 @@ class CollectRenderLayers(pyblish.api.ContextPlugin):
         drg = pm.PyNode('defaultRenderGlobals')
 
         projectPath = str(pm.system.Workspace.getPath().expand())
+        renderSetup.initialize()
+        rs = renderSetup.instance()
+        layers = rs.getRenderLayers()
 
-
-        for layer in pm.ls(type='renderLayer'):
+        for layer in layers:
 
             # legacyLayer = layer
             # legacyLayer = pm.PyNode(layer.legacyRenderLayer.get())
@@ -35,10 +37,9 @@ class CollectRenderLayers(pyblish.api.ContextPlugin):
 
             # Switch to renderlayer
             self.log.info('Switching render layer to {}'.format(layer_name))
-            # try:
-            #     pm.editRenderLayerGlobals(currentRenderLayer=legacyLayer)
-            # except:
-            #     continue
+            rs.switchToLayer(layer)
+            self.log.info('Switched render layer to {}'.format(layer_name))
+
 
             if context.data['ftrackData']['Project']['code'] == 'hbt':
                 renderpass = 'diffuse_color'
@@ -101,3 +102,8 @@ class CollectRenderLayers(pyblish.api.ContextPlugin):
 
             # adding ftrack data to activate processing
             instance.data['ftrackComponents'] = components
+
+            self.log.debug('collected: {}'.format(layer_name))
+
+        master_layer = rs.getDefaultRenderLayer()
+        rs.switchToLayer(master_layer)

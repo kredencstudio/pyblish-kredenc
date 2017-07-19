@@ -3,6 +3,7 @@ import pyblish.api
 import pyblish_kredenc.utils as pyblish_utils
 reload(pyblish_utils)
 from pyblish_kredenc.actions import actions_os
+import maya.app.renderSetup.model.renderSetup as renderSetup
 
 
 class ExtractAssLocal(pyblish.api.InstancePlugin):
@@ -11,7 +12,7 @@ class ExtractAssLocal(pyblish.api.InstancePlugin):
     order = pyblish.api.ExtractorOrder + 0.1
     families = ['arnold']
     optional = True
-    label = '.ASS export Local'
+    label = '.ASS export'
 
     actions = [actions_os.OpenOutputFolder, actions_os.OpenOutputFile]
 
@@ -36,7 +37,12 @@ class ExtractAssLocal(pyblish.api.InstancePlugin):
                     '
 
         self.log.info('Switching render layer to {}'.format(instance.name))
-        pm.editRenderLayerGlobals(currentRenderLayer=instance.name)
+        renderSetup.initialize()
+        rs = renderSetup.instance()
+        lyr = rs.getRenderLayer(instance.name)
+        rs.switchToLayer(lyr)
         self.log.debug('Exporting ass')
         pm.exportAll(outputPath, f=1, typ="ASS Export", options=options)
         self.log.debug('Export succesfull')
+        master_layer = rs.getDefaultRenderLayer()
+        rs.switchToLayer(master_layer)

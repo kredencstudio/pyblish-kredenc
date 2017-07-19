@@ -1,5 +1,6 @@
 import maya
 import pyblish.api
+import maya.app.renderSetup.model.renderSetup as renderSetup
 
 
 class ExtractSceneSave(pyblish.api.Extractor):
@@ -12,5 +13,8 @@ class ExtractSceneSave(pyblish.api.Extractor):
 
     def process(self, instance):
 
+        rs = renderSetup.instance()
+        master_layer = rs.getDefaultRenderLayer()
+        rs.switchToLayer(master_layer)
         self.log.info('saving scene')
         maya.cmds.file(s=True)
