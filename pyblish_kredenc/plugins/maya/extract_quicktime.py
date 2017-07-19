@@ -47,34 +47,15 @@ class ExtractQuicktime(pyblish.api.Extractor):
                           '_cam' suffix")
             return
 
-
-        ### PROJECT FILTERING
+        # PROJECT FILTERING
 
         project_code = instance.context.data['ftrackData']['Project']['code']
         task_type = instance.context.data['ftrackData']['Task']['type']
 
-
-        # # KOS Presets
-        # if instance.context.data['ftrackData']['Project']['code'] == 'kos':
-        #     preset_name = 'kos'
-        #     if instance.context.data['ftrackData']['Task']['type'] in ['Rigging']:
-        #         preset_name = 'kos_anim'
-        #
-        # # HBT Presets
-        # if instance.context.data['ftrackData']['Project']['code'] == 'hbt':
-        #     self.log.info('hbt')
-        #     preset_name = 'hbt'
-        #
-        # if instance.context.data['ftrackData']['Project']['code'] == 'int':
-        #     self.log.info('int')
-        #     preset_name = 'int'
-
-
-
         # load Preset
         studio_tools = os.path.abspath(os.environ.get('studio_tools'))
         task_preset_path = os.path.join(studio_tools, 'studio',
-                                   'capture_presets',
+                                    'capture_presets',
                                    (project_code + '_' + task_type + '.json'))
 
         project_preset_path = os.path.join(studio_tools, 'studio',
@@ -99,6 +80,7 @@ class ExtractQuicktime(pyblish.api.Extractor):
 
 
         preset['camera'] = camera
+        preset['compression'] = "H.264"
 
         dir_path = pyblish_utils.temp_dir(instance)
 
@@ -112,12 +94,12 @@ class ExtractQuicktime(pyblish.api.Extractor):
 
         # CLEAR HUDS
 
-        # huds = cmds.headsUpDisplay(lh=True)
-        # stored_huds = []
-        # for hud in huds:
-        #     if cmds.headsUpDisplay(hud, vis=True, q=True):
-        #         stored_huds.append(hud)
-        #         cmds.headsUpDisplay(hud, vis=False, e=True)
+        huds = cmds.headsUpDisplay(lh=True)
+        stored_huds = []
+        for hud in huds:
+            if cmds.headsUpDisplay(hud, vis=True, q=True):
+                stored_huds.append(hud)
+                cmds.headsUpDisplay(hud, vis=False, e=True)
 
         # Export Playblast
 
@@ -130,8 +112,8 @@ class ExtractQuicktime(pyblish.api.Extractor):
         instance.data["outputPath_qt"] = playblast
         self.log.info("Outputting video to %s" % playblast)
 
-        # for hud in stored_huds:
-        #     cmds.headsUpDisplay(hud, vis=True, e=True)
+        for hud in stored_huds:
+            cmds.headsUpDisplay(hud, vis=True, e=True)
 
 
 @contextlib.contextmanager

@@ -24,14 +24,14 @@ class ExtractFlipbook(pyblish.api.Extractor):
             raise pyblish.api.ValidationError('didn\'t create flipbook.')
 
 
-def makeMovie(outputI, outputV, audio):
+def makeMovie(outputI, outputV, audio, startf):
     if audio != '':
         audio = '-i ' + str(audio) + ' -map 0 -map 1 -c:a libtwolame'
     paddingExp = ".%4d"
     filename, extension = os.path.splitext(outputI)
     filename, padding = os.path.splitext(filename)
     input = filename + paddingExp + extension
-    output = subprocess.call('ffmpeg -i {0} {2} -c:v libx264 -preset slow -vf "scale=trunc(iw/2)*2:trunc(ih/2)*2" -crf 19 -y {1}'.format(input, outputV, audio))
+    output = subprocess.call('ffmpeg -start_number {3} -i {0} {2} -c:v libx264 -preset slow -vf "scale=trunc(iw/2)*2:trunc(ih/2)*2" -crf 19 -y {1}'.format(input, outputV, audio, startf))
     return outputV
 
 
@@ -138,7 +138,7 @@ def flip(node):
 
     if enable_v:
         print 'video'
-        makeMovie(outputI, outputV, audio)
+        makeMovie(outputI, outputV, audio, startf)
 
     if enable_postscript:
         executeScript(postscript)
