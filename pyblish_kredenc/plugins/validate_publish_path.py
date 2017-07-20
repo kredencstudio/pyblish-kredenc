@@ -1,7 +1,7 @@
 import os
 import pyblish
 import pyblish.api
-from ft_studio import ft_pathUtils
+from ftrack_kredenc import ft_pathUtils
 reload(ft_pathUtils)
 from pyblish_kredenc.actions import actions_os
 

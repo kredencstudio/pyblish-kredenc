@@ -1,6 +1,6 @@
 import shutil
 import pyblish.api
-from ft_studio import ft_pathUtils
+from ftrack_kredenc import ft_pathUtils
 import os
 
 

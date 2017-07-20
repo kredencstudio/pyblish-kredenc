@@ -3,7 +3,7 @@ import os
 import pymel
 import pyblish.api
 
-from ft_studio import ft_maya, ft_pathUtils
+from ftrack_kredenc import ft_maya, ft_pathUtils
 reload(ft_maya)
 
 def get_path(context):
