@@ -53,17 +53,17 @@ class ExtractQuicktime(pyblish.api.Extractor):
         task_type = instance.context.data['ftrackData']['Task']['type']
 
         # load Preset
-        studio_tools = os.path.abspath(os.environ.get('studio_tools'))
-        task_preset_path = os.path.join(studio_tools, 'studio',
-                                    'capture_presets',
+        studio_repos = os.path.abspath(os.environ.get('studio_repos'))
+        task_preset_path = os.path.join(studio_repos, 'maya',
+                                    'capture_gui_presets',
                                    (project_code + '_' + task_type + '.json'))
 
-        project_preset_path = os.path.join(studio_tools, 'studio',
-                                   'capture_presets',
+        project_preset_path = os.path.join(studio_repos, 'maya',
+                                   'capture_gui_presets',
                                    (project_code + '.json'))
 
-        default_preset_path = os.path.join(studio_tools, 'studio',
-                                   'capture_presets',
+        default_preset_path = os.path.join(studio_repos, 'maya',
+                                   'capture_gui_presets',
                                    'default.json')
 
 
