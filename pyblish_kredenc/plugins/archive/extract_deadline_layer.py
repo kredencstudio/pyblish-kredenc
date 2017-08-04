@@ -1,7 +1,6 @@
 import pyblish.api
 import os
 import pymel
-import pymel.core as pm
 
 @pyblish.api.log
 class ExtractDeadlineLayer(pyblish.api.InstancePlugin):
@@ -30,6 +29,7 @@ class ExtractDeadlineLayer(pyblish.api.InstancePlugin):
         hostversion = pymel.versions.fullName()
         build = pymel.versions.bitness()
 
+
         if 'ass.farm' in instance.data['families']:
             self.log.info('ASS export on the farm are not yet supported')
         elif 'ass.local' in instance.data['families']:
@@ -38,32 +38,10 @@ class ExtractDeadlineLayer(pyblish.api.InstancePlugin):
             job_data['LimitGroups'] = instance.data['renderer']
             plugin_data['InputFile'] = instance.data['publishFile']
             plugin_data['LocalRendering'] = 'False'
-            mtoa_version = pymel.core.pluginInfo('mtoa', query=True, version=True)
-            plugin_data['Executable'] = 'mtoa_' + hostversion + '_' + mtoa_version
-
-            mtoa_path = pm.pluginInfo('mtoa', query=True, path=True)
-            PluginFolder1 = os.path.split(mtoa_path)[0].replace('plug-ins', 'shaders')
-            plugin_data['PluginFolder1'] = PluginFolder1
-
-            PluginFolder2 = ''
-            if mtoa_version.startswith("1.4"):
-                PluginFolder2 = '\\\\kre-c01\\share\\core\\software\\arnold\\alShaders-win-1.0.0rc18-ai4.2.12.2\\bin'
-            plugin_data['PluginFolder2'] = PluginFolder2
-
-            PluginFolder2 = ''
-            if mtoa_version.startswith("2."):
-                PluginFolder2 = '\\\\kre-c01\\share\\core\\software\\arnold\\alShaders-win-2.0.0-ai5.0.1.0\\bin'
-            plugin_data['PluginFolder2'] = PluginFolder2
-
-            PluginFolder3 = ''
-            if pm.pluginInfo( 'pgYetiMaya', query=True, loaded=True):
-                yeti_path = pm.pluginInfo('pgYetiMaya', query=True, path=True)
-                PluginFolder3 = os.path.split(yeti_path)[0].replace('plug-ins', 'bin')
-            plugin_data['PluginFolder3'] = PluginFolder3
-
-            plugin_data['PathFolder1'] = PluginFolder3
-
-            plugin_data['Version'] = 'Beta'
+            plugin_data['PluginFolder1'] = ''
+            plugin_data['PluginFolder2'] = ''
+            plugin_data['PluginFolder3'] = ''
+            plugin_data['Version'] = 'Release'
             plugin_data['CommandLineOptions'] = ''
             plugin_data['Verbose'] = '4'
         else:

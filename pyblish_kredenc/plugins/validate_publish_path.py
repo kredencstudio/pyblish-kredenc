@@ -1,7 +1,7 @@
 import os
 import pyblish
 import pyblish.api
-from ft_studio import ft_pathUtils
+from ftrack_kredenc import ft_pathUtils
 reload(ft_pathUtils)
 from pyblish_kredenc.actions import actions_os
 
@@ -47,9 +47,13 @@ class ValidatePublishPath(pyblish.api.InstancePlugin):
             templates = [
                 'asset.publish.scene'
             ]
-        else:
+        elif 'Shot' in ftrack_data:
             templates = [
                 'shot.publish.scene'
+            ]
+        else:
+            templates = [
+                'folder.publish.scene'
             ]
 
         assert templates, "Could not recognize entity"

@@ -1,18 +1,17 @@
 import shutil
 import os
 import pyblish.api
-import pyblish_kredenc.utils as utils
 
 
 @pyblish.api.log
-class IntegrateMasterModel(pyblish.api.InstancePlugin):
+class IntegrateMasterAsset(pyblish.api.InstancePlugin):
     """Copies asset to it's final location
     """
 
     order = pyblish.api.IntegratorOrder
     # order = pyblish.api.ValidatorOrder
-    families = ['model']
-    label = 'Master Model'
+    families = ['model', 'rig', 'cache', 'look']
+    label = 'Master Asset'
     optional = True
 
     def process(self, instance):
@@ -25,15 +24,11 @@ class IntegrateMasterModel(pyblish.api.InstancePlugin):
             filename, ext = os.path.splitext(sourcePath)
             self.log.debug(sourcePath)
 
-            publishFile = instance.data['publishFile']
+            master_file = instance.data['masterFile']
 
-            publishFile = os.path.splitext(publishFile)[0] + ext
-            self.log.debug(publishFile)
+            master_file = os.path.splitext(master_file)[0] + ext
+            self.log.debug(master_file)
 
-            vstring, version = utils.version_get(publishFile, 'v')
-            self.log.debug(vstring + version)
-
-            master_file = publishFile.replace('_{}{}'.format(vstring, version), '')
             self.log.debug('master file: {}'.format(master_file))
 
             d = os.path.dirname(master_file)

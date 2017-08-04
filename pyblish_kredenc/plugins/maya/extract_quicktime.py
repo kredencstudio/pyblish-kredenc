@@ -1,21 +1,13 @@
 import os
 import contextlib
-import subprocess
 
 import pyblish.api
-from pyblish_kredenc.vendor import capture
+import capture_gui
 
 import pyblish_kredenc.utils as pyblish_utils
 
 from maya import cmds
-import pymel.core as pm
 
-import json
-
-def load_preset(path):
-    """Load options json from path"""
-    with open(path, "r") as f:
-        return json.load(f)
 
 @pyblish.api.log
 class ExtractQuicktime(pyblish.api.Extractor):
@@ -55,54 +47,40 @@ class ExtractQuicktime(pyblish.api.Extractor):
                           '_cam' suffix")
             return
 
-        fmt = instance.data('format') or 'image'
-        compression = instance.data('compression') or 'png'
-        off_screen = instance.data('offScreen', True)
-        maintain_aspect_ratio = instance.data('maintainAspectRatio', True)
+        # PROJECT FILTERING
 
-        start_frame = int(cmds.playbackOptions(minTime=True, q=True))
-
-        check_viewport = False
-
-        # Choose preset
-        preset_name = 'default'
-
-        ### PROJECT FILTERING
-
-        # KOS Presets
-        if instance.context.data['ftrackData']['Project']['code'] == 'kos':
-            preset_name = 'kos'
-            if instance.context.data['ftrackData']['Task']['type'] in ['Rigging']:
-                preset_name = 'kos_anim'
-
-        # HBT Presets
-        if instance.context.data['ftrackData']['Project']['code'] == 'hbt':
-            self.log.info('hbt')
-            preset_name = 'hbt'
-
-        self.log.info('using viewport preset: {}'.format(preset_name))
+        project_code = instance.context.data['ftrackData']['Project']['code']
+        task_type = instance.context.data['ftrackData']['Task']['type']
 
         # load Preset
-        studio_tools = os.path.abspath(os.environ.get('studio_tools'))
-        preset_path = os.path.join(studio_tools, 'studio',
-                                   'capture_presets',
-                                   (preset_name + '.json'))
+        studio_repos = os.path.abspath(os.environ.get('studio_repos'))
+        task_preset_path = os.path.join(studio_repos, 'maya',
+                                    'capture_gui_presets',
+                                   (project_code + '_' + task_type + '.json'))
 
-        if check_viewport:
-            try:
-                preset = capture.parse_active_view()
-            except:
-                preset = load_preset(preset_path)
+        project_preset_path = os.path.join(studio_repos, 'maya',
+                                   'capture_gui_presets',
+                                   (project_code + '.json'))
+
+        default_preset_path = os.path.join(studio_repos, 'maya',
+                                   'capture_gui_presets',
+                                   'default.json')
+
+
+        # my_file = Path("/path/to/file")
+        if os.path.isfile(task_preset_path):
+            preset_to_use = task_preset_path
+        elif os.path.isfile(project_preset_path):
+            preset_to_use = project_preset_path
         else:
-            self.log.debug('loading preset: {}'.format(preset_path))
-            preset = load_preset(preset_path)
-            self.log.debug('success loading preset')
+            preset_to_use = default_preset_path
+
+        preset = pyblish_utils.load_capture_preset(preset_to_use)
+        self.log.info('using viewport preset: {}'.format(preset_to_use))
+
 
         preset['camera'] = camera
-
-        for key in preset['camera_options']:
-            if 'display' in key:
-                preset['camera_options'][key] = False
+        preset['compression'] = "H.264"
 
         dir_path = pyblish_utils.temp_dir(instance)
 
@@ -125,37 +103,14 @@ class ExtractQuicktime(pyblish.api.Extractor):
 
         # Export Playblast
 
+        preset['filename'] = output_images
+        preset['overwrite'] = True
+
         with maintained_time():
-            outputI = capture.capture(
-                filename=output_images,
-                format=fmt,
-                viewer=False,
-                compression=compression,
-                off_screen=off_screen,
-                maintain_aspect_ratio=maintain_aspect_ratio,
-                overwrite=True,
-                quality=70,
-                **preset
-                )
+            playblast = capture_gui.lib.capture_scene(preset)
 
-        import maya.mel
-        aPlayBackSliderPython = maya.mel.eval('$tmpVar=$gPlayBackSlider')
-        audioNode = pm.timeControl(aPlayBackSliderPython, q=True, sound=True)
-        audio = ''
-        if audioNode:
-            audiofile = pm.PyNode(audioNode).filename.get()
-            audio = audiofile
-            if audio != '':
-                audio = '-i ' + audio + ' -map 0 -map 1 -c:a libtwolame'
-
-        paddingExp = ".%4d"
-        filename, extension = os.path.splitext(outputI)
-        filename, padding = os.path.splitext(filename)
-        outputI = filename + paddingExp + extension
-        outputV = (path + ".mov")
-        instance.data["outputPath_qt"] = outputV
-        self.log.info("Outputting video to %s" % outputV)
-        output = subprocess.call('ffmpeg -start_number {3} -i {0} {2} -c:v libx264 -preset veryslow -vf "scale=trunc(iw/2)*2:trunc(ih/2)*2" -crf 22 -y {1}'.format(outputI, outputV, audio, start_frame))
+        instance.data["outputPath_qt"] = playblast
+        self.log.info("Outputting video to %s" % playblast)
 
         for hud in stored_huds:
             cmds.headsUpDisplay(hud, vis=True, e=True)

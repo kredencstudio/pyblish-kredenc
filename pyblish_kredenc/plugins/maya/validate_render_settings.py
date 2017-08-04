@@ -3,7 +3,7 @@ import os
 import pymel
 import pyblish.api
 
-from ft_studio import ft_maya, ft_pathUtils
+from ftrack_kredenc import ft_maya, ft_pathUtils
 reload(ft_maya)
 
 def get_path(context):
@@ -13,11 +13,11 @@ def get_path(context):
 
     if 'Asset_Build' not in ftrack_data.keys():
         templates = [
-            'shot.task.output'
+            'shot.render'
         ]
     else:
         templates = [
-            'asset.task.output'
+            'asset.render'
         ]
 
     root = context.data('ftrackData')['Project']['root']

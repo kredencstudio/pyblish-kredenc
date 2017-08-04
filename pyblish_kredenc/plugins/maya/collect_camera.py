@@ -40,6 +40,7 @@ class CollectCameras(pyblish.api.Collector):
 
             item = name.split('_')[0]
             instance.data['item'] = item
+            instance.data["label"] = item + ' camera'
 
             self.log.debug("item {}, name {}".format(item, name))
 

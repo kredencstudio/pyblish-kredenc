@@ -1,6 +1,6 @@
 import pyblish.api
 import pymel.core as pm
-
+import maya.app.renderSetup.model.renderSetup as renderSetup
 
 @pyblish.api.log
 class CollectRenderLayers(pyblish.api.ContextPlugin):
@@ -15,11 +15,13 @@ class CollectRenderLayers(pyblish.api.ContextPlugin):
         drg = pm.PyNode('defaultRenderGlobals')
 
         projectPath = str(pm.system.Workspace.getPath().expand())
+        renderSetup.initialize()
+        rs = renderSetup.instance()
+        layers = rs.getRenderLayers()
 
+        for layer in layers:
 
-        for layer in pm.ls(type='renderLayer'):
-
-            legacyLayer = layer
+            # legacyLayer = layer
             # legacyLayer = pm.PyNode(layer.legacyRenderLayer.get())
 
             layer_name = layer.name()
@@ -29,16 +31,20 @@ class CollectRenderLayers(pyblish.api.ContextPlugin):
                 continue
 
             # skipping non renderable layers
-            if not legacyLayer.renderable.get():
-                continue
+            # if not legacyLayer.renderable.get():
+            #     continue
 
 
             # Switch to renderlayer
             self.log.info('Switching render layer to {}'.format(layer_name))
-            try:
-                pm.editRenderLayerGlobals(currentRenderLayer=legacyLayer)
-            except:
-                continue
+            rs.switchToLayer(layer)
+            self.log.info('Switched render layer to {}'.format(layer_name))
+
+
+            if context.data['ftrackData']['Project']['code'] == 'hbt':
+                renderpass = 'diffuse_color'
+            else:
+                renderpass = 'beauty'
 
             # getting frames
             start_frame = str(int(drg.startFrame.get()))
@@ -46,13 +52,15 @@ class CollectRenderLayers(pyblish.api.ContextPlugin):
             by_frame = int(drg.byFrameStep.get())
             frames = '{}-{}x{}'.format(start_frame, end_frame, by_frame)
 
+            layer_name_clean = layer_name.replace('rs_', '')
+
             # Get the frame padding from render settings
             padding = drg.extensionPadding.get()
             padString = '#' * padding
             # start_frame_padded = start_frame.zfill(padding)
-            renderPath = pm.renderSettings(fp=True, cts='RenderPass=beauty', gin=padString, lut=True, lyr=layer_name)[0]
+            renderPath = pm.renderSettings(fp=True, cts='RenderPass={} RenderLayer={}'.format(renderpass, layer_name), gin=padString, lut=True)[0]
             # first_frame_path = pm.renderSettings(fp=True, gin=start_frame_padded, lyr=layer.name())[0]
-            renderPath = renderPath.replace((layer_name.split('_')[1]), (layer_name))
+            renderPath = renderPath.replace(layer_name, layer_name_clean)
             self.log.debug('render files: {}'.format(renderPath))
             self.log.debug('frames: {}'.format(frames))
 
@@ -94,3 +102,8 @@ class CollectRenderLayers(pyblish.api.ContextPlugin):
 
             # adding ftrack data to activate processing
             instance.data['ftrackComponents'] = components
+
+            self.log.debug('collected: {}'.format(layer_name))
+
+        master_layer = rs.getDefaultRenderLayer()
+        rs.switchToLayer(master_layer)

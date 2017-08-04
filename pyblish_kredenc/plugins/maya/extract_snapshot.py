@@ -2,21 +2,13 @@ import os
 import contextlib
 
 import pyblish.api
-from pyblish_kredenc.vendor import capture
+import capture_gui
 
 import pyblish_kredenc.utils as pyblish_utils
 from pyblish_kredenc.actions import actions_os
 reload(actions_os)
 
 from maya import cmds
-import pymel.core as pm
-
-import json
-
-def load_preset(path):
-    """Load options json from path"""
-    with open(path, "r") as f:
-        return json.load(f)
 
 @pyblish.api.log
 class ExtractSnapshot(pyblish.api.Extractor):
@@ -58,24 +50,40 @@ class ExtractSnapshot(pyblish.api.Extractor):
 
         camera = instance[0]
 
-        preset_name = 'default'
+        # PROJECT FILTERING
+
+        project_code = instance.context.data['ftrackData']['Project']['code']
+        task_type = instance.context.data['ftrackData']['Task']['type']
 
         # load Preset
         studio_tools = os.path.abspath(os.environ.get('studio_tools'))
-        preset_path = os.path.join(studio_tools, 'studio',
+        task_preset_path = os.path.join(studio_tools, 'studio',
+                                    'capture_presets',
+                                   (project_code + '_' + task_type + '.json'))
+
+        project_preset_path = os.path.join(studio_tools, 'studio',
                                    'capture_presets',
-                                   (preset_name + '.json'))
+                                   (project_code + '.json'))
 
-        try:
-            preset = capture.parse_active_view()
-        except:
-            self.log.debug(pyblish_utils.__file__)
-            preset = load_preset(preset_path)
-            preset['camera'] = camera
+        default_preset_path = os.path.join(studio_tools, 'studio',
+                                   'capture_presets',
+                                   'default.json')
 
-        for key in preset['camera_options']:
-            if 'display' in key:
-                preset['camera_options'][key] = False
+        # my_file = Path("/path/to/file")
+        if os.path.isfile(task_preset_path):
+            preset_to_use = task_preset_path
+        elif os.path.isfile(project_preset_path):
+            preset_to_use = project_preset_path
+        else:
+            preset_to_use = default_preset_path
+
+        preset = pyblish_utils.load_capture_preset(preset_to_use)
+        self.log.info('using viewport preset: {}'.format(preset_to_use))
+        for key in preset:
+            self.log.info(preset[key])
+
+
+        preset['camera'] = camera
 
         # Ensure name of camera is valid
         sourcePath = os.path.normpath(instance.context.data('currentFile'))
@@ -93,20 +101,21 @@ class ExtractSnapshot(pyblish.api.Extractor):
 
         self.log.info("Outputting to %s" % path)
 
-        with maintained_time():
-            output = capture.snap(
-                filename=path,
-                format=format,
-                compression=compression,
-                viewer=False,
-                off_screen=off_screen,
-                maintain_aspect_ratio=maintain_aspect_ratio,
-                overwrite=True,
-                quality=80,
-                **preset
-                )
+        frame = cmds.currentTime( query=True )
 
-        instance.data["outputPath_jpg"] = output
+        preset['filename'] = path
+        preset['overwrite'] = True
+        preset['format'] = format
+        preset['compression'] = compression
+        preset['start_frame'] = frame
+        preset['end_frame'] = frame
+        preset['frame'] = frame
+
+
+        with maintained_time():
+            playblast = capture_gui.lib.capture_scene(preset)
+
+        instance.data["outputPath_jpg"] = playblast
 
         for hud in stored_huds:
             cmds.headsUpDisplay(hud, vis=True, e=True)

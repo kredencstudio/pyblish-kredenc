@@ -10,7 +10,7 @@ class ExtractMayaAscii(pyblish.api.Extractor):
 
     label = "Maya Ascii"
     hosts = ["maya"]
-    families = ["model", "camera"]
+    families = ["model", 'camera', 'rig', 'look']
     optional = True
 
     actions = [actions_os.OpenOutputFolder, actions_os.OpenOutputFile]
@@ -26,20 +26,38 @@ class ExtractMayaAscii(pyblish.api.Extractor):
         self.log.info("Performing extraction")
         with pyblish_maya.maintained_selection():
             self.log.debug("instance: " + str(instance))
-            mc.select(instance)
+            roots = instance.data.get('roots')
+            if not roots:
+                roots = instance
+            mc.select(roots)
             # cmds.select(instance, noExpand=True)
             # self.log.info(instance.data['preserveReferences'])
             # preserveReferences = instance.data['preserveReferences'] or 'False'
 
-            path = mc.file(path,
-                           es=True,
-                           constructionHistory=False,
-                           preserveReferences=False,
-                           shader=True,
-                           channels=False,
-                           constraints=False,
-                           force=True,
-                           type='mayaAscii')
+            if instance.data['family'] in ['model']:
+
+                path = mc.file(path,
+                               es=True,
+                               constructionHistory=False,
+                               preserveReferences=False,
+                               shader=True,
+                               channels=False,
+                               constraints=False,
+                               force=True,
+                               type='mayaAscii')
+
+            elif instance.data['family'] in ['rig', 'look', 'camera']:
+
+                self.log.debug("EXTRACTING: " + str(instance))
+                path = mc.file(path,
+                               es=True,
+                               constructionHistory=True,
+                               preserveReferences=True,
+                               shader=True,
+                               channels=True,
+                               constraints=True,
+                               force=True,
+                               type='mayaAscii')
 
             instance.data['outputPath_ma'] = path
 

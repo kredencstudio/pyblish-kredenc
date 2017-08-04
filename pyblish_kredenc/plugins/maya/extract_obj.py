@@ -25,7 +25,10 @@ class ExtractMayaOBJ(pyblish.api.Extractor):
         # Perform extraction
         self.log.info("Performing extraction..")
         with pyblish_maya.maintained_selection():
-            mc.select(instance)
+            roots = instance.data.get('roots')
+            if not roots:
+                roots = instance
+            mc.select(roots)
             # cmds.select(instance, noExpand=True)
             path = mc.file(path,
                            es=True,

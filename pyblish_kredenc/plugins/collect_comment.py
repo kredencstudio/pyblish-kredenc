@@ -11,5 +11,3 @@ class CollectComment(pyblish.api.Collector):
     def process(self, context):
 
         context.data["comment"] = ""
-
-        self.log.info('Scene Version: %s' % context.data('version'))
