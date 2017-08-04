@@ -46,8 +46,13 @@ class ExtractDeadlineLayer(pyblish.api.InstancePlugin):
             plugin_data['PluginFolder1'] = PluginFolder1
 
             PluginFolder2 = ''
-            if '1.4.' in mtoa_version:
-                PluginFolder2 = '\\\\kre-c01\\share\\core\\repos\\arnold\\alShaders-win-1.0.0rc18-ai4.2.12.2\\bin'
+            if mtoa_version.startswith("1.4"):
+                PluginFolder2 = '\\\\kre-c01\\share\\core\\software\\arnold\\alShaders-win-1.0.0rc18-ai4.2.12.2\\bin'
+            plugin_data['PluginFolder2'] = PluginFolder2
+
+            PluginFolder2 = ''
+            if mtoa_version.startswith("2."):
+                PluginFolder2 = '\\\\kre-c01\\share\\core\\software\\arnold\\alShaders-win-2.0.0-ai5.0.1.0\\bin'
             plugin_data['PluginFolder2'] = PluginFolder2
 
             PluginFolder3 = ''
