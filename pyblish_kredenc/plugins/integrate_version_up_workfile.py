@@ -1,7 +1,7 @@
 import shutil
 import pyblish.api
 import pyblish_kredenc.utils as pyblish_utils
-from ftrack_kredenc import ft_pathUtils
+from ftrack_kredenc import ft_utils
 
 
 @pyblish.api.log
@@ -43,7 +43,7 @@ class VersionUpWorkfile(pyblish.api.InstancePlugin):
             root = instance.context.data('ftrackData')['Project']['root']
             self.log.debug(root)
 
-            new_workFile = ft_pathUtils.getPathsYaml(taskid,
+            new_workFile = ft_utils.getPathsYaml(taskid,
                                                      templateList=templates,
                                                      version=version,
                                                      root=root)[0]

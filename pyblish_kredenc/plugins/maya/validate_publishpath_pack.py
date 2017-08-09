@@ -1,6 +1,6 @@
 import pyblish.api
-from ftrack_kredenc import ft_pathUtils
-reload(ft_pathUtils)
+from ftrack_kredenc import ft_utils
+reload(ft_utils)
 
 
 @pyblish.api.log
@@ -54,7 +54,7 @@ class ValidatePublishPathPack(pyblish.api.InstancePlugin):
 
         self.log.debug(templates)
         self.log.debug(kwargs)
-        publishFile = ft_pathUtils.getPathsYaml(taskid,
+        publishFile = ft_utils.getPathsYaml(taskid,
                                                 templateList=templates,
                                                 root=root,
                                                 **kwargs

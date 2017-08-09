@@ -1,7 +1,7 @@
 import shutil
 import os
 import pyblish.api
-from ftrack_kredenc import ft_pathUtils
+from ftrack_kredenc import ft_utils
 
 
 @pyblish.api.log
@@ -49,7 +49,7 @@ class ConformFlipbook(pyblish.api.Conformer):
             root = instance.context.data('ftrackData')['Project']['root']
             self.log.debug(root)
 
-            publishFile = ft_pathUtils.getPathsYaml(taskid,
+            publishFile = ft_utils.getPathsYaml(taskid,
                                                     templateList=templates,
                                                     version=version,
                                                     root=root)

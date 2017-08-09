@@ -3,7 +3,7 @@ import os
 import pymel
 import pyblish.api
 
-from ftrack_kredenc import ft_maya, ft_pathUtils
+from ftrack_kredenc import ft_maya, ft_utils
 reload(ft_maya)
 
 def get_path(context):
@@ -21,7 +21,7 @@ def get_path(context):
         ]
 
     root = context.data('ftrackData')['Project']['root']
-    renderFolder = ft_pathUtils.getPathsYaml(taskid,
+    renderFolder = ft_utils.getPathsYaml(taskid,
                                              templateList=templates,
                                              root=root)
     renderFolder = renderFolder[0]

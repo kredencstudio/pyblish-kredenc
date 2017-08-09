@@ -1,6 +1,6 @@
 import pyblish.api
-from ftrack_kredenc import ft_pathUtils
-reload(ft_pathUtils)
+from ftrack_kredenc import ft_utils
+reload(ft_utils)
 
 
 class ValidatePublishPathAssets(pyblish.api.InstancePlugin):
@@ -40,7 +40,7 @@ class ValidatePublishPathAssets(pyblish.api.InstancePlugin):
 
             templates = ['shot.publish.item']
             self.log.debug(templates)
-            publishFile = ft_pathUtils.getPathsYaml(taskid,
+            publishFile = ft_utils.getPathsYaml(taskid,
                                                     templateList=templates,
                                                     root=root,
                                                     **kwargs
@@ -48,7 +48,7 @@ class ValidatePublishPathAssets(pyblish.api.InstancePlugin):
 
             templates = ['shot.publish.master']
             self.log.debug(templates)
-            masterFile = ft_pathUtils.getPathsYaml(taskid,
+            masterFile = ft_utils.getPathsYaml(taskid,
                                                    templateList=templates,
                                                    root=root,
                                                    **kwargs
@@ -57,7 +57,7 @@ class ValidatePublishPathAssets(pyblish.api.InstancePlugin):
 
             templates = ['asset.publish.item']
             self.log.debug(templates)
-            publishFile = ft_pathUtils.getPathsYaml(taskid,
+            publishFile = ft_utils.getPathsYaml(taskid,
                                                      templateList=templates,
                                                      root=root,
                                                      **kwargs
@@ -65,7 +65,7 @@ class ValidatePublishPathAssets(pyblish.api.InstancePlugin):
 
             templates = ['asset.publish.master']
             self.log.debug(templates)
-            masterFile = ft_pathUtils.getPathsYaml(taskid,
+            masterFile = ft_utils.getPathsYaml(taskid,
                                                    templateList=templates,
                                                    root=root,
                                                    **kwargs

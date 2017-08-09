@@ -1,5 +1,5 @@
 import pyblish.api
-from ftrack_kredenc import ft_pathUtils
+from ftrack_kredenc import ft_utils
 
 
 @pyblish.api.log
@@ -39,7 +39,7 @@ class ValidateInitialScene(pyblish.api.Validator):
 
             self.log.debug(templates)
 
-            new_workFile = ft_pathUtils.getPathsYaml(taskid,
+            new_workFile = ft_utils.getPathsYaml(taskid,
                                                      templateList=templates,
                                                      root=root,
                                                      **kwargs

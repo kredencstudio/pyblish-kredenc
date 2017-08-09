@@ -2,7 +2,7 @@ import shutil
 import os
 import ftrack
 import pyblish.api
-from ftrack_kredenc import ft_pathUtils
+from ftrack_kredenc import ft_utils
 
 
 @pyblish.api.log
@@ -49,7 +49,7 @@ class IntegrateCamera(pyblish.api.Conformer):
                     'tv-sq-cam-file',
                 ]
 
-            publishFile = ft_pathUtils.getPaths(task, templates, version)
+            publishFile = ft_utils.getPaths(task, templates, version)
             publishFile = os.path.normpath(publishFile[templates[0]])
 
             self.log.info('Copying preview to location: {}'.format(publishFile))

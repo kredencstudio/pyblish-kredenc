@@ -1,6 +1,6 @@
 import shutil
 import pyblish.api
-from ftrack_kredenc import ft_pathUtils
+from ftrack_kredenc import ft_utils
 import os
 
 
@@ -39,7 +39,7 @@ class IntegrateCamera(pyblish.api.Conformer):
                 'shot.cam.file'
             ]
 
-        publishFile = ft_pathUtils.getPathsYaml(taskid,
+        publishFile = ft_utils.getPathsYaml(taskid,
                                                 templateList=templates,
                                                 version=version,
                                                 item='cam',

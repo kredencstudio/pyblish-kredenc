@@ -1,8 +1,8 @@
 import os
 import pyblish
 import pyblish.api
-from ftrack_kredenc import ft_pathUtils
-reload(ft_pathUtils)
+from ftrack_kredenc import ft_utils
+reload(ft_utils)
 from pyblish_kredenc.actions import actions_os
 
 
@@ -61,7 +61,7 @@ class ValidatePublishPath(pyblish.api.InstancePlugin):
         self.log.debug(templates)
 
         root = instance.context.data('ftrackData')['Project']['root']
-        publishFiles = ft_pathUtils.getPathsYaml(taskid,
+        publishFiles = ft_utils.getPathsYaml(taskid,
                                                  templateList=templates,
                                                  version=version,
                                                  root=root)
