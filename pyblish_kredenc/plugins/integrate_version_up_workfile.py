@@ -1,7 +1,7 @@
 import shutil
 import pyblish.api
 import pyblish_kredenc.utils as pyblish_utils
-from ftrack_kredenc import ft_utils
+import ft_utils
 
 
 @pyblish.api.log

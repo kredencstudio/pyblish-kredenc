@@ -1,7 +1,7 @@
 import os
 import pyblish
 import pyblish.api
-from ftrack_kredenc import ft_utils
+import ft_utils
 reload(ft_utils)
 from pyblish_kredenc.actions import actions_os
 
