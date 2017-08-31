@@ -4,7 +4,7 @@ import pyblish_kredenc.utils as pyblish_utils
 
 
 class CollectSceneVersion(pyblish.api.Collector):
-    """Finds version in the filename or passes the one found in the context
+    """Finds version in the filename or uses the one found in the context
         Arguments:
         version (int, optional): version number of the publish
     """

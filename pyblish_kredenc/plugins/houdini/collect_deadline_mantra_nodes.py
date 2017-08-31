@@ -4,10 +4,10 @@ import re
 import hou
 
 @pyblish.api.log
-class SelectDeadlineMantraNodes(pyblish.api.Selector):
+class SelectDeadlineMantraNodes(pyblish.api.Collector):
     """Selects all write nodes"""
 
-    order = pyblish.api.Selector.order + 0.1
+    order = pyblish.api.Collector.order + 0.1
     hosts = ['houdini']
     version = (0, 1, 0)
 

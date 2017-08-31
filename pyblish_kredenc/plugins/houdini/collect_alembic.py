@@ -2,7 +2,7 @@ import hou
 import pyblish.api
 
 @pyblish.api.log
-class CollectAlembicRops(pyblish.api.Selector):
+class CollectAlembicRops(pyblish.api.Collector):
     """Selects all cam nodes"""
 
     hosts = ['houdini']

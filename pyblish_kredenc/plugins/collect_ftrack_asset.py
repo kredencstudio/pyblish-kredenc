@@ -1,14 +1,13 @@
 import pyblish.api
 
 
-@pyblish.api.log
-class CollectFtrackAsset(pyblish.api.Collector):
+class CollectFtrackAssets(pyblish.api.Collector):
 
     """ Adds ftrack asset information to the instance
     """
 
     order = pyblish.api.Collector.order + 0.41
-    label = 'Asset Attributes'
+    label = 'Collect asset information'
 
     def process(self, context):
 

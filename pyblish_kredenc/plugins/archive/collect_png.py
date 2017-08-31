@@ -8,7 +8,7 @@ import ftrack
 class CollectPNG(pyblish.api.Collector):
     """"""
 
-    order = pyblish.api.Selector.order + 0.2
+    order = pyblish.api.Collector.order + 0.2
     hosts = ['ftrack']
 
     def process(self, context):

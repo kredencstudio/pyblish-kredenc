@@ -7,7 +7,7 @@ import maya
 
 
 @pyblish.api.log
-class SelectDeadlineRenderlayers(pyblish.api.Selector):
+class SelectDeadlineRenderlayers(pyblish.api.Collector):
     """ Gathers all renderlayers
     """
 

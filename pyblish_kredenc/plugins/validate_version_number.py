@@ -7,6 +7,7 @@ class ValidateVersionNumber(pyblish.api.Validator):
     """Validates whether version number of output matches version of the
     work file
     """
+    
     families = ['writeNode', 'prerenders', 'mantra']
     version = (0, 1, 0)
     label = 'Version numbers'

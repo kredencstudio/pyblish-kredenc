@@ -4,7 +4,7 @@ import os
 
 @pyblish.api.log
 class IntegrateInitialScene(pyblish.api.Integrator):
-    """Saves version one of the workfile
+    """Prepares and saves version one of the workfile
     """
 
     families = ['new_scene']

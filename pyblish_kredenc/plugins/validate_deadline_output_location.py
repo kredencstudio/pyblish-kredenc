@@ -6,7 +6,7 @@ import pyblish.api
 
 @pyblish.api.log
 class ValidateDeadlineOutputLocation(pyblish.api.Validator):
-    """Validates whether the output is local or networked"""
+    """Validates whether the render output is local or networked"""
 
     families = ['render']
     optional = True

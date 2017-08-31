@@ -4,7 +4,7 @@ import os
 import hou
 
 @pyblish.api.log
-class SelectWorkfile(pyblish.api.Selector):
+class SelectWorkfile(pyblish.api.Collector):
     """Selects current workfile"""
 
     hosts = ['*']

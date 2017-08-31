@@ -5,10 +5,10 @@ from maya import mel
 
 
 @pyblish.api.log
-class CollectMayaUnits(pyblish.api.Selector):
+class CollectMayaUnits(pyblish.api.Collector):
     """Collect Maya's scene units."""
 
-    order = pyblish.api.Selector.order
+    order = pyblish.api.Collector.order
     hosts = ["maya"]
 
     def process(self, context):

@@ -3,7 +3,7 @@ import pyblish.api
 
 
 @pyblish.api.log
-class SelectFlipbookNodes(pyblish.api.Selector):
+class SelectFlipbookNodes(pyblish.api.Collector):
     """Selects all flipbook nodes"""
 
     hosts = ['houdini']

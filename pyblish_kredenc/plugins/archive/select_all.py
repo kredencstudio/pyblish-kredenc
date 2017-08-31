@@ -1,7 +1,7 @@
 import pyblish.api
 
 @pyblish.api.log
-class SelectAll(pyblish.api.Selector):
+class SelectAll(pyblish.api.Collector):
     """
     """
 

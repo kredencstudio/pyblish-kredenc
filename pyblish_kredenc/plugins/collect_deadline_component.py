@@ -1,10 +1,10 @@
 import pyblish.api
 
 @pyblish.api.log
-class CollectDeadlineComponent(pyblish.api.Selector):
+class CollectDeadlineComponent(pyblish.api.Collector):
     """Collects renderable componets for deadline"""
 
-    order = pyblish.api.Selector.order + 0.4
+    order = pyblish.api.Collector.order + 0.4
     version = (0, 1, 0)
     families = ['deadline.render']
 

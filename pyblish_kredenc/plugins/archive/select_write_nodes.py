@@ -3,7 +3,7 @@ import pyblish.api
 
 
 @pyblish.api.log
-class SelectWriteNodes(pyblish.api.Selector):
+class SelectWriteNodes(pyblish.api.Collector):
     """Selects all write nodes"""
 
     hosts = ['nuke']

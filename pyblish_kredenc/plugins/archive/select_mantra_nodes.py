@@ -3,7 +3,7 @@ import pyblish.api
 
 
 @pyblish.api.log
-class SelectMantraNodes(pyblish.api.Selector):
+class SelectMantraNodes(pyblish.api.Collector):
     """Selects all mantra nodes"""
 
     hosts = ['houdinix']
