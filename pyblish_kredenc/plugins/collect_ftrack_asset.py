@@ -35,6 +35,7 @@ class CollectFtrackAsset(pyblish.api.Collector):
             # task type filtering
             task_type = ftrack_data['Task']['type'].lower()
             asset_type = ''
+            families = instance.data['families']
 
             self.log.debug('task type {}'.format(task_type))
 
@@ -50,12 +51,13 @@ class CollectFtrackAsset(pyblish.api.Collector):
                 asset_type = 'rig'
             elif task_type == 'animation':
                 asset_type = 'anim'
+                # if ('review' in families) and ('snapshot' not in families):
+                #     asset_type = 'mov'
             elif task_type == 'fx':
                 asset_type = 'fx'
             elif task_type == 'layout':
                 asset_type = 'layout'
 
-            families = instance.data['families']
 
             # family filtering
             if 'camera' in families:
@@ -66,8 +68,6 @@ class CollectFtrackAsset(pyblish.api.Collector):
                 asset_type = 'cache'
             elif 'scene' in families:
                 asset_type = 'scene'
-            elif 'review' in families:
-                asset_type = 'mov'
             elif 'render' in families:
                 asset_type = 'render'
                 if 'writeNode' in families:

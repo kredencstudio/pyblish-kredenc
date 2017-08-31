@@ -39,6 +39,7 @@ class CollectPreview(pyblish.api.ContextPlugin):
 
             if camera == 'persp':
                 instance.data['publish'] = False
+                instance.data["families"].append('snapshot')
 
             if context.data['ftrackData']['Task']['type'] in ['Lighting']:
                 instance.data['publish'] = False
@@ -51,7 +52,6 @@ class CollectPreview(pyblish.api.ContextPlugin):
             # task specific overrides
             if context.data['ftrackData']['Task']['type'] == 'Rigging':
                 instance.data['show'] = ['polymeshes', 'nurbsCurves', 'joints']
-
 
             # ftrack data
             components = {'review': {'path': '',

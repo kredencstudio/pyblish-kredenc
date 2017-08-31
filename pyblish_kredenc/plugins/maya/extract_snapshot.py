@@ -3,12 +3,11 @@ import contextlib
 
 import pyblish.api
 import capture_gui
-
+from maya import cmds
 import pyblish_kredenc.utils as pyblish_utils
 from pyblish_kredenc.actions import actions_os
 reload(actions_os)
 
-from maya import cmds
 
 @pyblish.api.log
 class ExtractSnapshot(pyblish.api.Extractor):
@@ -43,30 +42,36 @@ class ExtractSnapshot(pyblish.api.Extractor):
         components = instance.data['ftrackComponents'].copy()
         self.log.debug('Components: {}'.format(components))
 
-        format = instance.data('format') or 'image'
-        compression = instance.data('compression') or 'jpg'
-        off_screen = instance.data('offScreen', False)
-        maintain_aspect_ratio = instance.data('maintainAspectRatio', True)
-
         camera = instance[0]
 
         # PROJECT FILTERING
 
-        project_code = instance.context.data['ftrackData']['Project']['code']
-        task_type = instance.context.data['ftrackData']['Task']['type']
+        ftrack_data = instance.context.data['ftrackData']
+
+        project_code = ftrack_data['Project']['code']
+        task_type = ftrack_data['Task']['type']
+
+        # if 'Asset_Build' in ftrack_data:
+        #     asset = ftrack_data['Asset_Build']['name']
+        # elif 'Shot' in ftrack_data:
+        #     asset = ftrack_data['Shot']['name']
 
         # load Preset
-        studio_tools = os.path.abspath(os.environ.get('studio_tools'))
-        task_preset_path = os.path.join(studio_tools, 'studio',
-                                    'capture_presets',
+        studio_repos = os.path.abspath(os.environ.get('studio_repos'))
+        # shot_preset_path = os.path.join(studio_repos, 'maya',
+        #                             'capture_gui_presets',
+        #                            (project_code + '_' + task_type + '_' + asset + '.json'))
+
+        task_preset_path = os.path.join(studio_repos, 'maya',
+                                    'capture_gui_presets',
                                    (project_code + '_' + task_type + '.json'))
 
-        project_preset_path = os.path.join(studio_tools, 'studio',
-                                   'capture_presets',
+        project_preset_path = os.path.join(studio_repos, 'maya',
+                                   'capture_gui_presets',
                                    (project_code + '.json'))
 
-        default_preset_path = os.path.join(studio_tools, 'studio',
-                                   'capture_presets',
+        default_preset_path = os.path.join(studio_repos, 'maya',
+                                   'capture_gui_presets',
                                    'default.json')
 
         # my_file = Path("/path/to/file")
@@ -79,16 +84,12 @@ class ExtractSnapshot(pyblish.api.Extractor):
 
         preset = pyblish_utils.load_capture_preset(preset_to_use)
         self.log.info('using viewport preset: {}'.format(preset_to_use))
-        for key in preset:
-            self.log.info(preset[key])
-
 
         preset['camera'] = camera
 
         # Ensure name of camera is valid
         sourcePath = os.path.normpath(instance.context.data('currentFile'))
         path, extension = os.path.splitext(sourcePath)
-        path = (path + ".jpg")
 
         # CLEAR HUDS
 
@@ -99,23 +100,23 @@ class ExtractSnapshot(pyblish.api.Extractor):
                 stored_huds.append(hud)
                 cmds.headsUpDisplay(hud, vis=False, e=True)
 
-        self.log.info("Outputting to %s" % path)
+        self.log.debug("Outputting to %s" % path)
 
-        frame = cmds.currentTime( query=True )
+        frame = cmds.currentTime(query=True)
 
         preset['filename'] = path
         preset['overwrite'] = True
-        preset['format'] = format
-        preset['compression'] = compression
+        preset['format'] = 'image'
+        preset['compression'] = 'jpg'
         preset['start_frame'] = frame
         preset['end_frame'] = frame
-        preset['frame'] = frame
-
+        preset['frame'] = None
 
         with maintained_time():
             playblast = capture_gui.lib.capture_scene(preset)
 
         instance.data["outputPath_jpg"] = playblast
+        instance.context.data["thumbnail"] = playblast
 
         for hud in stored_huds:
             cmds.headsUpDisplay(hud, vis=True, e=True)
