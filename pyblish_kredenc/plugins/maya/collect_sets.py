@@ -24,8 +24,8 @@ class CollectSets(pyblish.api.Collector):
 
         for object_set in sets:
 
-            if not self.transform_set(object_set):
-                continue
+            # if not self.transform_set(object_set):
+            #     continue
 
             attrName = 'family'
             if hasattr(object_set, attrName):

@@ -57,6 +57,8 @@ class CollectFtrackAsset(pyblish.api.Collector):
                 asset_type = 'fx'
             elif task_type == 'layout':
                 asset_type = 'layout'
+            elif task_type == 'previz':
+                asset_type = 'mov'
 
 
             # family filtering

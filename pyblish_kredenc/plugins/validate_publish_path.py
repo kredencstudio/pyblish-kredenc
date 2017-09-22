@@ -51,10 +51,7 @@ class ValidatePublishPath(pyblish.api.InstancePlugin):
             templates = [
                 'shot.publish.scene'
             ]
-        else:
-            templates = [
-                'folder.publish.scene'
-            ]
+
 
         assert templates, "Could not recognize entity"
 

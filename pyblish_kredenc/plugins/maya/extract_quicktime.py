@@ -47,13 +47,23 @@ class ExtractQuicktime(pyblish.api.Extractor):
                           '_cam' suffix")
             return
 
-        # PROJECT FILTERING
 
-        project_code = instance.context.data['ftrackData']['Project']['code']
-        task_type = instance.context.data['ftrackData']['Task']['type']
+        ftrack_data = instance.context.data['ftrackData']
+
+        project_code = ftrack_data['Project']['code']
+        task_type = ftrack_data['Task']['type']
+
+        if 'Asset_Build' in ftrack_data:
+            asset = ftrack_data['Asset_Build']['name']
+        elif 'Shot' in ftrack_data:
+            asset = ftrack_data['Shot']['name']
 
         # load Preset
         studio_repos = os.path.abspath(os.environ.get('studio_repos'))
+        shot_preset_path = os.path.join(studio_repos, 'maya',
+                                    'capture_gui_presets',
+                                   (project_code + '_' + task_type + '_' + asset + '.json'))
+
         task_preset_path = os.path.join(studio_repos, 'maya',
                                     'capture_gui_presets',
                                    (project_code + '_' + task_type + '.json'))
@@ -66,9 +76,10 @@ class ExtractQuicktime(pyblish.api.Extractor):
                                    'capture_gui_presets',
                                    'default.json')
 
-
         # my_file = Path("/path/to/file")
-        if os.path.isfile(task_preset_path):
+        if os.path.isfile(shot_preset_path):
+            preset_to_use = shot_preset_path
+        elif os.path.isfile(task_preset_path):
             preset_to_use = task_preset_path
         elif os.path.isfile(project_preset_path):
             preset_to_use = project_preset_path
@@ -81,6 +92,18 @@ class ExtractQuicktime(pyblish.api.Extractor):
 
         preset['camera'] = camera
         preset['compression'] = "H.264"
+        preset['camera_options'] = {
+            "displayGateMask": False,
+            "displayResolution": False,
+            "displayFilmGate": False,
+            "displayFieldChart": False,
+            "displaySafeAction": False,
+            "displaySafeTitle": False,
+            "displayFilmPivot": False,
+            "displayFilmOrigin": False,
+            "overscan": 1.0,
+            "depthOfField": cmds.getAttr("{0}.depthOfField".format(camera)),
+        }
 
         dir_path = pyblish_utils.temp_dir(instance)
 

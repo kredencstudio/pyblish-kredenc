@@ -36,7 +36,7 @@ class ValidatePublishPathAssets(pyblish.api.InstancePlugin):
 
         ftrack_data = instance.context.data['ftrackData']
 
-        if 'Asset_Build' not in ftrack_data.keys():
+        if 'Shot' in ftrack_data.keys():
 
             templates = ['shot.publish.item']
             self.log.debug(templates)
@@ -53,7 +53,7 @@ class ValidatePublishPathAssets(pyblish.api.InstancePlugin):
                                                    root=root,
                                                    **kwargs
                                                    )[0]
-        else:
+        elif 'Asset_Build' in ftrack_data.keys():
 
             templates = ['asset.publish.item']
             self.log.debug(templates)
@@ -64,6 +64,24 @@ class ValidatePublishPathAssets(pyblish.api.InstancePlugin):
                                                      )[0]
 
             templates = ['asset.publish.master']
+            self.log.debug(templates)
+            masterFile = ft_utils.getPathsYaml(taskid,
+                                                   templateList=templates,
+                                                   root=root,
+                                                   **kwargs
+                                                   )[0]
+
+        else:
+
+            templates = ['folder.publish.item']
+            self.log.debug(templates)
+            publishFile = ft_utils.getPathsYaml(taskid,
+                                                     templateList=templates,
+                                                     root=root,
+                                                     **kwargs
+                                                     )[0]
+
+            templates = ['folder.publish.master']
             self.log.debug(templates)
             masterFile = ft_utils.getPathsYaml(taskid,
                                                    templateList=templates,

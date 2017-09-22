@@ -11,23 +11,19 @@ class CollectPreview(pyblish.api.ContextPlugin):
 
     def process(self, context):
 
-        all_cameras = cmds.ls(objectsOnly=True,
-                              type="camera",
-                              long=True,
-                              recursive=True)
+        all_cameras = cmds.listCameras()
 
         self.log.info(all_cameras)
 
         cameras = []
         for cam in all_cameras:
-            if 'cam' in cam.lower():
+            if cam.lower().endswith('_cam'):
                 cameras.append(cam)
 
-        cameras.append('perspShape')
+        cameras.append('persp')
 
-        for camera_shape in cameras:  # Include namespace
+        for camera in cameras:  # Include namespace
 
-            camera = cmds.listRelatives(camera_shape, parent=True)[0]
 
             # Use short name
             name = cmds.ls(camera, long=False)[0].lower().rsplit("_cam", 1)[0]
