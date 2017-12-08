@@ -4,7 +4,7 @@ import maya.app.renderSetup.model.renderSetup as renderSetup
 
 @pyblish.api.log
 class CollectRenderLayers(pyblish.api.ContextPlugin):
-    """Collect Maya's scene units."""
+    """Collect Maya render layers."""
 
     order = pyblish.api.CollectorOrder
     hosts = ["maya"]
@@ -41,8 +41,11 @@ class CollectRenderLayers(pyblish.api.ContextPlugin):
             self.log.info('Switched render layer to {}'.format(layer_name))
 
 
-            if context.data['ftrackData']['Project']['code'] == 'hbt':
-                renderpass = 'diffuse_color'
+            if context.data.get('ftrackData'):
+                if context.data['ftrackData']['Project']['code'] == 'hbt':
+                    renderpass = 'diffuse_color'
+                else:
+                    renderpass = 'beauty'
             else:
                 renderpass = 'beauty'
 
