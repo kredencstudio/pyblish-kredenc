@@ -42,26 +42,32 @@ class ExtractDeadlineLayer(pyblish.api.InstancePlugin):
             plugin_data['Executable'] = 'mtoa_' + hostversion + '_' + mtoa_version
 
             mtoa_path = pm.pluginInfo('mtoa', query=True, path=True)
-            PluginFolder1 = os.path.split(mtoa_path)[0].replace('plug-ins', 'shaders')
-            plugin_data['PluginFolder1'] = PluginFolder1
+            PluginFolders = ''
 
-            PluginFolder2 = ''
+            PluginFolder = os.path.split(mtoa_path)[0].replace('plug-ins', 'shaders')
+            PluginFolders += "{};".format(PluginFolder)
+
+            PluginFolder = ''
             if mtoa_version.startswith("1.4"):
-                PluginFolder2 = '\\\\kre-c01\\share\\core\\software\\arnold\\alShaders-win-1.0.0rc18-ai4.2.12.2\\bin'
-            plugin_data['PluginFolder2'] = PluginFolder2
+                PluginFolder = r'\kre-c01\share\core\software\arnold\alShaders-win-1.0.0rc18-ai4.2.12.2\bin;'
+                PluginFolders += PluginFolder
 
-            PluginFolder2 = ''
+            PluginFolder = ''
             if mtoa_version.startswith("2."):
-                PluginFolder2 = '\\\\kre-c01\\share\\core\\software\\arnold\\alShaders-win-2.0.0-ai5.0.1.0\\bin'
-            plugin_data['PluginFolder2'] = PluginFolder2
+                PluginFolder = r'\\kre-c01\share\core\software\arnold\alShaders-win-2.0.0-ai5.0.1.0\bin;'
+                PluginFolders += PluginFolder
 
-            PluginFolder3 = ''
+            PluginFolder = ''
             if pm.pluginInfo( 'pgYetiMaya', query=True, loaded=True):
                 yeti_path = pm.pluginInfo('pgYetiMaya', query=True, path=True)
-                PluginFolder3 = os.path.split(yeti_path)[0].replace('plug-ins', 'bin')
-            plugin_data['PluginFolder3'] = PluginFolder3
+                PluginFolder = os.path.split(yeti_path)[0].replace('plug-ins', 'bin')
+                PluginFolders += PluginFolder + ";"
 
-            plugin_data['PathFolder1'] = PluginFolder3
+            PluginFolders += r'\\kre-c01\share\core\software\arnold\abcToA-3.0.1\abcToA-3.0.1\procedurals;'
+            PluginFolders += r'\\kre-c01\share\core\software\arnold\alShaders-win-2.0.0-ai5.0.1.0\bin;'
+
+            plugin_data['PluginFolder2'] = PluginFolders
+
 
             plugin_data['Version'] = 'Beta'
             plugin_data['CommandLineOptions'] = ''
