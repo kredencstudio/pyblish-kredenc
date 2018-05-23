@@ -49,13 +49,13 @@ class ExtractDeadlineLayer(pyblish.api.InstancePlugin):
 
             PluginFolder = ''
             if mtoa_version.startswith("1.4"):
-                PluginFolder = r'\kre-c01\share\core\software\arnold\alShaders-win-1.0.0rc18-ai4.2.12.2\bin;'
+                PluginFolder = r'\\KRE-C01\share\core\software\arnold\alShaders-win-1.0.0rc18-ai4.2.12.2\bin;'
                 PluginFolders += PluginFolder
 
             PluginFolder = ''
             if mtoa_version.startswith("2."):
-                PluginFolder = r'\\kre-c01\share\core\software\arnold\alShaders-win-2.0.0-ai5.0.1.0\bin;'
-                PluginFolders += PluginFolder
+                PluginFolders += r'\\KRE-C01\share\core\software\arnold\alShaders-win-2.0.0b2-ai5.0.1.0\bin;'
+                PluginFolders += r'\\KRE-C01\share\core\software\arnold\abcToA-3.0.1\abcToA-3.0.1\procedurals;'
 
             PluginFolder = ''
             if pm.pluginInfo( 'pgYetiMaya', query=True, loaded=True):
@@ -63,8 +63,7 @@ class ExtractDeadlineLayer(pyblish.api.InstancePlugin):
                 PluginFolder = os.path.split(yeti_path)[0].replace('plug-ins', 'bin')
                 PluginFolders += PluginFolder + ";"
 
-            PluginFolders += r'\\kre-c01\share\core\software\arnold\abcToA-3.0.1\abcToA-3.0.1\procedurals;'
-            PluginFolders += r'\\kre-c01\share\core\software\arnold\alShaders-win-2.0.0-ai5.0.1.0\bin;'
+
 
             plugin_data['PluginFolder2'] = PluginFolders
 

@@ -38,12 +38,12 @@ class Ass(pyblish.api.InstancePlugin):
         folder, filename = os.path.split(outputFrames)
         basename, ext = os.path.splitext(os.path.splitext(filename)[0])
 
-        output_path = os.path.join(dir_path, 'ass', basename + '.ass.gz')
+        output_path = os.path.join(dir_path, 'ass', basename + '.ass')
         instance.data['outputPath_ass'] = output_path
         self.log.debug('output_path: {}'.format(output_path))
 
         start_frame = instance.data['startFrame'].zfill(instance.data['padding'])
-        frameFileName = '{}.{}.ass.gz'.format(basename, start_frame)
+        frameFileName = '{}.{}.ass'.format(basename, start_frame)
         publish_file = os.path.join(folder, 'ass', frameFileName)
         instance.data['publishFile'] = publish_file
         self.log.debug('publish_file: {}'.format(publish_file))

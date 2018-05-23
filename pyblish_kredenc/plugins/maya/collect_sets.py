@@ -4,7 +4,7 @@ import pymel
 
 @pyblish.api.log
 class CollectSets(pyblish.api.Collector):
-    """Inject all models from the scene into the context"""
+    """Inject all instances from the scene into the context"""
 
     def transform_set(self, object_set):
         if not object_set.members():
@@ -34,7 +34,7 @@ class CollectSets(pyblish.api.Collector):
             else:
                 continue
 
-            if family_main in ['model', 'rig', 'look']:
+            if family_main in ['model', 'rig', 'look', 'cache']:
 
                 # Remove illegal disk characters
                 name = object_set.name().replace(":", "_")

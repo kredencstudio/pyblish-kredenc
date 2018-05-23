@@ -75,6 +75,7 @@ class CollectMovieDraft(pyblish.api.InstancePlugin):
             job_data["Frames"] = frame_list
             job_data["Name"] = job.Name
             job_data['Pool'] = 'comp'
+            job_data['Group'] = 'draft'
             job_data['Priority'] = job.Priority + 1
             job_data["UserName"] = job.UserName
             job_data["OutputFilename0"] = output_path
@@ -82,7 +83,7 @@ class CollectMovieDraft(pyblish.api.InstancePlugin):
 
             # setting plugin data
             plugin_data = {}
-            plugin_data["scriptFile"] = r'K:\core\dev\deadline-custom\draft\encode_to_MOV_H264_1080p_with_audio.py'
+            plugin_data["scriptFile"] = r'\\kre-c01\share\core\dev\deadline-custom\draft\encode_to_MOV_H264_1080p_with_audio.py'
             plugin_data["ScriptArg0"] = "username=\"\""
             plugin_data["ScriptArg1"] = "entity=\"\""
             plugin_data["ScriptArg2"] = "version=\"\""

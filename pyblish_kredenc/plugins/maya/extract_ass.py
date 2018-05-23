@@ -33,7 +33,7 @@ class ExtractAssLocal(pyblish.api.InstancePlugin):
                     -lightLinks 1 \
                     -forceTranslateShadingEngines \
                     -shadowLinks 2\
-                    -compressed\
+                    -asciiAss\
                     '
 
         self.log.info('Switching render layer to {}'.format(instance.name))
