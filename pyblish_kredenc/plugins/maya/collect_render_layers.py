@@ -40,14 +40,10 @@ class CollectRenderLayers(pyblish.api.ContextPlugin):
             rs.switchToLayer(layer)
             self.log.info('Switched render layer to {}'.format(layer_name))
 
-
+            renderpass = "beauty"
             if context.data.get('ftrackData'):
                 if context.data['ftrackData']['Project']['code'] == 'hbt':
                     renderpass = 'diffuse_color'
-                else:
-                    renderpass = 'beauty'
-            else:
-                renderpass = 'beauty'
 
             # getting frames
             start_frame = str(int(drg.startFrame.get()))

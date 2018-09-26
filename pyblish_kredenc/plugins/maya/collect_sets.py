@@ -6,6 +6,8 @@ import pymel
 class CollectSets(pyblish.api.Collector):
     """Inject all instances from the scene into the context"""
 
+    order = pyblish.api.CollectorOrder + 0.1
+
     def transform_set(self, object_set):
         if not object_set.members():
             return False
@@ -16,10 +18,14 @@ class CollectSets(pyblish.api.Collector):
 
         return True
 
-    def process(self, context):
+    def process(self,context):
+
+        asset = ""
+        if context.data.get('ftrackData'):
+            if context.data('ftrackData').get('Asset_Build'):
+                asset = context.data('ftrackData')['Asset_Build']['name']
 
         # FAMILY FILTERING
-
         sets = pymel.core.ls(type="objectSet")
 
         for object_set in sets:
@@ -66,7 +72,9 @@ class CollectSets(pyblish.api.Collector):
 
                 instance = context.create_instance(name=name)
                 instance.add(object_set)
-                instance.data["label"] = item + ' ' + family_main
+
+                instance.data["label"] = asset + " " + item + ' ' + family_main
+
                 instance.data["publish"] = publish
                 instance.data["family"] = family_main
                 instance.data['families'] = [family_main]

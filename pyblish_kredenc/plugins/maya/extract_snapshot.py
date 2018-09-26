@@ -39,6 +39,24 @@ class ExtractSnapshot(pyblish.api.Extractor):
 
     def process(self, instance):
         self.log.info("Extracting capture..")
+
+        if instance.context.data.get('ftrackData'):
+            if instance.context.data['ftrackData']['Project']['code'] == 'hbt':
+                self.log.info("Switching texures to LOW")
+                import hbt_switch_tex as hbtSw
+                reload(hbtSw)
+
+                nhbtData=hbtSw.switchTexture()
+
+                nhbtData.option = 1
+                nhbtData.highest = False
+                nhbtData.limit = 1600
+                nhbtData.validatorCheck()
+                nhbtData.fast = False
+
+                nhbtData.all = True
+                nhbtData.switch()
+
         components = instance.data['ftrackComponents'].copy()
         self.log.debug('Components: {}'.format(components))
 

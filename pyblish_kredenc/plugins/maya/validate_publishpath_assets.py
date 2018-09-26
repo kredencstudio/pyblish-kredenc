@@ -12,7 +12,7 @@ class ValidatePublishPathAssets(pyblish.api.InstancePlugin):
     """
 
     order = pyblish.api.ValidatorOrder
-    families = ['model', 'rig', 'camera', 'look', 'cache']
+    families = ['model', 'rig', 'camera', 'look', 'cache', 'location', 'prop']
     label = 'Validate Asset Paths'
 
     def process(self, instance):

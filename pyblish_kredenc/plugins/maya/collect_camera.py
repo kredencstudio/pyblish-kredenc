@@ -41,7 +41,7 @@ class CollectCameras(pyblish.api.Collector):
             self.log.debug("item {}, name {}".format(item, name))
 
             if context.data['ftrackData']['Task']['type'] in ['Lighting']:
-                instance.data['publish'] = True
+                instance.data['publish'] = False
 
             attrs = cmds.listAttr(camera, userDefined=True) or list()
 

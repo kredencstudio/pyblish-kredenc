@@ -11,7 +11,7 @@ class IntegrateSlibRig(pyblish.api.InstancePlugin):
 
     order = pyblish.api.IntegratorOrder
     # order = pyblish.api.ValidatorOrder
-    families = ['rig']
+    families = ['rig'] #,'model','look'
     label = 'SLIB Rig'
     optional = True
 

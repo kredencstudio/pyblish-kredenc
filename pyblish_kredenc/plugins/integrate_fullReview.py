@@ -5,7 +5,7 @@ from ftrack_kredenc import ft_utils
 
 
 @pyblish.api.log
-class ConformFlipbook(pyblish.api.Conformer):
+class ConformFullFlipbook(pyblish.api.Conformer):
     """Copies Review movie to it's final location
 
      Expected data members:
@@ -15,11 +15,13 @@ class ConformFlipbook(pyblish.api.Conformer):
     """
 
     families = ['review']
-    label = 'Review'
+    label = 'Full Review'
+    optional = True
+    active = True
 
     def process(self, instance):
 
-        extractedPaths = [v for k,v in instance.data.items() if k.startswith('outputPath')]
+        extractedPaths = [v for k,v in instance.data.items() if k.startswith('handleOutputPath')]
 
         componentPath = ''
 
@@ -57,10 +59,10 @@ class ConformFlipbook(pyblish.api.Conformer):
             path, extension = os.path.splitext(publishFile[0])
             sourceFile, source_ext = os.path.splitext(sourcePath)
 
-            publishFile = path + source_ext
+            publishFile = path + '_handle' + source_ext
 
-            self.log.info('Moving preview from location: {}'.format(sourcePath))
-            self.log.info('Moving preview to location: {}'.format(publishFile))
+            self.log.info('Moving full preview from location: {}'.format(sourcePath))
+            self.log.info('Moving full preview to location: {}'.format(publishFile))
 
             d = os.path.dirname(publishFile)
             if not os.path.exists(d):
@@ -74,7 +76,7 @@ class ConformFlipbook(pyblish.api.Conformer):
         if componentPath:
             self.log.debug('Component Path: {}'.format(componentPath))
             components = instance.data['ftrackComponents'].copy()
-            components['review']['path'] = componentPath
+            components['fullReview']['path'] = componentPath
 
 
             instance.data['ftrackComponents'] = components

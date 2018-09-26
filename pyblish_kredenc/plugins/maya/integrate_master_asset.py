@@ -10,7 +10,7 @@ class IntegrateMasterAsset(pyblish.api.InstancePlugin):
 
     order = pyblish.api.IntegratorOrder
     # order = pyblish.api.ValidatorOrder
-    families = ['model', 'rig', 'cache', 'look']
+    families = ['model', 'rig', 'cache', 'look', 'location', 'prop']
     label = 'Master Asset'
     optional = True
 

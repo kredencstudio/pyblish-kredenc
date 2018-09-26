@@ -62,12 +62,19 @@ def load_capture_preset(path):
             temp_options2['textureMaxResolution'] = 512
             temp_options2['enableTextureMaxRes'] = True
 
+        if key == 'alphaCut' :
+            temp_options2['transparencyAlgorithm'] = 5
+            temp_options2['transparencyQuality'] = 1
+
+        if key == 'headsUpDisplay' :
+            temp_options['headsUpDisplay'] = True
+
         if key == 'displayLights':
             temp_options[str(key)] = light_options[preset[id][key]]
         else:
             temp_options[str(key)] = preset[id][key]
 
-    for key in ['override_viewport_options', 'high_quality']:
+    for key in ['override_viewport_options', 'high_quality', 'alphaCut']:
         temp_options.pop(key, None)
 
     options['viewport_options'] = temp_options

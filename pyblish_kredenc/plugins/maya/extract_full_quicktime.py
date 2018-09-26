@@ -22,13 +22,9 @@ reload(dHUD)
 from tweakHUD import ftrackStrings as fStrings
 reload(fStrings)
 
-def soundOffsetFunc(oSF,SF,H):
-    tmOff = (oSF - H) - SF
-    return tmOff
-
 
 @pyblish.api.log
-class ExtractQuicktime(pyblish.api.Extractor):
+class ExtractFullQuicktime(pyblish.api.Extractor):
     """Extract review instances as a quicktime
 
     Arguments:
@@ -51,10 +47,19 @@ class ExtractQuicktime(pyblish.api.Extractor):
     families = ["review"]
     hosts = ["maya"]
     optional = True
-    label = "Quicktime"
+    label = "Full Quicktime"
+    active = True
 
     def process(self, instance):
-        self.log.info("Extracting capture..")
+
+        def temp_dir():
+            import tempfile
+            extract_dir = tempfile.mkdtemp()
+            return extract_dir
+
+
+
+        self.log.info("Extracting full capture..")
         #ftrackData = context.data.get('ftrackData')
 
         if instance.context.data.get('ftrackData'):
@@ -78,7 +83,6 @@ class ExtractQuicktime(pyblish.api.Extractor):
                 pm.refresh(f=True)
 
 
-
         components = instance.data['ftrackComponents'].copy()
         self.log.debug('Components: {}'.format(components))
 
@@ -99,6 +103,19 @@ class ExtractQuicktime(pyblish.api.Extractor):
             asset = ftrack_data['Asset_Build']['name']
         elif 'Shot' in ftrack_data:
             asset = ftrack_data['Shot']['name']
+
+
+        ftrackStrings = fStrings.annotationData()
+        nData = ftrackStrings.niceData
+        nData['version'] = instance.context.data('version')
+
+        fFrame = int(float(nData['oFStart']))
+        eFrame = int(float(nData['oFEnd']))
+        fHandle = int(float(nData['handle']))
+        soundOfst = 0 #fFrame - fHandle - fFrame
+        nData['frame'] = [(str("{0:05d}".format(f))) for f in range(fFrame - fHandle, eFrame + fHandle + 1)]
+
+
 
         # load Preset
         studio_repos = os.path.abspath(os.environ.get('studio_repos'))
@@ -149,10 +166,10 @@ class ExtractQuicktime(pyblish.api.Extractor):
             "displayFilmPivot": False,
             "displayFilmOrigin": False,
             "overscan": 1.0,
-            "depthOfField": cmds.getAttr("{0}.depthOfField".format(camera)),
+            "depthOfField": cmds.getAttr("{0}.depthOfField".format(camera))
         }
 
-        dir_path = pyblish_utils.temp_dir(instance)
+        dir_path = temp_dir()
 
         # Ensure name of camera is valid
         sourcePath = os.path.normpath(instance.context.data('currentFile'))
@@ -166,17 +183,20 @@ class ExtractQuicktime(pyblish.api.Extractor):
         preset['filename'] = output_images
         preset['overwrite'] = True
 
+
+        preset['start_frame'] = fFrame - fHandle
+        preset['end_frame'] = eFrame + fHandle
+
         pm.refresh(f=True)
 
 
-        refreshFrameInt = int(pm.playbackOptions( q = True,  minTime = True))
+        refreshFrameInt = fFrame - fHandle
         pm.currentTime( refreshFrameInt - 1, edit=True )
         pm.currentTime( refreshFrameInt, edit=True )
 
         with maintained_time():
             playblast = capture_gui.lib.capture_scene(preset)
 
-        #instance.data["outputPath_qt"] = playblast
 
         self.log.info("Calculating HUD data overlay")
 
@@ -185,13 +205,8 @@ class ExtractQuicktime(pyblish.api.Extractor):
         fls = [os.path.join(dir_path, f).replace("\\","/") for f in os.listdir( dir_path ) if f.endswith(preset['compression'])]
         #self.log.info(" these  %s" % fls[0])
 
-        ftrackStrings = fStrings.annotationData()
-        nData = ftrackStrings.niceData
-        nData['version'] = instance.context.data('version')
-        fFrame = int(pm.playbackOptions( q = True,  minTime = True))
-        eFrame = int(pm.playbackOptions( q = True,  maxTime = True))
-        nData['frame'] = [(str("{0:05d}".format(f))) for f in range(fFrame, eFrame + 1)]
-        soundOfst = int(float(nData['oFStart'])) - int(float(nData['handle'])) - fFrame
+
+
         soundFile = mu.giveMePublishedAudio()
         self.log.info("SOUND offset  %s" % str(soundOfst))
         self.log.info("SOUND source video to %s" % str(soundFile))
@@ -206,8 +221,11 @@ class ExtractQuicktime(pyblish.api.Extractor):
             os.remove(f)
 
         playblast = (ann.expPth).replace("\\","/")
-        instance.data["outputPath_qt"] = movieFullPth
-        self.log.info("Outputting video to %s" % movieFullPth)
+        instance.data["handleOutputPath_qt"] = movieFullPth
+        self.log.info("Outputting full video to %s" % movieFullPth)
+
+        #instance.data['ftrackComponents']['fullReview'] = {'path': "", 'reviewable': False}
+
 
 @contextlib.contextmanager
 def maintained_time():

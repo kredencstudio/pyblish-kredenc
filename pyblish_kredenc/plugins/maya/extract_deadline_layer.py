@@ -55,7 +55,14 @@ class ExtractDeadlineLayer(pyblish.api.InstancePlugin):
             PluginFolder = ''
             if mtoa_version.startswith("2."):
                 PluginFolders += r'\\KRE-C01\share\core\software\arnold\alShaders-win-2.0.0b2-ai5.0.1.0\bin;'
-                PluginFolders += r'\\KRE-C01\share\core\software\arnold\abcToA-3.0.1\abcToA-3.0.1\procedurals;'
+                PluginFolders += r'\\KRE-C01\share\core\software\arnold\abcToA-3.0.1\procedurals;'
+
+            if mtoa_version.startswith("3.0"):
+                PluginFolders += r'\\KRE-C01\share\core\software\arnold\alShaders-win-2.0.0b4-ai5.0.1.0\bin;'
+                PluginFolders += r'\\KRE-C01\share\core\software\arnold\abcToA-3.0.2\procedurals;'
+
+            if mtoa_version.startswith("3.1"):
+                PluginFolders += r'\\KRE-C01\share\core\software\arnold\abcToA-3.0.2\procedurals;'
 
             PluginFolder = ''
             if pm.pluginInfo( 'pgYetiMaya', query=True, loaded=True):
@@ -64,6 +71,11 @@ class ExtractDeadlineLayer(pyblish.api.InstancePlugin):
                 PluginFolders += PluginFolder + ";"
 
 
+            PluginFolder = ''
+            if pm.pluginInfo( 'MiarmyExpress', query=True, loaded=True):
+                miarmy_path = pm.pluginInfo('MiarmyExpress', query=True, path=True)
+                PluginFolders += r'\\KRE-C01\share\core\software\miarmy\miarmy_6.2.64_2018\bin\arnold\mtoa3.0.1;'
+                PluginFolders += miarmy_path + ";"
 
             plugin_data['PluginFolder2'] = PluginFolders
 

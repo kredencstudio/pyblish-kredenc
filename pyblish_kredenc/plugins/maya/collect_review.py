@@ -36,6 +36,8 @@ class CollectPreview(pyblish.api.ContextPlugin):
             if camera == 'persp':
                 instance.data['publish'] = False
                 instance.data["families"].append('snapshot')
+            if camera == 'shot_cam':
+                instance.data["families"].append('snapshot')
 
             if context.data['ftrackData']['Task']['type'] in ['Lighting']:
                 instance.data['publish'] = False
@@ -52,7 +54,11 @@ class CollectPreview(pyblish.api.ContextPlugin):
             # ftrack data
             components = {'review': {'path': '',
                                      'reviewable': True,
-                                     }}
+                                     },
+                            'fullReview': {'path': '',
+                                        'reviewable': False,
+                                 }
+                            }
             instance.data['ftrackComponents'] = components
 
             self.log.info("Added: %s" % components)

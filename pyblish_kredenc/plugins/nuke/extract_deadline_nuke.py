@@ -43,6 +43,6 @@ class ExtractDeadlineNuke(pyblish.api.Extractor):
         plugin_data['BatchMode'] = 'True'
         plugin_data['EnforceRenderOrder'] = 'False'
         plugin_data['NukeX'] = 'False'
-        plugin_data['Version'] = '10.0'
+        plugin_data['Version'] = '11.2'
 
         instance.data['deadlineData']['plugin'] = plugin_data
